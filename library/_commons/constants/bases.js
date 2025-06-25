@@ -6,6 +6,9 @@ export const configFlag = "--config";
 export const lintConfigImportsFlag = "--lint-config-imports";
 export const myIgnoresOnlyFlag = "--my-ignores-only";
 
+// placeholder prefix
+export const $COMMENT = "$COMMENT";
+
 // ESLint ignores
 export const knownIgnores = [
   "node_modules",
@@ -16,9 +19,6 @@ export const knownIgnores = [
   ".parcel-cache",
   ".react-router-parcel",
 ];
-
-// placeholder prefix
-export const $COMMENT = "$COMMENT";
 
 // success objects
 export const successFalse = Object.freeze({
