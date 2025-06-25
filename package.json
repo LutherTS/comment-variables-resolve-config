@@ -9,6 +9,10 @@
   "author": "Luther Tchofo Safo <luther@tchofo-safo-portfolio.me>",
   "type": "module",
   "main": "library/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LutherTS/comment-variables-resolve-config.git"
+  },
   "dependencies": {
     "zod": "^3.25.67"
   }
