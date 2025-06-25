@@ -1,0 +1,12 @@
+{
+  "name": "comment-variables-resolve-config",
+  "version": "1.0.0",
+  "description": "The shared package at the hearts of the comment-variables npm package and the (upcoming) Comment Variables VS Code extension. ",
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "library/index.js",
+  "dependencies": {
+    "zod": "^3.25.67"
+  }
+}
