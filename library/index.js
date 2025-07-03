@@ -42,6 +42,7 @@ const resolveConfig =
 
     // Step 2: Imports the config dynamically
 
+    delete require.cache[require.resolve(configPath)];
     const configModule = /** @type {unknown} */ (
       // await import(url.pathToFileURL(configPath))
       require(configPath)
