@@ -2,9 +2,6 @@ import fs from "fs";
 import path from "path";
 import url from "url";
 
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-
 import {
   successFalse,
   successTrue,
@@ -56,19 +53,10 @@ const resolveConfig = async (configPath) => {
 
   // Step 2: Acquires the config
 
-  const rawContent = fs.readFileSync(configPath, "utf-8");
-  console.log("This raw content is:", rawContent);
-
-  delete require.cache[require.resolve(configPath)];
-
-  // const configModule = /** @type {unknown} */ (require(configPath));
   const configModule = await /** @type {unknown} */ (
     import(`${url.pathToFileURL(configPath)}?t=${Date.now()}`)
-  );
-  console.log("This config module is:", configModule);
-
+  ); // `?t=${Date.now()}` for cache-busting
   const config = /** @type {unknown} */ (configModule.default);
-  console.log("This config is:", config);
 
   // Step 3: Validates config object
 
