@@ -14,6 +14,7 @@
     "url": "git+https://github.com/LutherTS/comment-variables-resolve-config.git"
   },
   "dependencies": {
+    "eslint": "^9.30.1",
     "zod": "^3.25.67"
   }
 }

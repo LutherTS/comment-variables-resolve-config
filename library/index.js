@@ -120,6 +120,10 @@ const resolveConfig = async (configPath) => {
     return flattenedConfigDataResults;
   }
 
+  /* NEW!! */
+  // This is where I'll be using ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
+  // So in the process, I will be running and received findAllImports, meaning resolveConfig will be exporting all imports from the config, with the relevant flag only needing to choose between all imports or just the config path. This way you can say eventually OK, here when I command-click a $COMMENT, because it's not ignored it sends me to the position, but here because it's ignored it actually shows me all references.
+
   // sends back:
   // - the flattened config data,
   // - the reverse flattened config data,
