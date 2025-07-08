@@ -24,6 +24,13 @@ declare const resolveConfig: (configPath: string) => Promise<
       reversedFlattenedConfigData: {
         [k: string]: string;
       };
+      valueLocations: {
+        [k: string]: {
+          value: string;
+          filePath: string;
+          loc: SourceLocation;
+        };
+      };
     }
 >;
 

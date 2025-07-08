@@ -2,6 +2,11 @@ import fs from "fs";
 import path from "path";
 import url from "url";
 
+import { ESLint } from "eslint";
+import tseslint from "typescript-eslint";
+
+import { findAllImports } from "find-all-js-imports";
+
 import {
   successFalse,
   successTrue,
@@ -15,6 +20,24 @@ import {
   ConfigDataSchema,
   ConfigIgnoresSchema,
 } from "./_commons/schemas/config.js";
+
+import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
+
+/**
+ * @typedef {import("@typescript-eslint/utils").TSESTree.SourceLocation} SourceLocation
+ */
+
+// default ESLint config language options
+const typeScriptAndJSXCompatible = {
+  // for compatibility with TypeScript (.ts and .tsx)
+  parser: tseslint.parser,
+  // for compatibility with JSX (React, etc.)
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+};
 
 /**
  * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
@@ -124,13 +147,113 @@ const resolveConfig = async (configPath) => {
   // This is where I'll be using ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I will be running and received findAllImports, meaning resolveConfig will be exporting all imports from the config, with the relevant flag only needing to choose between all imports or just the config path. This way you can say eventually OK, here when I command-click a $COMMENT, because it's not ignored it sends me to the position, but here because it's ignored it actually shows me all references.
 
+  const findAllImportsResults = findAllImports(configPath);
+  if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional. (This also means that current warnings find all imports will need to be upgraded to errors.)
+  const rawFiles = [...findAllImportsResults.visitedSet];
+  // the paths must be relative
+  const files = rawFiles.map((e) => path.relative(process.cwd(), e));
+
+  const eslint = new ESLint({
+    overrideConfigFile: true,
+    overrideConfig: [
+      {
+        files,
+        languageOptions: typeScriptAndJSXCompatible,
+        plugins: {
+          ["commentVariablesPluginName"]: {
+            rules: {
+              ["extract"]: extractObjectStringLiteralValues,
+            },
+          },
+        },
+        rules: {
+          [`${"commentVariablesPluginName"}/${"extract"}`]: "warn",
+        },
+      },
+    ],
+  });
+  const results = await eslint.lintFiles(files);
+  console.log("Results are:", results);
+
+  /** @type {{value: string; filePath: string; loc: SourceLocation}[]} */
+  const extracted = results.flatMap((result) =>
+    result.messages
+      .filter(
+        (msg) => msg.ruleId === `${"commentVariablesPluginName"}/${"extract"}`
+      )
+      .map((msg) => JSON.parse(msg.message))
+  );
+  console.log("Extracted are:", extracted);
+
+  const map = new Map();
+  const array = [];
+
+  for (const extract of extracted) {
+    const value = extract.value;
+    if (!map.has(value)) {
+      map.set(value, extract);
+    } else array.push(extract);
+  }
+  console.log("Map is:", map);
+  console.log("Array is:", array);
+
+  // array should be empty
+  if (array.length !== 0) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            "ERROR. `array` should remain empty because all extracted values should be unique. More on that later.",
+        },
+      ],
+    };
+  }
+
+  const { reversedFlattenedConfigData } = flattenedConfigDataResults;
+  const reversedFlattenedConfigDataKeys = Object.keys(
+    reversedFlattenedConfigData
+  );
+  console.log("Keys are:", reversedFlattenedConfigDataKeys);
+
+  const set = new Set();
+  for (const key of reversedFlattenedConfigDataKeys) {
+    if (!map.has(key)) set.add(key);
+  } // All could be in a single run, but I'd rather report on ALL the errors one time instead of reporting on them one by one.
+
+  // set should be empty
+  if (set.size !== 0) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            "ERROR. `set` should remain empty, because there shouldn't be a single value in the reversed flatenned config that does not have its equivalent in `map`, which may only be the case if the value was obtain by another mean than a string literal. More on that later.",
+        },
+      ],
+    };
+  }
+
+  /** @type {{[k: string]: {value: string; filePath: string; loc: SourceLocation;}}} */
+  const valueLocations = {};
+  for (const key of reversedFlattenedConfigDataKeys) {
+    if (!map.has(key)) set.add(key);
+    valueLocations[key] = map.get(key);
+  }
+  console.log("Value locations are:", valueLocations);
+  console.log(valueLocations[reversedFlattenedConfigDataKeys[0]]);
+
   // sends back:
   // - the flattened config data,
   // - the reverse flattened config data,
   // - the verified config path
   // - and the raw passed ignores
   return {
-    ...flattenedConfigDataResults, // finalized
+    // THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
+    ...flattenedConfigDataResults, // finalized (comes with its own successTrue)
+    valueLocations, // NEW
     configPath, // finalized
     passedIgnores: configIgnoresSchemaResult.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
