@@ -276,6 +276,8 @@ export {
   myIgnoresOnlyFlag,
   $COMMENT,
   knownIgnores,
+  placeholderMessageId,
+  placeholderDataId,
 } from "./_commons/constants/bases.js";
 
 export {

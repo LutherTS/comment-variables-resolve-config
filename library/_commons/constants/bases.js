@@ -54,4 +54,10 @@ export const typeScriptAndJSXCompatible = {
 export const commentVariablesPluginName = "comment-variables";
 
 // rule name
-export const extractRuleName = "extract";
+export const extractRuleName = "extract-object-string-literal-values";
+
+// messageId
+export const placeholderMessageId = "placeholderMessageId";
+
+// dataId
+export const placeholderDataId = "placeholderDataId";

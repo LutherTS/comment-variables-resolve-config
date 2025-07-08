@@ -1,5 +1,7 @@
+import { placeholderMessageId, placeholderDataId } from "../constants/bases.js";
+
 /**
- * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<"message", []>} Rule
+ * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, []>} Rule
  */
 
 /** @type {Rule} */
@@ -12,7 +14,7 @@ const rule = {
     },
     schema: [],
     messages: {
-      ["message"]: "{{ stringified }}",
+      [placeholderMessageId]: `{{ ${placeholderDataId} }}`,
     },
   },
   create: (context) => {
@@ -28,9 +30,9 @@ const rule = {
             const propValueNode = prop.value;
             context.report({
               node: propValueNode,
-              messageId: "message",
+              messageId: placeholderMessageId,
               data: {
-                ["stringified"]: JSON.stringify({
+                [placeholderDataId]: JSON.stringify({
                   value: propValueNode.value,
                   filePath: context.filename,
                   loc: propValueNode.loc,
