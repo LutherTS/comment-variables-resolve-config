@@ -1,3 +1,7 @@
+import tseslint from "typescript-eslint";
+
+type TSESLintParser = typeof tseslint.parser;
+
 // must be manually maintained
 
 /**
@@ -24,6 +28,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       reversedFlattenedConfigData: {
         [k: string]: string;
       };
+      rawDefaultIgnores: string[];
       valueLocations: {
         [k: string]: {
           value: string;
@@ -50,6 +55,9 @@ export const typeWarning: Readonly<{
 }>;
 
 export const defaultConfigFileName: "comments.config.js";
+export const commentVariablesPluginName: "comment-variables";
+export const placeholderMessageId: "placeholderMessageId";
+export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";
 export const lintConfigImportsFlag: "--lint-config-imports";
 export const myIgnoresOnlyFlag: "--my-ignores-only";
@@ -63,6 +71,14 @@ export const knownIgnores: [
   ".parcel-cache",
   ".react-router-parcel"
 ];
+export const typeScriptAndJSXCompatible: {
+  parser: TSESLintParser;
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true;
+    };
+  };
+};
 
 export const configKeyRegex: RegExp;
 export const flattenedConfigKeyRegex: RegExp;

@@ -39,14 +39,13 @@ export const typeWarning = Object.freeze({
 });
 
 // default ESLint config language options
+const jSXTrue = Object.freeze({ jsx: true });
 export const typeScriptAndJSXCompatible = {
   // for compatibility with TypeScript (.ts and .tsx)
   parser: tseslint.parser,
   // for compatibility with JSX (React, etc.)
   parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
+    ecmaFeatures: { ...jSXTrue },
   },
 };
 

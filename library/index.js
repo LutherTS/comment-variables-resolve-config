@@ -251,6 +251,7 @@ const resolveConfig = async (configPath) => {
   return {
     // THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...flattenedConfigDataResults, // finalized (comes with its own successTrue)
+    rawDefaultIgnores: rawFiles, // NEW
     valueLocations, // NEW
     configPath, // finalized
     passedIgnores: configIgnoresSchemaResult.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
