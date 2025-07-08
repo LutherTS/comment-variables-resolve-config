@@ -3,7 +3,6 @@ import path from "path";
 import url from "url";
 
 import { ESLint } from "eslint";
-import tseslint from "typescript-eslint";
 
 import { findAllImports } from "find-all-js-imports";
 
@@ -12,6 +11,9 @@ import {
   successTrue,
   typeError,
   typeWarning,
+  typeScriptAndJSXCompatible,
+  commentVariablesPluginName,
+  extractRuleName,
 } from "./_commons/constants/bases.js";
 
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
@@ -24,20 +26,16 @@ import {
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
 /**
- * @typedef {import("@typescript-eslint/utils").TSESTree.SourceLocation} SourceLocation
+ * @typedef {import("@typescript-eslint/utils")
+ *   .TSESTree
+ *   .SourceLocation
+ * } SourceLocation
+ * @typedef {{
+ *   value: string;
+ *   filePath: string;
+ *   loc: SourceLocation
+ * }} ValueLocation
  */
-
-// default ESLint config language options
-const typeScriptAndJSXCompatible = {
-  // for compatibility with TypeScript (.ts and .tsx)
-  parser: tseslint.parser,
-  // for compatibility with JSX (React, etc.)
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
-};
 
 /**
  * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
@@ -68,7 +66,7 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: "ERROR. File passed is not JavaScript (.js).",
+          message: "ERROR. Config file passed is not JavaScript (.js).",
         },
       ],
     };
@@ -160,14 +158,14 @@ const resolveConfig = async (configPath) => {
         files,
         languageOptions: typeScriptAndJSXCompatible,
         plugins: {
-          ["commentVariablesPluginName"]: {
+          [commentVariablesPluginName]: {
             rules: {
-              ["extract"]: extractObjectStringLiteralValues,
+              [extractRuleName]: extractObjectStringLiteralValues,
             },
           },
         },
         rules: {
-          [`${"commentVariablesPluginName"}/${"extract"}`]: "warn",
+          [`${commentVariablesPluginName}/${extractRuleName}`]: "warn",
         },
       },
     ],
@@ -175,11 +173,12 @@ const resolveConfig = async (configPath) => {
   const results = await eslint.lintFiles(files);
   console.log("Results are:", results);
 
-  /** @type {{value: string; filePath: string; loc: SourceLocation}[]} */
+  /** @type {ValueLocation[]} */
   const extracted = results.flatMap((result) =>
     result.messages
       .filter(
-        (msg) => msg.ruleId === `${"commentVariablesPluginName"}/${"extract"}`
+        (msg) =>
+          msg.ruleId === `${commentVariablesPluginName}/${extractRuleName}`
       )
       .map((msg) => JSON.parse(msg.message))
   );
@@ -205,7 +204,7 @@ const resolveConfig = async (configPath) => {
         {
           ...typeError,
           message:
-            "ERROR. `array` should remain empty because all extracted values should be unique. More on that later.",
+            "ERROR. `array` should remain empty because all extracted values should be unique. More on that later.", // Next, list all of the duplicates, by including the ones in the array and the first one in the map.
         },
       ],
     };
@@ -230,20 +229,19 @@ const resolveConfig = async (configPath) => {
         {
           ...typeError,
           message:
-            "ERROR. `set` should remain empty, because there shouldn't be a single value in the reversed flatenned config that does not have its equivalent in `map`, which may only be the case if the value was obtain by another mean than a string literal. More on that later.",
+            "ERROR. `set` should remain empty, because there shouldn't be a single value in the reversed flattened config that does not have its equivalent in `map`, which may only be the case if the value was obtain by another mean than a string literal. More on that later.", // Next, list all the values from the reversed flattened config that do not have their equivalent in map in order to inform on what values should be changed to string literals.
         },
       ],
     };
   }
 
-  /** @type {{[k: string]: {value: string; filePath: string; loc: SourceLocation;}}} */
+  /** @type {{[k: string]: ValueLocation}} */
   const valueLocations = {};
   for (const key of reversedFlattenedConfigDataKeys) {
     if (!map.has(key)) set.add(key);
-    valueLocations[key] = map.get(key);
+    valueLocations[reversedFlattenedConfigData[key]] = map.get(key);
   }
   console.log("Value locations are:", valueLocations);
-  console.log(valueLocations[reversedFlattenedConfigDataKeys[0]]);
 
   // sends back:
   // - the flattened config data,
@@ -262,7 +260,14 @@ const resolveConfig = async (configPath) => {
 
 export default resolveConfig;
 
-export { successFalse, successTrue, typeError, typeWarning };
+export {
+  successFalse,
+  successTrue,
+  typeError,
+  typeWarning,
+  typeScriptAndJSXCompatible,
+  commentVariablesPluginName,
+};
 
 export {
   defaultConfigFileName,
