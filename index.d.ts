@@ -28,7 +28,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       reversedFlattenedConfigData: {
         [k: string]: string;
       };
-      rawDefaultIgnores: string[];
+      rawConfigAndImportPaths: string[];
       valueLocations: {
         [k: string]: {
           value: string;

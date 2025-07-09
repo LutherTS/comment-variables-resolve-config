@@ -147,9 +147,11 @@ const resolveConfig = async (configPath) => {
 
   const findAllImportsResults = findAllImports(configPath);
   if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional. (This also means that current warnings find all imports will need to be upgraded to errors.)
-  const rawFiles = [...findAllImportsResults.visitedSet];
-  // the paths must be relative
-  const files = rawFiles.map((e) => path.relative(process.cwd(), e));
+  const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
+  // the paths must be relative for ESLint
+  const files = rawConfigAndImportPaths.map((e) =>
+    path.relative(process.cwd(), e)
+  );
 
   const eslint = new ESLint({
     overrideConfigFile: true,
@@ -251,7 +253,7 @@ const resolveConfig = async (configPath) => {
   return {
     // THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...flattenedConfigDataResults, // finalized (comes with its own successTrue)
-    rawDefaultIgnores: rawFiles, // NEW
+    rawConfigAndImportPaths, // NEW
     valueLocations, // NEW
     configPath, // finalized
     passedIgnores: configIgnoresSchemaResult.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
