@@ -22,7 +22,7 @@ const data = {
       settings: "The required settings as follows:", // $COMMENT#JSDOC#PARAMS#SETTINGS
     }),
     returns: Object.freeze({
-      escapeRegex: `The string with regex characters escaped.`, // $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
+      escapeRegex: "The string with regex characters escaped.", // $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
       flattenConfigData:
         "Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).", // $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA
       resolveConfig:

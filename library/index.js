@@ -96,9 +96,25 @@ const resolveConfig = async (configPath) => {
   }
 
   // validates config.data
-  const configDataResult = ConfigDataSchema.safeParse(config.data);
+  const data = /** @type {unknown} */ (config.data);
 
-  if (!configDataResult.success) {
+  // needed because of z.record()
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            "ERROR. Invalid config.data format. The config.data should be an object.",
+        },
+      ],
+    };
+  }
+
+  const configDataResults = ConfigDataSchema.safeParse(config.data);
+
+  if (!configDataResults.success) {
     return {
       ...successFalse,
       errors: [
@@ -106,7 +122,7 @@ const resolveConfig = async (configPath) => {
           ...typeError,
           message: "ERROR. Config data could not pass validation from zod.",
         },
-        ...configDataResult.error.errors.map((e) => ({
+        ...configDataResults.error.errors.map((e) => ({
           ...typeError,
           message: e.message,
         })),
@@ -115,11 +131,11 @@ const resolveConfig = async (configPath) => {
   }
 
   // validates config.ignores
-  const configIgnoresSchemaResult = ConfigIgnoresSchema.safeParse(
+  const configIgnoresSchemaResults = ConfigIgnoresSchema.safeParse(
     config.ignores
   );
 
-  if (!configIgnoresSchemaResult.success) {
+  if (!configIgnoresSchemaResults.success) {
     return {
       ...successFalse,
       errors: [
@@ -127,7 +143,7 @@ const resolveConfig = async (configPath) => {
           ...typeError,
           message: "ERROR. Config ignores could not pass validation from zod.",
         },
-        ...configIgnoresSchemaResult.error.errors.map((e) => ({
+        ...configIgnoresSchemaResults.error.errors.map((e) => ({
           ...typeError,
           message: e.message,
         })),
@@ -135,7 +151,7 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  const flattenedConfigDataResults = flattenConfigData(configDataResult.data);
+  const flattenedConfigDataResults = flattenConfigData(configDataResults.data);
 
   if (!flattenedConfigDataResults.success) {
     return flattenedConfigDataResults;
@@ -173,10 +189,9 @@ const resolveConfig = async (configPath) => {
     ],
   });
   const results = await eslint.lintFiles(files);
-  console.log("Results are:", results);
 
   /** @type {ValueLocation[]} */
-  const extracted = results.flatMap((result) =>
+  const extracts = results.flatMap((result) =>
     result.messages
       .filter(
         (msg) =>
@@ -184,21 +199,21 @@ const resolveConfig = async (configPath) => {
       )
       .map((msg) => JSON.parse(msg.message))
   );
-  console.log("Extracted are:", extracted);
 
   const map = new Map();
   const array = [];
 
-  for (const extract of extracted) {
+  for (const extract of extracts) {
     const value = extract.value;
     if (!map.has(value)) {
       map.set(value, extract);
     } else array.push(extract);
   }
-  console.log("Map is:", map);
-  console.log("Array is:", array);
 
-  // array should be empty
+  // IMPORTANT...
+  // I'm actually going to need to use the callback, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`.
+
+  // array should be empty, because all extracted values should be unique
   if (array.length !== 0) {
     return {
       ...successFalse,
@@ -206,7 +221,7 @@ const resolveConfig = async (configPath) => {
         {
           ...typeError,
           message:
-            "ERROR. `array` should remain empty because all extracted values should be unique. More on that later.", // Next, list all of the duplicates, by including the ones in the array and the first one in the map.
+            "ERROR. (`array` should remain empty.) You have several string literal values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release.", // Next, list all of the duplicates, by including the ones in the array and the first one found in the map.
         },
       ],
     };
@@ -216,14 +231,13 @@ const resolveConfig = async (configPath) => {
   const reversedFlattenedConfigDataKeys = Object.keys(
     reversedFlattenedConfigData
   );
-  console.log("Keys are:", reversedFlattenedConfigDataKeys);
 
   const set = new Set();
   for (const key of reversedFlattenedConfigDataKeys) {
     if (!map.has(key)) set.add(key);
   } // All could be in a single run, but I'd rather report on ALL the errors one time instead of reporting on them one by one.
 
-  // set should be empty
+  // set should be empty, because there shouldn't be a single value in the reversed flattened config that does not have its equivalent in map
   if (set.size !== 0) {
     return {
       ...successFalse,
@@ -231,7 +245,7 @@ const resolveConfig = async (configPath) => {
         {
           ...typeError,
           message:
-            "ERROR. `set` should remain empty, because there shouldn't be a single value in the reversed flattened config that does not have its equivalent in `map`, which may only be the case if the value was obtain by another mean than a string literal. More on that later.", // Next, list all the values from the reversed flattened config that do not have their equivalent in map in order to inform on what values should be changed to string literals.
+            "ERROR. (`set` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release.", // Next, list all the values from the reversed flattened config that do not have their equivalent in map in order to inform on what values should be changed to string literals.
         },
       ],
     };
@@ -243,7 +257,6 @@ const resolveConfig = async (configPath) => {
     if (!map.has(key)) set.add(key);
     valueLocations[reversedFlattenedConfigData[key]] = map.get(key);
   }
-  console.log("Value locations are:", valueLocations);
 
   // sends back:
   // - the flattened config data,
@@ -253,10 +266,10 @@ const resolveConfig = async (configPath) => {
   return {
     // THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...flattenedConfigDataResults, // finalized (comes with its own successTrue)
-    rawConfigAndImportPaths, // NEW
+    rawConfigAndImportPaths, // NEW and now in resolveConfig
     valueLocations, // NEW
     configPath, // finalized
-    passedIgnores: configIgnoresSchemaResult.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
+    passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
   };
 };
