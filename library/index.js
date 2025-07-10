@@ -304,5 +304,5 @@ export {
 
 export {
   escapeRegex,
-  makePlaceholderRegex,
+  makeIsolatedStringRegex,
 } from "./_commons/utilities/helpers.js";
