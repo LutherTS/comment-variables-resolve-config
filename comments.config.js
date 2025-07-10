@@ -3,6 +3,8 @@ const data = {
     definitions: Object.freeze({
       escapeRegex:
         'Escapes all regex characters with a `"\\"` in a string to prepare it for use in a regex.', // $COMMENT#JSDOC#DEFINITIONS#ESCAPEREGEX
+      makePlaceholderRegex:
+        "Makes a global regex for a `$COMMENT#*` placeholder.",
       flattenConfigData:
         "Flattens the config's data property into a one-dimensional object of $COMMENT-*-like keys and string values.", // $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA
       resolveConfig:
@@ -10,6 +12,8 @@ const data = {
     }),
     params: Object.freeze({
       string: "The string.", // $COMMENT#JSDOC#PARAMS#STRING
+      placeholder:
+        "The `$COMMENT#*` placeholder that the regex is designed to find.",
       configData:
         "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)", // $COMMENT#JSDOC#PARAMS#CONFIGDATA
       configDataMapOption:
@@ -23,6 +27,8 @@ const data = {
     }),
     returns: Object.freeze({
       escapeRegex: "The string with regex characters escaped.", // $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
+      makePlaceholderRegex:
+        "The regex complete with positive lookbehind and positive lookahead to ensure the placeholder is taken into account only when surrounded by whitespace.",
       flattenConfigData:
         "Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).", // $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA
       resolveConfig:
