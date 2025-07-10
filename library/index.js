@@ -302,4 +302,7 @@ export {
   flattenedConfigPlaceholderRegex,
 } from "./_commons/constants/regexes.js";
 
-export { escapeRegex } from "./_commons/utilities/helpers.js";
+export {
+  escapeRegex,
+  makePlaceholderRegex,
+} from "./_commons/utilities/helpers.js";

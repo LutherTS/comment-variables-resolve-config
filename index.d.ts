@@ -90,3 +90,10 @@ export const flattenedConfigPlaceholderRegex: RegExp;
  * @returns The string with regex characters escaped.
  */
 export const escapeRegex: (string: string) => string;
+
+/**
+ * Makes a global regex for a `$COMMENT#*` placeholder.
+ * @param {string} placeholder The `$COMMENT#*` placeholder that the regex is designed to find.
+ * @returns The regex complete with positive lookbehind and positive lookahead to ensure the placeholder is taken into account only when surrounded by whitespace.
+ */
+export const makePlaceholderRegex: (placeholder: string) => RegExp;
