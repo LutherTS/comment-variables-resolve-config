@@ -92,8 +92,8 @@ export const flattenedConfigPlaceholderRegex: RegExp;
 export const escapeRegex: (string: string) => string;
 
 /**
- * Makes a global regex for a `$COMMENT#*` placeholder.
- * @param {string} placeholder The `$COMMENT#*` placeholder that the regex is designed to find.
- * @returns The regex complete with positive lookbehind and positive lookahead to ensure the placeholder is taken into account only when surrounded by whitespace.
+ * Makes a global regex for a given string that ensures it is surrounded by whitespace.
+ * @param {string} string The string.
+ * @returns The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace.
  */
-export const makePlaceholderRegex: (placeholder: string) => RegExp;
+export const makeIsolatedStringRegex: (string: string) => RegExp;
