@@ -1,3 +1,5 @@
+import tseslint from "typescript-eslint";
+
 // comments.config.js
 export const defaultConfigFileName = "comments.config.js";
 
@@ -35,3 +37,26 @@ export const typeError = Object.freeze({
 export const typeWarning = Object.freeze({
   type: "warning",
 });
+
+// default ESLint config language options
+const jSXTrue = Object.freeze({ jsx: true });
+export const typeScriptAndJSXCompatible = {
+  // for compatibility with TypeScript (.ts and .tsx)
+  parser: tseslint.parser,
+  // for compatibility with JSX (React, etc.)
+  parserOptions: {
+    ecmaFeatures: { ...jSXTrue },
+  },
+};
+
+// plugin name
+export const commentVariablesPluginName = "comment-variables";
+
+// rule name
+export const extractRuleName = "extract-object-string-literal-values";
+
+// messageId
+export const placeholderMessageId = "placeholderMessageId";
+
+// dataId
+export const placeholderDataId = "placeholderDataId";
