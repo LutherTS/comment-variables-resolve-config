@@ -21,7 +21,7 @@ import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 import {
   ConfigDataSchema,
   ConfigIgnoresSchema,
-} from "./_commons/schemas/config.js";
+} from "./_commons/constants/schemas.js";
 
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
@@ -157,9 +157,9 @@ const resolveConfig = async (configPath) => {
     return flattenedConfigDataResults;
   }
 
-  /* NEW!! */
-  // This is where I'll be using ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
-  // So in the process, I will be running and received findAllImports, meaning resolveConfig will be exporting all imports from the config, with the relevant flag only needing to choose between all imports or just the config path. This way you can say eventually OK, here when I command-click a $COMMENT, because it's not ignored it sends me to the position, but here because it's ignored it actually shows me all references.
+  /* NEW!!! */
+  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
+  // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but here because it's ignored it actually shows me all references outside the ignored files.
 
   const findAllImportsResults = findAllImports(configPath);
   if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional. (This also means that current warnings find all imports will need to be upgraded to errors.)
@@ -235,7 +235,7 @@ const resolveConfig = async (configPath) => {
   const set = new Set();
   for (const key of reversedFlattenedConfigDataKeys) {
     if (!map.has(key)) set.add(key);
-  } // All could be in a single run, but I'd rather report on ALL the errors one time instead of reporting on them one by one.
+  } // All could be in a single run, but I'd rather report on ALL the errors one time instead of reporting on them one by one for now.
 
   // set should be empty, because there shouldn't be a single value in the reversed flattened config that does not have its equivalent in map
   if (set.size !== 0) {
