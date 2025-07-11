@@ -29,7 +29,7 @@ declare const resolveConfig: (configPath: string) => Promise<
         [k: string]: string;
       };
       rawConfigAndImportPaths: string[];
-      valueLocations: {
+      keys_valueLocations: {
         [k: string]: {
           value: string;
           filePath: string;

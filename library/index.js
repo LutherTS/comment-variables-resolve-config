@@ -200,7 +200,9 @@ const resolveConfig = async (configPath) => {
       .map((msg) => JSON.parse(msg.message))
   );
 
+  /** @type {Map<string, ValueLocation>} */
   const map = new Map();
+  /** @type {Array<ValueLocation>} */
   const array = [];
 
   for (const extract of extracts) {
@@ -232,6 +234,7 @@ const resolveConfig = async (configPath) => {
     reversedFlattenedConfigData
   );
 
+  /** @type {Set<string>} */
   const set = new Set();
   for (const key of reversedFlattenedConfigDataKeys) {
     if (!map.has(key)) set.add(key);
@@ -252,22 +255,18 @@ const resolveConfig = async (configPath) => {
   }
 
   /** @type {{[k: string]: ValueLocation}} */
-  const valueLocations = {};
-  for (const key of reversedFlattenedConfigDataKeys) {
-    if (!map.has(key)) set.add(key);
-    valueLocations[reversedFlattenedConfigData[key]] = map.get(key);
+  const keys_valueLocations = {};
+  for (const reversedKey of reversedFlattenedConfigDataKeys) {
+    if (!map.has(reversedKey)) set.add(reversedKey);
+    keys_valueLocations[reversedFlattenedConfigData[reversedKey]] =
+      map.get(reversedKey);
   }
 
-  // sends back:
-  // - the flattened config data,
-  // - the reverse flattened config data,
-  // - the verified config path
-  // - and the raw passed ignores
   return {
-    // THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
+    // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...flattenedConfigDataResults, // finalized (comes with its own successTrue)
     rawConfigAndImportPaths, // NEW and now in resolveConfig
-    valueLocations, // NEW
+    keys_valueLocations, // NEW (formerly valueLocations)
     configPath, // finalized
     passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
