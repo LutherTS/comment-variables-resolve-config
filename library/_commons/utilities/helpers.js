@@ -1,3 +1,5 @@
+import { successFalse, typeError } from "../constants/bases.js";
+
 /* escapeRegex */
 
 /**
@@ -17,3 +19,20 @@ export const escapeRegex = (string) =>
  */
 export const makeIsolatedStringRegex = (string) =>
   new RegExp(`(?<=\\s|^)${escapeRegex(string)}(?=\\s|$)`, "g");
+
+/* makeSuccessFalseTypeError */
+
+/**
+ * Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.
+ * @param {string} message The human-readable message of the error.
+ * @returns A `{success: false}` object with a single error in its error array of `{type: "error"}`.
+ */
+export const makeSuccessFalseTypeError = (message) => ({
+  ...successFalse,
+  errors: [
+    {
+      ...typeError,
+      message,
+    },
+  ],
+});

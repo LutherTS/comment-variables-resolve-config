@@ -1,6 +1,8 @@
 import tseslint from "typescript-eslint";
-
 type TSESLintParser = typeof tseslint.parser;
+
+import type { TSESTree } from "@typescript-eslint/utils";
+type SourceLocation = TSESTree.SourceLocation;
 
 // must be manually maintained
 
@@ -36,6 +38,7 @@ declare const resolveConfig: (configPath: string) => Promise<
           loc: SourceLocation;
         };
       };
+      aliases_flattenedKeys: Record<string, string>;
     }
 >;
 

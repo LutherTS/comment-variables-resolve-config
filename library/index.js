@@ -15,7 +15,9 @@ import {
   commentVariablesPluginName,
   extractRuleName,
 } from "./_commons/constants/bases.js";
+import { flattenedConfigPlaceholderRegex } from "./_commons/constants/regexes.js";
 
+import { makeSuccessFalseTypeError } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 
 import {
@@ -46,30 +48,16 @@ const resolveConfig = async (configPath) => {
   // Step 1a: Checks if config file exists
 
   if (!fs.existsSync(configPath)) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message: "ERROR. No config file found.",
-        },
-      ],
-    };
+    return makeSuccessFalseTypeError("ERROR. No config file found.");
   }
 
   // Step 1b: Checks if config file is JavaScript file
 
   const configExtension = path.extname(configPath);
   if (configExtension !== ".js") {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message: "ERROR. Config file passed is not JavaScript (.js).",
-        },
-      ],
-    };
+    return makeSuccessFalseTypeError(
+      "ERROR. Config file passed is not JavaScript (.js)."
+    );
   }
 
   // Step 2: Acquires the config
@@ -83,16 +71,9 @@ const resolveConfig = async (configPath) => {
 
   // validates config
   if (!config || typeof config !== "object" || Array.isArray(config)) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message:
-            "ERROR. Invalid config format. The config should be an object.",
-        },
-      ],
-    };
+    return makeSuccessFalseTypeError(
+      "ERROR. Invalid config format. The config should be an object."
+    );
   }
 
   // validates config.data
@@ -100,16 +81,9 @@ const resolveConfig = async (configPath) => {
 
   // needed because of z.record()
   if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message:
-            "ERROR. Invalid config.data format. The config.data should be an object.",
-        },
-      ],
-    };
+    return makeSuccessFalseTypeError(
+      "ERROR. Invalid config.data format. The config.data should be an object."
+    );
   }
 
   const configDataResults = ConfigDataSchema.safeParse(config.data);
@@ -157,6 +131,90 @@ const resolveConfig = async (configPath) => {
     return flattenedConfigDataResults;
   }
 
+  const { configDataMap } = flattenedConfigDataResults;
+
+  // ALL flattenConfigData VERIFICATIONS SHOULD BE MADE HERE, OUTSIDE THE RECURSION
+
+  // strips metadata
+  /**@type {Map<string, string>} */
+  const flattenedConfigDataMap = new Map();
+  configDataMap.forEach((value, key) => {
+    flattenedConfigDataMap.set(key, value.value);
+  });
+
+  // makes the flattened config data object
+  const flattenedConfigData = Object.fromEntries(flattenedConfigDataMap);
+
+  // The integrity of the flattened config data needs to be established before working with it safely.
+
+  const flattenedConfigDataKeysSet = new Set(Object.keys(flattenedConfigData));
+
+  const flattenedConfigDataValuesArray = Object.values(flattenedConfigData);
+  // const flattenedConfigDataValuesSet = new Set(flattenedConfigDataValuesArray);
+
+  // Here is where I can implement aliases. The whole flow will probably have to be re-thought. The idea is that if a value is strictly equal to a key, then it is an alias.
+  // And then, we could literally compose aliases within values, like { key: "$#CHOCOLAT CHAUD#"} ...or not. Because the goal of the API is not to be verbose, but rather to be readable. So I would always prefer $COMMENT#COMMENT $COMMENT#IS $COMMENT#BLUE over $COMMENT#CIB... it depends. Anyway I do the aliases first, and then I'll look into it.
+  // Also, since the error format I'm using is shared between the consumers of the config, I could export makeSuccessFalseTypeError. // DONE.
+
+  // Aliases logic:
+  // - instead of returning an error because an existing flattened key is in the value...
+  /** @type {Record<string, string>} */
+  const aliases_flattenedKeys = {};
+  // ...in aliases_flattenedKeys...
+  // for (const key of flattenedConfigDataKeysSet) {
+  for (const [key, value] of Object.entries(flattenedConfigData)) {
+    // if (flattenedConfigDataValuesSet.has(key)) {
+    if (flattenedConfigDataKeysSet.has(value)) {
+      // ...the pair is now an alias... // checked
+      aliases_flattenedKeys[key] = value;
+      // ...the original key is removed from flattenedConfigData // checked
+      delete flattenedConfigData[key];
+
+      continue;
+
+      // checks the reversability of flattenedConfigData
+      // return {
+      //   ...successFalse,
+      //   errors: [
+      //     {
+      //       ...typeError,
+      //       message: `ERROR. The key "${key}" is and shouldn't be among the values of flattenedConfigData.`,
+      //     },
+      //   ],
+      // };
+    }
+    // }
+
+    // for (const key of flattenedConfigDataKeysSet) {
+    if (!flattenedConfigKeyRegex.test(key)) {
+      // checks if each key for flattenedConfigData passes the flattenedConfigKeyRegex test
+      return makeSuccessFalseTypeError(
+        `ERROR. Somehow the key "${key}" is not properly formatted. (This is mostly an internal mistake.)`
+      );
+    }
+  }
+
+  /** @type {Set<string>} */
+  const duplicateChecksSet = new Set();
+
+  for (const value of flattenedConfigDataValuesArray) {
+    if (duplicateChecksSet.has(value)) {
+      // checks that no two values are duplicate
+      return makeSuccessFalseTypeError(
+        `ERROR. The value "${value}" is already assigned to an existing key.`
+      );
+    }
+    duplicateChecksSet.add(value);
+  }
+
+  // Also including the reversed flattened config data.
+
+  const reversedFlattenedConfigData = Object.fromEntries(
+    Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
+  );
+
+  console.log("Aliases are:", aliases_flattenedKeys);
+
   /* NEW!!! */
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but here because it's ignored it actually shows me all references outside the ignored files.
@@ -199,14 +257,22 @@ const resolveConfig = async (configPath) => {
       )
       .map((msg) => JSON.parse(msg.message))
   );
+  console.log("Extracts are:", extracts);
 
   /** @type {Map<string, ValueLocation>} */
   const map = new Map();
   /** @type {Array<ValueLocation>} */
   const array = [];
 
+  // ...
+  // There's going to be the ...
+  // I'm gonna need to straight-up ditch the "keys" to go straight to the placeholders. It's going to be a seismic change but one that:
+  // - simply the sources of truth from three characteristics to two (from 'key, value, placeholder', to 'placeholder, comment')
+  // allows here to ignore all values that start with $COMMENT# since all placeholders (not keys) will start with the exact same prefix: if (extract.value.startsWith(`${$COMMENT}#`))
+  // Actually... if (configKeysSet.has(extract.value)) continue. That means value here is a key and is therefore an alias.
   for (const extract of extracts) {
     const value = extract.value;
+    if (flattenedConfigDataKeysSet.has(value)) continue; // that's an alias
     if (!map.has(value)) {
       map.set(value, extract);
     } else array.push(extract);
@@ -217,19 +283,11 @@ const resolveConfig = async (configPath) => {
 
   // array should be empty, because all extracted values should be unique
   if (array.length !== 0) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message:
-            "ERROR. (`array` should remain empty.) You have several string literal values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release.", // Next, list all of the duplicates, by including the ones in the array and the first one found in the map.
-        },
-      ],
-    };
+    return makeSuccessFalseTypeError(
+      "ERROR. (`array` should remain empty.) You have several string literal values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release. (If you really need two keys to have the same value, we're introducing aliases.)" // Next, list all of the duplicates, by including the ones in the array and the first one found in the map.
+    );
   }
 
-  const { reversedFlattenedConfigData } = flattenedConfigDataResults;
   const reversedFlattenedConfigDataKeys = Object.keys(
     reversedFlattenedConfigData
   );
@@ -242,16 +300,9 @@ const resolveConfig = async (configPath) => {
 
   // set should be empty, because there shouldn't be a single value in the reversed flattened config that does not have its equivalent in map
   if (set.size !== 0) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message:
-            "ERROR. (`set` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release.", // Next, list all the values from the reversed flattened config that do not have their equivalent in map in order to inform on what values should be changed to string literals.
-        },
-      ],
-    };
+    return makeSuccessFalseTypeError(
+      "ERROR. (`set` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release." // Next, list all the values from the reversed flattened config that do not have their equivalent in map in order to inform on what values should be changed to string literals.
+    );
   }
 
   /** @type {{[k: string]: ValueLocation}} */
@@ -264,7 +315,10 @@ const resolveConfig = async (configPath) => {
 
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
-    ...flattenedConfigDataResults, // finalized (comes with its own successTrue)
+    ...successTrue,
+    flattenedConfigData,
+    reversedFlattenedConfigData,
+    aliases_flattenedKeys,
     rawConfigAndImportPaths, // NEW and now in resolveConfig
     keys_valueLocations, // NEW (formerly valueLocations)
     configPath, // finalized

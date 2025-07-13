@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { configKeyRegex } from "./regexes.js";
 
+// Think about doing it with zod 4 by also preventing the present of an empty string.
 export const ConfigDataSchema = z
   .lazy(() =>
     z.record(
