@@ -15,7 +15,10 @@ import {
   commentVariablesPluginName,
   extractRuleName,
 } from "./_commons/constants/bases.js";
-import { flattenedConfigPlaceholderRegex } from "./_commons/constants/regexes.js";
+import {
+  flattenedConfigKeyRegex,
+  flattenedConfigPlaceholderRegex,
+} from "./_commons/constants/regexes.js";
 
 import { makeSuccessFalseTypeError } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
