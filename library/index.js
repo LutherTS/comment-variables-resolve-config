@@ -152,9 +152,6 @@ const resolveConfig = async (configPath) => {
 
   const flattenedConfigDataKeysSet = new Set(Object.keys(flattenedConfigData));
 
-  const flattenedConfigDataValuesArray = Object.values(flattenedConfigData);
-  // const flattenedConfigDataValuesSet = new Set(flattenedConfigDataValuesArray);
-
   // Here is where I can implement aliases. The whole flow will probably have to be re-thought. The idea is that if a value is strictly equal to a key, then it is an alias.
   // And then, we could literally compose aliases within values, like { key: "$#CHOCOLAT CHAUD#"} ...or not. Because the goal of the API is not to be verbose, but rather to be readable. So I would always prefer $COMMENT#COMMENT $COMMENT#IS $COMMENT#BLUE over $COMMENT#CIB... it depends. Anyway I do the aliases first, and then I'll look into it.
   // Also, since the error format I'm using is shared between the consumers of the config, I could export makeSuccessFalseTypeError. // DONE.
@@ -196,6 +193,9 @@ const resolveConfig = async (configPath) => {
       );
     }
   }
+
+  const flattenedConfigDataValuesArray = Object.values(flattenedConfigData);
+  // const flattenedConfigDataValuesSet = new Set(flattenedConfigDataValuesArray);
 
   /** @type {Set<string>} */
   const duplicateChecksSet = new Set();
