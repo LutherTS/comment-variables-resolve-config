@@ -216,7 +216,7 @@ const resolveConfig = async (configPath) => {
     Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
   );
 
-  console.log("Aliases are:", aliases_flattenedKeys);
+  // console.log("Aliases are:", aliases_flattenedKeys);
 
   /* NEW!!! */
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
@@ -260,7 +260,7 @@ const resolveConfig = async (configPath) => {
       )
       .map((msg) => JSON.parse(msg.message))
   );
-  console.log("Extracts are:", extracts);
+  // console.log("Extracts are:", extracts);
 
   /** @type {Map<string, ValueLocation>} */
   const map = new Map();
