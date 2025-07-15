@@ -18,7 +18,7 @@ import {
 } from "./_commons/constants/bases.js";
 import {
   flattenedConfigKeyRegex,
-  flattenedConfigPlaceholderRegexLocally,
+  flattenedConfigPlaceholderLocalRegex,
 } from "./_commons/constants/regexes.js";
 
 import { makeSuccessFalseTypeError } from "./_commons/utilities/helpers.js";
@@ -241,7 +241,7 @@ const resolveConfig = async (configPath) => {
         );
       // 4. check if all separated pass flattenedConfigPlaceholderRegex2
       for (const valueSegment of valueSegments) {
-        if (!flattenedConfigPlaceholderRegexLocally.test(valueSegment)) {
+        if (!flattenedConfigPlaceholderLocalRegex.test(valueSegment)) {
           return makeSuccessFalseTypeError(
             `ERROR. Value segment "${valueSegment}" in value "${value}" is not a comment variable.`
           );
@@ -424,6 +424,7 @@ export {
   typeWarning,
   typeScriptAndJSXCompatible,
   commentVariablesPluginName,
+  flattenedConfigPlaceholderLocalRegex,
 };
 
 export {
@@ -440,7 +441,7 @@ export {
 export {
   configKeyRegex,
   flattenedConfigKeyRegex,
-  flattenedConfigPlaceholderRegex,
+  flattenedConfigPlaceholderGlobalRegex,
 } from "./_commons/constants/regexes.js";
 
 export {

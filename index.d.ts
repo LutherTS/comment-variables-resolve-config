@@ -85,7 +85,8 @@ export const typeScriptAndJSXCompatible: {
 
 export const configKeyRegex: RegExp;
 export const flattenedConfigKeyRegex: RegExp;
-export const flattenedConfigPlaceholderRegex: RegExp;
+export const flattenedConfigPlaceholderLocalRegex: RegExp;
+export const flattenedConfigPlaceholderGlobalRegex: RegExp;
 
 /**
  * Escapes all regex characters with a `"\"` in a string to prepare it for use in a regex.
