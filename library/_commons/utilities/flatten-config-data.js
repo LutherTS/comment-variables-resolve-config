@@ -1,5 +1,4 @@
 import { successTrue } from "../constants/bases.js";
-import { flattenedConfigKeyRegex } from "../constants/regexes.js";
 
 import { makeSuccessFalseTypeError } from "./helpers.js";
 
@@ -66,92 +65,4 @@ export const flattenConfigData = (
     ...successTrue,
     configDataMap,
   };
-
-  // // strips metadata
-  // /**@type {Map<string, string>} */
-  // const flattenedConfigDataMap = new Map();
-  // configDataMap.forEach((value, key) => {
-  //   flattenedConfigDataMap.set(key, value.value);
-  // });
-
-  // // makes the flattened config data object
-  // const flattenedConfigData = Object.fromEntries(flattenedConfigDataMap);
-
-  // // The integrity of the flattened config data needs to be established before working with it safely.
-
-  // const flattenedConfigDataKeysSet = new Set(Object.keys(flattenedConfigData));
-
-  // const flattenedConfigDataValuesArray = Object.values(flattenedConfigData);
-  // // const flattenedConfigDataValuesSet = new Set(flattenedConfigDataValuesArray);
-
-  // // Here is where I can implement aliases. The whole flow will probably have to be re-thought. The idea is that if a value is strictly equal to a key, then it is an alias.
-  // // And then, we could literally compose aliases within values, like { key: "$#CHOCOLAT CHAUD#"} ...or not. Because the goal of the API is not to be verbose, but rather to be readable. So I would always prefer $COMMENT#COMMENT $COMMENT#IS $COMMENT#BLUE over $COMMENT#CIB... it depends. Anyway I do the aliases first, and then I'll look into it.
-  // // Also, since the error format I'm using is shared between the consumers of the config, I could export makeSuccessFalseTypeError. // DONE.
-
-  // // Aliases logic:
-  // // - instead of returning an error because an existing flattened key is in the value...
-  // /** @type {Record<string, string>} */
-  // const aliases_flattenedKeys = {};
-  // // ...in aliases_flattenedKeys...
-  // // for (const key of flattenedConfigDataKeysSet) {
-  // for (const [key, value] of Object.entries(flattenedConfigData)) {
-  //   // if (flattenedConfigDataValuesSet.has(key)) {
-  //   if (flattenedConfigDataKeysSet.has(value)) {
-  //     // ...the pair is now an alias... // checked
-  //     aliases_flattenedKeys[key] = value;
-  //     // ...the original key is removed from flattenedConfigData // checked
-  //     delete flattenedConfigData[key];
-
-  //     continue;
-
-  //     // checks the reversability of flattenedConfigData
-  //     // return {
-  //     //   ...successFalse,
-  //     //   errors: [
-  //     //     {
-  //     //       ...typeError,
-  //     //       message: `ERROR. The key "${key}" is and shouldn't be among the values of flattenedConfigData.`,
-  //     //     },
-  //     //   ],
-  //     // };
-  //   }
-  //   // }
-
-  //   // for (const key of flattenedConfigDataKeysSet) {
-  //   if (!flattenedConfigKeyRegex.test(key)) {
-  //     // checks if each key for flattenedConfigData passes the flattenedConfigKeyRegex test
-  //     return makeSuccessFalseTypeError(
-  //       `ERROR. Somehow the key "${key}" is not properly formatted. (This is mostly an internal mistake.)`
-  //     );
-  //   }
-  // }
-
-  // /** @type {Set<string>} */
-  // const set = new Set();
-
-  // for (const value of flattenedConfigDataValuesArray) {
-  //   if (set.has(value)) {
-  //     console.log("errors, duplicate value");
-  //     // checks that no two values are duplicate
-  //     return makeSuccessFalseTypeError(
-  //       `ERROR. The value "${value}" is already assigned to an existing key.`
-  //     );
-  //   }
-  //   set.add(value);
-  // }
-
-  // // Also including the reversed flattened config data.
-
-  // const reversedFlattenedConfigData = Object.fromEntries(
-  //   Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
-  // );
-
-  // console.log("Aliases are:", aliases_flattenedKeys);
-
-  // return {
-  //   ...successTrue,
-  //   flattenedConfigData,
-  //   reversedFlattenedConfigData,
-  //   aliases_flattenedKeys,
-  // };
 };
