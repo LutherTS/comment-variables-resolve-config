@@ -174,56 +174,64 @@ const resolveConfig = async (configPath) => {
   // - instead of returning an error because an existing flattened key is in the value...
   /** @type {Record<string, string>} */
   const aliases_flattenedKeys = {};
-  // ...in aliases_flattenedKeys...
-  // for (const key of flattenedConfigDataKeysSet) {
+  /** @type {Record<string, string>} */
+  const flattenedKeys_originalsOnly = {};
   for (const [key, value] of Object.entries(originalFlattenedConfigData)) {
-    // if (flattenedConfigDataValuesSet.has(key)) {
-    if (originalFlattenedConfigDataKeysSet.has(value)) {
+    // ...in aliases_flattenedKeys...
+    if (originalFlattenedConfigData[value]) {
       // ...the pair is now an alias... // checked
       aliases_flattenedKeys[key] = value;
       // ...the original key is removed from flattenedConfigData // checked
-      delete originalFlattenedConfigData[key];
+      delete originalFlattenedConfigData[key]; // Instead of destroying on the original, I would rather prefer keeping the original clean while making a new object.
 
       continue;
+    } else {
+      // ... separating originalFlattenedConfigData into two objects: one for non-alias pairs and one for alias pairs.
+      flattenedKeys_originalsOnly[key] = value;
     }
 
-    // for (const key of flattenedConfigDataKeysSet) {
     if (!flattenedConfigKeyRegex.test(key)) {
-      // checks if each key for flattenedConfigData passes the flattenedConfigKeyRegex test
+      // Checks if each key for flattenedConfigData passes the flattenedConfigKeyRegex test. This validates for aliases keys and values at the same time as well since in originalFlattenedConfigData[value] guarantees that the value of an alias is a key being tested right here.
       return makeSuccessFalseTypeError(
         `ERROR. Somehow the key "${key}" is not properly formatted. (This is mostly an internal mistake.)`
       );
     }
   }
 
-  // PASSED THIS STAGE, flattenedConfigData IS FINAL BEFORE COMPOSED VARIABLES.
+  // PASSED THIS STAGE, we're now clearly distinguishing:
+  // - originalFlattenedConfigData, which is the untreated raw config data
+  // - aliases_flattenedKeys, which is only the aliases
+  // - flattenedKeys_originalsOnly, which is only the originals
   // Do also keep in mind that aliases are in an object of their own, so there aren't affecting duplicate checks, especially since raw duplication is already addressed with flattenConfigData.
 
-  const originalFlattenedConfigDataValuesArray = Object.values(
-    originalFlattenedConfigData
-  );
+  // const originalFlattenedConfigDataValuesArray = Object.values(
+  //   originalFlattenedConfigData // flattenedKeys_originalsOnly
+  // );
 
   /** @type {Set<string>} */
-  const duplicateChecksSet = new Set();
+  const originalsOnlyDuplicateChecksSet = new Set();
 
-  for (const value of originalFlattenedConfigDataValuesArray) {
-    if (duplicateChecksSet.has(value)) {
-      // checks that no two values are duplicate
+  // for (const value of originalFlattenedConfigDataValuesArray) {
+  for (const value of Object.values(flattenedKeys_originalsOnly)) {
+    // now that aliases whose values can be duplicate are removed ...
+    if (originalsOnlyDuplicateChecksSet.has(value)) {
+      // ... checks that no two original values are duplicate
       return makeSuccessFalseTypeError(
         `ERROR. The value "${value}" is already assigned to an existing key.`
       );
     }
-    duplicateChecksSet.add(value);
+    originalsOnlyDuplicateChecksSet.add(value);
   }
 
-  // It is AFTER duplication has been checked on values that we can safely consider handling Composed Variables.
-  // To do so, we'll go through flattenedConfigData and recreate a new flattenedConfigData, the true final one, that checks each Object.entries sur flattenedConfigData.
+  // It is AFTER duplication has been checked on values that we can safely consider handling composed variables.
+  // To do so, we'll go through flattenedKeys_originalsOnly and then create flattenedConfigData, the true final one, that checks each Object.entries sur flattenedKeys_originalsOnly.
 
   /** @type {Record<string, string>} */
   const flattenedConfigData = {};
 
-  // I have to re-loop on flattenedConfigData because the previous loop modified flattenedConfigData.
-  for (const [key, value] of Object.entries(originalFlattenedConfigData)) {
+  // I have to re-loop on flattenedConfigData because the previous loop modified flattenedConfigData. // Actually now looping on flattenedKeys_originalsOnly instead, accentuating the difference between the two objects.
+  // for (const [key, value] of Object.entries(originalFlattenedConfigData)) {
+  for (const [key, value] of Object.entries(flattenedKeys_originalsOnly)) {
     // 0. check if the value includes "$COMMENT#" (basically there cannot be any value with "$COMMENT#" included that isn't a composed variable)
     if (value.includes(`${$COMMENT}#`)) {
       // That's where I can:
@@ -234,16 +242,16 @@ const resolveConfig = async (configPath) => {
         );
       // 2. separate the value by a space
       const valueSegments = value.split(" ");
-      // 3. check if the array of separated is >= 2 (a single comment variable will create a duplicate, so this is only reserved for aliases via the actual key) // The thing about this system is, we address the parts where values are keys or placeholders, by making them aliases and composed variables instead.
+      // 3. check if the array of value segments is >= 2 (a single comment variable will create a duplicate, so duplicate value behavior is only reserved for aliases via the actual original key as value) // The thing about this system is, we address the parts where values are keys or placeholders, by respectively making them aliases (keys as values are aliases) and composed variables instead (placeholders, composed, as values are composed variables).
       if (valueSegments.length < 2)
         return makeSuccessFalseTypeError(
           `ERROR. A composed variable needs at least two comment variables separated by a single space in order to be a composed variable, which the value "${value}" does not.`
         );
-      // 4. check if all separated pass flattenedConfigPlaceholderRegex2
+      // 4. check if all separated pass flattenedConfigPlaceholderLocalRegex
       for (const valueSegment of valueSegments) {
         if (!flattenedConfigPlaceholderLocalRegex.test(valueSegment)) {
           return makeSuccessFalseTypeError(
-            `ERROR. Value segment "${valueSegment}" in value "${value}" is not a comment variable.`
+            `ERROR. Value segment "${valueSegment}" in value "${value}" does not have the "${$COMMENT}#" shape of a comment variable.`
           );
         }
       }
@@ -251,35 +259,46 @@ const resolveConfig = async (configPath) => {
       const keySegments = valueSegments.map((e) =>
         e.replace(`${$COMMENT}#`, "")
       );
-      // 6. check that all obtain keys do exist in flattenedConfigData
+      // 6. check that all obtain keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
       for (const keySegment of keySegments) {
         if (
-          !originalFlattenedConfigData[keySegment] &&
-          !originalFlattenedConfigData[aliases_flattenedKeys?.[keySegment]]
+          !flattenedKeys_originalsOnly[keySegment] &&
+          !flattenedKeys_originalsOnly[aliases_flattenedKeys?.[keySegment]]
         )
           return makeSuccessFalseTypeError(
-            `ERROR. Key segment "${keySegment}" extract from value "${value}" is not a key in the original flattened config data.`
+            `ERROR. Key segment "${keySegment}" extract from value "${value}" is neither an original key nor a vetted alias to one.`
           );
       }
       // 7. now that it is secure, replace all keys by their values
       const resolvedSegments = keySegments.map(
         (e) =>
-          originalFlattenedConfigData[e] ||
-          originalFlattenedConfigData[aliases_flattenedKeys?.[e]]
+          flattenedKeys_originalsOnly[e] ||
+          flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]]
       );
-      // 8. join back the array of separated by a space
+      // 8. join back the array of resolved segments by a space
       const composedVariable = resolvedSegments.join(" ");
-      // 9. trueflattenedConfigData[key] = result of all this
+      // 9. flattenedConfigData[key] = result of all this
       flattenedConfigData[key] = composedVariable;
-      // (All throughout this process, when an issue arises, the process stops.)
-      // Because the idea is, in the values of flattenedConfigData:
-      // - there should be no (existing) keys to guarantee reversibility of the config
-      // - there should be no placeholders to prevent the creation of unintended placeholders
+      // All throughout this process, when an issue arises, the process stops. Because the idea is, in the values of flattenedConfigData:
+      // - there should be no (existing) keys to guarantee reversibility
+      // - there should be no singled-out placeholders to prevent the creation of unintended placeholders
     } else flattenedConfigData[key] = value;
   }
-  console.log("Flattened config data is:", flattenedConfigData);
+  console.log("Flattened is:", flattenedConfigData);
 
-  // A new duplicated value check will be needed.
+  /** @type {Set<string>} */
+  const flattenedConfigDataDuplicateChecksSet = new Set();
+
+  for (const value of Object.values(flattenedConfigData)) {
+    // now that composed variables have created new values ...
+    if (flattenedConfigDataDuplicateChecksSet.has(value)) {
+      // ... checks that no two final values are duplicate
+      return makeSuccessFalseTypeError(
+        `ERROR. The new value "${value}" is already assigned to an existing key.`
+      );
+    }
+    flattenedConfigDataDuplicateChecksSet.add(value);
+  }
 
   // Also including the reversed flattened config data.
 
@@ -287,7 +306,6 @@ const resolveConfig = async (configPath) => {
     Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
   );
   console.log("Reversed is:", reversedFlattenedConfigData);
-
   // console.log("Aliases are:", aliases_flattenedKeys);
 
   /* NEW!!! */
@@ -366,7 +384,7 @@ const resolveConfig = async (configPath) => {
   }
 
   const originalFlattenedConfigDataValuesArray2 = Object.values(
-    originalFlattenedConfigData
+    originalFlattenedConfigData // flattenedKeys_originalsOnly
   );
 
   /** @type {Set<string>} */
