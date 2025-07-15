@@ -24,21 +24,35 @@ declare const resolveConfig: (configPath: string) => Promise<
       configPath: string;
       passedIgnores: string[];
       config: object;
-      flattenedConfigData: {
-        [k: string]: string;
-      };
+      rawConfigAndImportPaths: string[];
+      flattenedConfigData: Record<string, string>;
+      aliases_flattenedKeys: Record<string, string>;
       reversedFlattenedConfigData: {
         [k: string]: string;
       };
-      rawConfigAndImportPaths: string[];
       keys_valueLocations: {
-        [k: string]: {
+        [x: string]: {
           value: string;
           filePath: string;
           loc: SourceLocation;
         };
       };
-      aliases_flattenedKeys: Record<string, string>;
+      nonAliasesKeys_valueLocations: Record<
+        string,
+        {
+          value: string;
+          filePath: string;
+          loc: SourceLocation;
+        }
+      >;
+      aliasesKeys_valueLocations: Record<
+        string,
+        {
+          value: string;
+          filePath: string;
+          loc: SourceLocation;
+        }
+      >;
     }
 >;
 

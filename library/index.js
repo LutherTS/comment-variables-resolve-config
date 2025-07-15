@@ -146,27 +146,12 @@ const resolveConfig = async (configPath) => {
     flattenedConfigDataMap.set(key, value.value);
   });
 
-  // makes the flattened config data object
+  // makes the original flattened config data object
   const originalFlattenedConfigData = Object.fromEntries(
     flattenedConfigDataMap
   );
-  console.log(
-    "Original flattened config data is:",
-    originalFlattenedConfigData
-  );
-
-  const originalreversedFlattenedConfigData = Object.fromEntries(
-    Object.entries(originalFlattenedConfigData).map(([key, value]) => [
-      value,
-      key,
-    ])
-  );
 
   // The integrity of the flattened config data needs to be established before working with it safely.
-
-  const originalFlattenedConfigDataKeysSet = new Set(
-    Object.keys(originalFlattenedConfigData)
-  );
 
   // We could literally compose aliases within values, like { key: "$#CHOCOLAT CHAUD#"} ...or not. Because the goal of the API is not to be verbose, but rather to be readable. So I would always prefer $COMMENT#COMMENT $COMMENT#IS $COMMENT#BLUE over $COMMENT#CIB... it depends. Anyway I do the aliases first, and then I'll look into it.
 
@@ -181,8 +166,6 @@ const resolveConfig = async (configPath) => {
     if (originalFlattenedConfigData[value]) {
       // ...the pair is now an alias... // checked
       aliases_flattenedKeys[key] = value;
-      // ...the original key is removed from flattenedConfigData // checked
-      delete originalFlattenedConfigData[key]; // Instead of destroying on the original, I would rather prefer keeping the original clean while making a new object.
 
       continue;
     } else {
@@ -204,23 +187,22 @@ const resolveConfig = async (configPath) => {
   // - flattenedKeys_originalsOnly, which is only the originals
   // Do also keep in mind that aliases are in an object of their own, so there aren't affecting duplicate checks, especially since raw duplication is already addressed with flattenConfigData.
 
-  // const originalFlattenedConfigDataValuesArray = Object.values(
-  //   originalFlattenedConfigData // flattenedKeys_originalsOnly
-  // );
+  const flattenedKeys_originalsOnly__valuesArray = Object.values(
+    flattenedKeys_originalsOnly
+  );
 
   /** @type {Set<string>} */
-  const originalsOnlyDuplicateChecksSet = new Set();
+  const flattenedKeys_originalsOnly__valuesDuplicateChecksSet = new Set();
 
-  // for (const value of originalFlattenedConfigDataValuesArray) {
-  for (const value of Object.values(flattenedKeys_originalsOnly)) {
+  for (const value of flattenedKeys_originalsOnly__valuesArray) {
     // now that aliases whose values can be duplicate are removed ...
-    if (originalsOnlyDuplicateChecksSet.has(value)) {
+    if (flattenedKeys_originalsOnly__valuesDuplicateChecksSet.has(value)) {
       // ... checks that no two original values are duplicate
       return makeSuccessFalseTypeError(
         `ERROR. The value "${value}" is already assigned to an existing key.`
       );
     }
-    originalsOnlyDuplicateChecksSet.add(value);
+    flattenedKeys_originalsOnly__valuesDuplicateChecksSet.add(value);
   }
 
   // It is AFTER duplication has been checked on values that we can safely consider handling composed variables.
@@ -229,9 +211,11 @@ const resolveConfig = async (configPath) => {
   /** @type {Record<string, string>} */
   const flattenedConfigData = {};
 
-  // I have to re-loop on flattenedConfigData because the previous loop modified flattenedConfigData. // Actually now looping on flattenedKeys_originalsOnly instead, accentuating the difference between the two objects.
-  // for (const [key, value] of Object.entries(originalFlattenedConfigData)) {
-  for (const [key, value] of Object.entries(flattenedKeys_originalsOnly)) {
+  const flattenedKeys_originalsOnly__EntriesArray = Object.entries(
+    flattenedKeys_originalsOnly
+  );
+
+  for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
     // 0. check if the value includes "$COMMENT#" (basically there cannot be any value with "$COMMENT#" included that isn't a composed variable)
     if (value.includes(`${$COMMENT}#`)) {
       // That's where I can:
@@ -284,7 +268,6 @@ const resolveConfig = async (configPath) => {
       // - there should be no singled-out placeholders to prevent the creation of unintended placeholders
     } else flattenedConfigData[key] = value;
   }
-  console.log("Flattened is:", flattenedConfigData);
 
   /** @type {Set<string>} */
   const flattenedConfigDataDuplicateChecksSet = new Set();
@@ -305,8 +288,15 @@ const resolveConfig = async (configPath) => {
   const reversedFlattenedConfigData = Object.fromEntries(
     Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
   );
-  console.log("Reversed is:", reversedFlattenedConfigData);
-  // console.log("Aliases are:", aliases_flattenedKeys);
+
+  // console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
+  // console.log("flattenedKeys_originalsOnly is:", flattenedKeys_originalsOnly);
+  // console.log("aliases_flattenedKeys is:", aliases_flattenedKeys);
+  // console.log("Flattened with composed variables is:", flattenedConfigData);
+  // console.log(
+  //   "Reversed with composed variables is:",
+  //   reversedFlattenedConfigData
+  // );
 
   /* NEW!!! */
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
@@ -352,12 +342,15 @@ const resolveConfig = async (configPath) => {
   );
   // console.log("Extracts are:", extracts);
 
-  // Both of these below ought to be rethought.
-
   /** @type {Map<string, ValueLocation>} */
-  const map = new Map();
-  /** @type {Array<ValueLocation>} */
-  const array = [];
+  const values_valueLocationsMap = new Map();
+  /** @type {Array<Record<string, ValueLocation>>} */
+  const values_valueLocations__duplicateValuesArray = [];
+
+  // making a set out of flattenedKeys_originalsOnly__valuesArray for faster lookups
+  const flattenedKeys_originalsOnly__valuesSet = new Set(
+    flattenedKeys_originalsOnly__valuesArray
+  );
 
   // ...
   // There's going to be the ...
@@ -367,69 +360,87 @@ const resolveConfig = async (configPath) => {
   // Actually... if (configKeysSet.has(extract.value)) continue. That means value here is a key and is therefore an alias.
   for (const extract of extracts) {
     const value = extract.value;
-    if (originalFlattenedConfigDataKeysSet.has(value)) continue; // that's an alias
-    if (!map.has(value)) {
-      map.set(value, extract);
-    } else array.push(extract);
+
+    if (originalFlattenedConfigData[value]) continue; // that's an alias, since the value is the key in the original flattened config data
+    // with aliases excluded we can now focus on originals only
+    if (flattenedKeys_originalsOnly__valuesSet.has(value)) {
+      // basically you can have duplicate object string literal values as long as they are not the values from the original flattened config data (which includes composed variables)
+      if (!values_valueLocationsMap.has(value))
+        values_valueLocationsMap.set(value, extract);
+      else values_valueLocations__duplicateValuesArray.push({ value: extract });
+    }
   }
 
-  // IMPORTANT...
-  // I'm actually going to need to use the callback, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`.
+  // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`.
 
-  // array should be empty, because all extracted values should be unique
-  if (array.length !== 0) {
+  // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
+  if (values_valueLocations__duplicateValuesArray.length !== 0) {
     return makeSuccessFalseTypeError(
-      "ERROR. (`array` should remain empty.) You have several string literal values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release. (If you really need two keys to have the same value, we're introducing aliases.)" // Next, list all of the duplicates, by including the ones in the array and the first one found in the map.
+      "ERROR. (`values_valueLocations__duplicateValuesArray` should remain empty.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release. (If you really need two keys to have the same value, we're introducing aliases.)" // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
     );
   }
-
-  const originalFlattenedConfigDataValuesArray2 = Object.values(
-    originalFlattenedConfigData // flattenedKeys_originalsOnly
-  );
 
   /** @type {Set<string>} */
-  const set = new Set();
-  for (const value of originalFlattenedConfigDataValuesArray2) {
-    if (!map.has(value)) {
-      console.log(map);
-      set.add(value);
-    }
-  } // All could be in a single run, but I'd rather report on ALL the errors one time instead of reporting on them one by one for now.
+  const unrecognizedValuesSet = new Set();
 
-  // set should be empty, because there shouldn't be a single value in the reversed flattened config that does not have its equivalent in map
-  if (set.size !== 0) {
+  for (const value of flattenedKeys_originalsOnly__valuesArray) {
+    if (!values_valueLocationsMap.has(value)) {
+      // valueLocations only include string literal, so even if the value perfectly resolves, it doesn't exist in values_valueLocationsMap
+      unrecognizedValuesSet.add(value);
+    }
+  }
+
+  // I'd rather report on ALL the errors one time instead of reporting on them one at a time for now.
+
+  // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
+  if (unrecognizedValuesSet.size !== 0) {
     return makeSuccessFalseTypeError(
-      "ERROR. (`set` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release." // Next, list all the values from the reversed flattened config that do not have their equivalent in map in order to inform on what values should be changed to string literals.
+      "ERROR. (`set` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release." // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
     );
   }
 
-  // console.log(originalFlattenedConfigDataValuesArray2);
-  console.log(originalreversedFlattenedConfigData);
-  /** @type {{[k: string]: ValueLocation}} */
-  const keys_valueLocations = {};
-  for (const value of originalFlattenedConfigDataValuesArray2) {
-    console.log(reversedFlattenedConfigData[value]);
-    console.log(originalreversedFlattenedConfigData[value]);
-    if (!map.has(value)) set.add(value);
-    keys_valueLocations[
-      reversedFlattenedConfigData[value] ||
-        originalreversedFlattenedConfigData[value]
-    ] = map.get(value);
+  // FINAL BOSS.
+  // The goal here is to find a solution that directly solves aliases.
+
+  /** @type {Record<string, ValueLocation>} */
+  const nonAliasesKeys_valueLocations = {}; // unique ValueLocation objects
+
+  for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
+    nonAliasesKeys_valueLocations[key] = values_valueLocationsMap.get(value);
   }
-  console.log("keys_valueLocations are:", keys_valueLocations); // AT HERE
-  // I need to literally go through every step. Wait.
+
+  /** @type {Record<string, ValueLocation>} */
+  const aliasesKeys_valueLocations = {}; // expected duplicate ValueLocation objects
+
+  for (const [key, value] of Object.entries(aliases_flattenedKeys)) {
+    aliasesKeys_valueLocations[key] = nonAliasesKeys_valueLocations[value];
+  }
+
+  const keys_valueLocations = {
+    ...nonAliasesKeys_valueLocations,
+    ...aliasesKeys_valueLocations,
+  }; // and I think this automatically solves aliases linking
+
+  // console.log(
+  //   "nonAliasesKeys_valueLocations are:",
+  //   nonAliasesKeys_valueLocations
+  // );
+  // console.log("aliases_valueLocations are:", aliasesKeys_valueLocations);
+  // console.log("keys_valueLocations are:", keys_valueLocations);
 
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...successTrue,
-    flattenedConfigData,
-    reversedFlattenedConfigData,
-    aliases_flattenedKeys,
-    rawConfigAndImportPaths, // NEW and now in resolveConfig
-    keys_valueLocations, // NEW (formerly valueLocations)
     configPath, // finalized
     passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
+    rawConfigAndImportPaths, // NEW and now in resolveConfig
+    aliases_flattenedKeys,
+    flattenedConfigData,
+    reversedFlattenedConfigData,
+    keys_valueLocations, // NEW (formerly valueLocations)
+    nonAliasesKeys_valueLocations,
+    aliasesKeys_valueLocations,
   };
 };
 
