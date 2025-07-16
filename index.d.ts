@@ -4,6 +4,8 @@ type TSESLintParser = typeof tseslint.parser;
 import type { TSESTree, TSESLint } from "@typescript-eslint/utils";
 type SourceLocation = TSESTree.SourceLocation;
 
+import type { Linter } from "eslint";
+
 // must be manually maintained
 
 /**
@@ -111,6 +113,36 @@ export const configKeyRegex: RegExp;
 export const flattenedConfigKeyRegex: RegExp;
 export const flattenedConfigPlaceholderLocalRegex: RegExp;
 export const flattenedConfigPlaceholderGlobalRegex: RegExp;
+
+/**
+ * Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.
+ * @param {string} message The human-readable message of the error.
+ * @returns A `{success: false}` object with a single error in its error array of `{type: "error"}`.
+ */
+export const makeSuccessFalseTypeError: (message: string) => {
+  errors: {
+    message: string;
+    type: "error";
+  }[];
+  success: false;
+};
+
+/**
+ *
+ * @param {LintMessage[]} lintMessages
+ * @param {string} pluginName
+ * @param {string} ruleName
+ * @returns
+ */
+export const extractValueLocationsFromLintMessages: (
+  lintMessages: Linter.LintMessage[],
+  pluginName: string,
+  ruleName: string
+) => {
+  value: string;
+  filePath: string;
+  loc: SourceLocation;
+}[];
 
 /**
  * Escapes all regex characters with a `"\"` in a string to prepare it for use in a regex.

@@ -21,7 +21,10 @@ import {
   flattenedConfigPlaceholderLocalRegex,
 } from "./_commons/constants/regexes.js";
 
-import { makeSuccessFalseTypeError } from "./_commons/utilities/helpers.js";
+import {
+  makeSuccessFalseTypeError,
+  extractValueLocationsFromLintMessages,
+} from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 
 import {
@@ -245,12 +248,18 @@ const resolveConfig = async (configPath) => {
       );
       // 6. check that all obtain keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
       for (const keySegment of keySegments) {
-        if (
-          !flattenedKeys_originalsOnly[keySegment] &&
-          !flattenedKeys_originalsOnly[aliases_flattenedKeys?.[keySegment]]
-        )
+        const resolvedValue =
+          flattenedKeys_originalsOnly[keySegment] ||
+          flattenedKeys_originalsOnly[aliases_flattenedKeys?.[keySegment]];
+
+        if (!resolvedValue)
           return makeSuccessFalseTypeError(
             `ERROR. Key segment "${keySegment}" extract from value "${value}" is neither an original key nor a vetted alias to one.`
+          );
+
+        if (resolvedValue.includes(`${$COMMENT}#`))
+          return makeSuccessFalseTypeError(
+            `ERROR. A potential composed variable cannot be used as the comment variable of another composed variable.`
           );
       }
       // 7. now that it is secure, replace all keys by their values
@@ -331,15 +340,20 @@ const resolveConfig = async (configPath) => {
   });
   const results = await eslint.lintFiles(files);
 
-  /** @type {ValueLocation[]} */
   const extracts = results.flatMap((result) =>
-    result.messages
-      .filter(
-        (msg) =>
-          msg.ruleId === `${commentVariablesPluginName}/${extractRuleName}`
-      )
-      .map((msg) => JSON.parse(msg.message))
+    extractValueLocationsFromLintMessages(
+      result.messages,
+      commentVariablesPluginName,
+      extractRuleName
+    )
   );
+  //   result.messages
+  //     .filter(
+  //       (msg) =>
+  //         msg.ruleId === `${commentVariablesPluginName}/${extractRuleName}`
+  //     )
+  //     .map((msg) => JSON.parse(msg.message))
+  // );
   // console.log("Extracts are:", extracts);
 
   /** @type {Map<string, ValueLocation>} */
@@ -456,6 +470,9 @@ export {
   flattenedConfigPlaceholderLocalRegex,
   extractRuleName,
   extractObjectStringLiteralValues,
+  //
+  makeSuccessFalseTypeError,
+  extractValueLocationsFromLintMessages,
 };
 
 export {

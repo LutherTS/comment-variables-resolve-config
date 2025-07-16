@@ -1,5 +1,22 @@
 import { successFalse, typeError } from "../constants/bases.js";
 
+/**
+ * @typedef {import('eslint').Linter.LintMessage} LintMessage
+ */
+
+// Temporary duplicate.
+/**
+ * @typedef {import("@typescript-eslint/utils")
+ *   .TSESTree
+ *   .SourceLocation
+ * } SourceLocation
+ * @typedef {{
+ *   value: string;
+ *   filePath: string;
+ *   loc: SourceLocation
+ * }} ValueLocation
+ */
+
 /* escapeRegex */
 
 /**
@@ -36,3 +53,23 @@ export const makeSuccessFalseTypeError = (message) => ({
     },
   ],
 });
+
+/* extractValueLocationsFromLintMessages */
+
+/**
+ *
+ * @param {LintMessage[]} lintMessages
+ * @param {string} pluginName
+ * @param {string} ruleName
+ * @returns
+ */
+export const extractValueLocationsFromLintMessages = (
+  lintMessages,
+  pluginName,
+  ruleName
+) =>
+  /** @type {ValueLocation[]} */ (
+    lintMessages
+      .filter((msg) => msg.ruleId === `${pluginName}/${ruleName}`)
+      .map((msg) => JSON.parse(msg.message))
+  );
