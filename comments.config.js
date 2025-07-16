@@ -12,7 +12,7 @@ const data = {
       makeSuccessFalseTypeError:
         'Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.', // $COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR
       extractValueLocationsFromLintMessages:
-        "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.",
+        "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.", // $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
     }),
     params: Object.freeze({
       string: "The string.", // $COMMENT#JSDOC#PARAMS#STRING
@@ -26,11 +26,11 @@ const data = {
         'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.', // $COMMENT#JSDOC#PARAMS#CONFIGPATH
       message: "The human-readable message of the error.", // $COMMENT#JSDOC#PARAMS#MESSAGE
       lintMessages:
-        "The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.",
+        "The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.", // $COMMENT#JSDOC#PARAMS#LINTMESSAGES
       pluginName:
-        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD",
+        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD", // $COMMENT#JSDOC#PARAMS#PLUGINNAME
       ruleName:
-        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD",
+        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD", // $COMMENT#JSDOC#PARAMS#RULENAME
       options: "The additional options as follows:", // $COMMENT#JSDOC#PARAMS#OPTIONS
       settings: "The required settings as follows:", // $COMMENT#JSDOC#PARAMS#SETTINGS
     }),
@@ -45,7 +45,7 @@ const data = {
       makeSuccessFalseTypeError:
         'A `{success: false}` object with a single error in its error array of `{type: "error"}`.', // $COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR
       extractValueLocationsFromLintMessages:
-        "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.",
+        "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.", // $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
     }),
   }),
   forComposedVariables: Object.freeze({

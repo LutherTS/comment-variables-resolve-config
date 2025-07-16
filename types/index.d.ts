@@ -128,11 +128,11 @@ export const makeSuccessFalseTypeError: (message: string) => {
 };
 
 /**
- *
- * @param {LintMessage[]} lintMessages
- * @param {string} pluginName
- * @param {string} ruleName
- * @returns
+ * $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
+ * @param {LintMessage[]} lintMessages $COMMENT#JSDOC#PARAMS#LINTMESSAGES
+ * @param {string} pluginName $COMMENT#JSDOC#PARAMS#PLUGINNAME
+ * @param {string} ruleName $COMMENT#JSDOC#PARAMS#RULENAME
+ * @returns $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
  */
 export const extractValueLocationsFromLintMessages: (
   lintMessages: Linter.LintMessage[],

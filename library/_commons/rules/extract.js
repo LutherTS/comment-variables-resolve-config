@@ -5,7 +5,7 @@ import {
 } from "../constants/bases.js";
 
 /**
- * @typedef {import("../../../types/typedefs.js").ExtractRule} ExtractRule
+ * @typedef {import("../../../types/_commons/typedefs.js").ExtractRule} ExtractRule
  */
 
 /** @type {ExtractRule} */

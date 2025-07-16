@@ -35,7 +35,7 @@ import {
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
 /**
- * @typedef {import("../types/typedefs.js").ValueLocation} ValueLocation
+ * @typedef {import("../types/_commons/typedefs.js").ValueLocation} ValueLocation
  */
 
 /**
@@ -147,8 +147,6 @@ const resolveConfig = async (configPath) => {
   );
 
   // The integrity of the flattened config data needs to be established before working with it safely.
-
-  // We could literally compose aliases within values, like { key: "$#CHOCOLAT CHAUD#"} ...or not. Because the goal of the API is not to be verbose, but rather to be readable. So I would always prefer $COMMENT#COMMENT $COMMENT#IS $COMMENT#BLUE over $COMMENT#CIB... it depends. Anyway I do the aliases first, and then I'll look into it.
 
   // Aliases logic:
   // - instead of returning an error because an existing flattened key is in the value...
@@ -304,7 +302,7 @@ const resolveConfig = async (configPath) => {
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but here because it's ignored it actually shows me all references outside the ignored files.
 
   const findAllImportsResults = findAllImports(configPath);
-  if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional. (This also means that current warnings find all imports will need to be upgraded to errors.)
+  if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
   const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
   // the paths must be relative for ESLint
   const files = rawConfigAndImportPaths.map((e) =>
@@ -339,14 +337,6 @@ const resolveConfig = async (configPath) => {
       extractRuleName
     )
   );
-  //   result.messages
-  //     .filter(
-  //       (msg) =>
-  //         msg.ruleId === `${commentVariablesPluginName}/${extractRuleName}`
-  //     )
-  //     .map((msg) => JSON.parse(msg.message))
-  // );
-  // console.log("Extracts are:", extracts);
 
   /** @type {Map<string, ValueLocation>} */
   const values_valueLocations__map = new Map();
@@ -358,12 +348,6 @@ const resolveConfig = async (configPath) => {
     flattenedKeys_originalsOnly__valuesArray
   );
 
-  // ...
-  // There's going to be the ...
-  // I'm gonna need to straight-up ditch the "keys" to go straight to the placeholders. It's going to be a seismic change but one that:
-  // - simply the sources of truth from three characteristics to two (from 'key, value, placeholder', to 'placeholder, comment')
-  // allows here to ignore all values that start with $COMMENT# since all placeholders (not keys) will start with the exact same prefix: if (extract.value.startsWith(`${$COMMENT}#`))
-  // Actually... if (configKeysSet.has(extract.value)) continue. That means value here is a key and is therefore an alias.
   for (const extract of extracts) {
     const value = extract.value;
 
@@ -391,7 +375,7 @@ const resolveConfig = async (configPath) => {
 
   for (const value of flattenedKeys_originalsOnly__valuesArray) {
     if (!values_valueLocations__map.has(value)) {
-      // valueLocations only include string literal, so even if the value perfectly resolves, it doesn't exist in values_valueLocationsMap
+      // valueLocations only include string literals, so even if the value perfectly resolves, it doesn't exist in values_valueLocationsMap
       unrecognizedValuesSet.add(value);
     }
   }
@@ -401,12 +385,9 @@ const resolveConfig = async (configPath) => {
   // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
   if (unrecognizedValuesSet.size !== 0) {
     return makeSuccessFalseTypeError(
-      "ERROR. (`set` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release." // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
+      "ERROR. (`unrecognizedValuesSet` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release." // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
     );
   }
-
-  // FINAL BOSS.
-  // The goal here is to find a solution that directly solves aliases.
 
   /** @type {Record<string, ValueLocation>} */
   const nonAliasesKeys_valueLocations = {}; // unique ValueLocation objects
@@ -425,12 +406,12 @@ const resolveConfig = async (configPath) => {
   const keys_valueLocations = {
     ...nonAliasesKeys_valueLocations,
     ...aliasesKeys_valueLocations,
-  }; // and I think this automatically solves aliases linking
+  };
 
-  console.log(
-    "nonAliasesKeys_valueLocations are:",
-    nonAliasesKeys_valueLocations
-  );
+  // console.log(
+  //   "nonAliasesKeys_valueLocations are:",
+  //   nonAliasesKeys_valueLocations
+  // );
   // console.log("aliases_valueLocations are:", aliasesKeys_valueLocations);
   // console.log("keys_valueLocations are:", keys_valueLocations);
 
@@ -462,7 +443,6 @@ export {
   flattenedConfigPlaceholderLocalRegex,
   extractRuleName,
   extractObjectStringLiteralValues,
-  //
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
 };

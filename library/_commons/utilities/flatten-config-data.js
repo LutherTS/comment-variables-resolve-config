@@ -3,8 +3,8 @@ import { successTrue } from "../constants/bases.js";
 import { makeSuccessFalseTypeError } from "./helpers.js";
 
 /**
- * @typedef {import("../../../types/typedefs.js").ConfigData} ConfigData
- * @typedef {import("../../../types/typedefs.js").FlattenConfigDataResults} FlattenConfigDataResults
+ * @typedef {import("../../../types/_commons/typedefs.js").ConfigData} ConfigData
+ * @typedef {import("../../../types/_commons/typedefs.js").FlattenConfigDataResults} FlattenConfigDataResults
  */
 
 /**
