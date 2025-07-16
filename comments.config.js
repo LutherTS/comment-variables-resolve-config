@@ -10,7 +10,9 @@ const data = {
       resolveConfig:
         "Verifies, validates and resolves the config path to retrieve the config's data and ignores.", // $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
       makeSuccessFalseTypeError:
-        'Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.',
+        'Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.', // $COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR
+      extractValueLocationsFromLintMessages:
+        "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.",
     }),
     params: Object.freeze({
       string: "The string.", // $COMMENT#JSDOC#PARAMS#STRING
@@ -22,7 +24,13 @@ const data = {
         "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).", // $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION
       configPath:
         'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.', // $COMMENT#JSDOC#PARAMS#CONFIGPATH
-      message: "The human-readable message of the error.",
+      message: "The human-readable message of the error.", // $COMMENT#JSDOC#PARAMS#MESSAGE
+      lintMessages:
+        "The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.",
+      pluginName:
+        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD",
+      ruleName:
+        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD",
       options: "The additional options as follows:", // $COMMENT#JSDOC#PARAMS#OPTIONS
       settings: "The required settings as follows:", // $COMMENT#JSDOC#PARAMS#SETTINGS
     }),
@@ -35,8 +43,16 @@ const data = {
       resolveConfig:
         "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.", // $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
       makeSuccessFalseTypeError:
-        'A `{success: false}` object with a single error in its error array of `{type: "error"}`.',
+        'A `{success: false}` object with a single error in its error array of `{type: "error"}`.', // $COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR
+      extractValueLocationsFromLintMessages:
+        "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.",
     }),
+  }),
+  forComposedVariables: Object.freeze({
+    pluginName: "plugin", // $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME
+    ruleName: "rule", // $COMMENT#FORCOMPOSEDVARIABLES#RULENAME
+    theNameOf: "The name of the", // $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF
+    forFilteringPeriod: "being used for filtering.", // $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD
   }),
 };
 
