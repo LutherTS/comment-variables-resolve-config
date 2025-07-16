@@ -1,8 +1,10 @@
 import tseslint from "typescript-eslint";
 type TSESLintParser = typeof tseslint.parser;
 
-import type { TSESTree } from "@typescript-eslint/utils";
+import type { TSESTree, TSESLint } from "@typescript-eslint/utils";
 type SourceLocation = TSESTree.SourceLocation;
+
+import type { Linter } from "eslint";
 
 // must be manually maintained
 
@@ -73,6 +75,7 @@ export const typeWarning: Readonly<{
 
 export const defaultConfigFileName: "comments.config.js";
 export const commentVariablesPluginName: "comment-variables";
+export const extractRuleName: "extract-object-string-literal-values";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";
@@ -97,10 +100,49 @@ export const typeScriptAndJSXCompatible: {
   };
 };
 
+export const extractObjectStringLiteralValues: TSESLint.RuleModule<
+  typeof placeholderMessageId,
+  [
+    {
+      composedVariablesOnly?: boolean;
+    }
+  ]
+>;
+
 export const configKeyRegex: RegExp;
 export const flattenedConfigKeyRegex: RegExp;
 export const flattenedConfigPlaceholderLocalRegex: RegExp;
 export const flattenedConfigPlaceholderGlobalRegex: RegExp;
+
+/**
+ * Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.
+ * @param {string} message The human-readable message of the error.
+ * @returns A `{success: false}` object with a single error in its error array of `{type: "error"}`.
+ */
+export const makeSuccessFalseTypeError: (message: string) => {
+  errors: {
+    message: string;
+    type: "error";
+  }[];
+  success: false;
+};
+
+/**
+ * Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.
+ * @param {LintMessage[]} lintMessages The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.
+ * @param {string} pluginName The name of the plugin being used for filtering.
+ * @param {string} ruleName The name of the rule being used for filtering.
+ * @returns An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.
+ */
+export const extractValueLocationsFromLintMessages: (
+  lintMessages: Linter.LintMessage[],
+  pluginName: string,
+  ruleName: string
+) => {
+  value: string;
+  filePath: string;
+  loc: SourceLocation;
+}[];
 
 /**
  * Escapes all regex characters with a `"\"` in a string to prepare it for use in a regex.

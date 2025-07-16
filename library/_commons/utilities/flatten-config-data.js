@@ -3,15 +3,8 @@ import { successTrue } from "../constants/bases.js";
 import { makeSuccessFalseTypeError } from "./helpers.js";
 
 /**
- * @typedef {Record<string, unknown>} ConfigData
- *
- * @typedef {{
- *   success: false;
- *   errors: Array<{ type: "error" | "warning"; message: string }>;
- * } | {
- *   success: true;
- *   configDataMap: Map<string, {value: string; source: string}>;
- * }} FlattenConfigDataResults
+ * @typedef {import("../../../types/_commons/typedefs.js").ConfigData} ConfigData
+ * @typedef {import("../../../types/_commons/typedefs.js").FlattenConfigDataResults} FlattenConfigDataResults
  */
 
 /**
