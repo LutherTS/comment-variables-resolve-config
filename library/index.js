@@ -421,10 +421,10 @@ const resolveConfig = async (configPath) => {
     ...aliasesKeys_valueLocations,
   }; // and I think this automatically solves aliases linking
 
-  // console.log(
-  //   "nonAliasesKeys_valueLocations are:",
-  //   nonAliasesKeys_valueLocations
-  // );
+  console.log(
+    "nonAliasesKeys_valueLocations are:",
+    nonAliasesKeys_valueLocations
+  );
   // console.log("aliases_valueLocations are:", aliasesKeys_valueLocations);
   // console.log("keys_valueLocations are:", keys_valueLocations);
 
@@ -454,6 +454,8 @@ export {
   typeScriptAndJSXCompatible,
   commentVariablesPluginName,
   flattenedConfigPlaceholderLocalRegex,
+  extractRuleName,
+  extractObjectStringLiteralValues,
 };
 
 export {

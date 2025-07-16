@@ -1,7 +1,7 @@
 import tseslint from "typescript-eslint";
 type TSESLintParser = typeof tseslint.parser;
 
-import type { TSESTree } from "@typescript-eslint/utils";
+import type { TSESTree, TSESLint } from "@typescript-eslint/utils";
 type SourceLocation = TSESTree.SourceLocation;
 
 // must be manually maintained
@@ -73,6 +73,7 @@ export const typeWarning: Readonly<{
 
 export const defaultConfigFileName: "comments.config.js";
 export const commentVariablesPluginName: "comment-variables";
+export const extractRuleName: "extract-object-string-literal-values";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";
@@ -96,6 +97,15 @@ export const typeScriptAndJSXCompatible: {
     };
   };
 };
+
+export const extractObjectStringLiteralValues: TSESLint.RuleModule<
+  typeof placeholderMessageId,
+  [
+    {
+      composedVariablesOnly?: boolean;
+    }
+  ]
+>;
 
 export const configKeyRegex: RegExp;
 export const flattenedConfigKeyRegex: RegExp;

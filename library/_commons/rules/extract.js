@@ -1,7 +1,17 @@
-import { placeholderMessageId, placeholderDataId } from "../constants/bases.js";
+import {
+  placeholderMessageId,
+  placeholderDataId,
+  $COMMENT,
+} from "../constants/bases.js";
 
 /**
- * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, []>} Rule
+ * @typedef {{
+ *   composedVariablesOnly?: boolean;
+ * }} RuleOptions
+ */
+
+/**
+ * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, [RuleOptions], unknown>} Rule
  */
 
 /** @type {Rule} */
@@ -12,12 +22,26 @@ const rule = {
       description:
         "Extracts strict string literals (no template literals) from object values along with the file path they're in and their SourceLocation object.",
     },
-    schema: [],
+    schema: [
+      {
+        type: "object",
+        properties: {
+          composedVariablesOnly: {
+            type: "boolean",
+            default: false,
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
     messages: {
       [placeholderMessageId]: `{{ ${placeholderDataId} }}`,
     },
   },
   create: (context) => {
+    const options = context.options[0] || {};
+    const composedVariablesOnly = options.composedVariablesOnly ?? false;
+
     return {
       ObjectExpression: (node) => {
         for (const prop of node.properties) {
@@ -25,7 +49,9 @@ const rule = {
             prop.type === "Property" &&
             prop.value &&
             prop.value.type === "Literal" &&
-            typeof prop.value.value === "string"
+            typeof prop.value.value === "string" &&
+            (!composedVariablesOnly ||
+              prop.value.value.includes(`${$COMMENT}#`))
           ) {
             const propValueNode = prop.value;
             context.report({
