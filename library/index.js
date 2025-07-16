@@ -35,15 +35,7 @@ import {
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
 /**
- * @typedef {import("@typescript-eslint/utils")
- *   .TSESTree
- *   .SourceLocation
- * } SourceLocation
- * @typedef {{
- *   value: string;
- *   filePath: string;
- *   loc: SourceLocation
- * }} ValueLocation
+ * @typedef {import("../types/typedefs.js").ValueLocation} ValueLocation
  */
 
 /**

@@ -1,20 +1,8 @@
 import { successFalse, typeError } from "../constants/bases.js";
 
 /**
- * @typedef {import('eslint').Linter.LintMessage} LintMessage
- */
-
-// Temporary duplicate.
-/**
- * @typedef {import("@typescript-eslint/utils")
- *   .TSESTree
- *   .SourceLocation
- * } SourceLocation
- * @typedef {{
- *   value: string;
- *   filePath: string;
- *   loc: SourceLocation
- * }} ValueLocation
+ * @typedef {import("../../../types/typedefs.js").LintMessage} LintMessage
+ * @typedef {import("../../../types/typedefs.js").ValueLocation} ValueLocation
  */
 
 /* escapeRegex */

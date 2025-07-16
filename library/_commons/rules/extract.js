@@ -5,16 +5,10 @@ import {
 } from "../constants/bases.js";
 
 /**
- * @typedef {{
- *   composedVariablesOnly?: boolean;
- * }} RuleOptions
+ * @typedef {import("../../../types/typedefs.js").ExtractRule} ExtractRule
  */
 
-/**
- * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, [RuleOptions], unknown>} Rule
- */
-
-/** @type {Rule} */
+/** @type {ExtractRule} */
 const rule = {
   meta: {
     type: "problem",
