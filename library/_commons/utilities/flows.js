@@ -16,7 +16,7 @@ import { ruleNames_makeRules } from "../constants/rules.js";
 
 /**
  * The core flow at the heart of resolving and compressing comments.
- * @param {typeof resolveRuleName | typeof compressRuleName} ruleName $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME currently used. (Either `"resolve"` or `"compress"`.)
+ * @param {typeof resolveRuleName | typeof compressRuleName} ruleName The name of the rule currently used. (Either `"resolve"` or `"compress"`.)
  * @param {string[]} ignores The array of paths and globs for the flow's ESLint instance to ignore.
  * @param {{[key: string]: string}} flattenedConfigData Either the flattened config data or the reversed flattened config data, since they share the same structure.
  */

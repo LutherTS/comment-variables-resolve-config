@@ -39,9 +39,9 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
- * @param {string} configPath $COMMENT#JSDOC#PARAMS#CONFIGPATH
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
+ * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
+ * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
+ * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
  */
 const resolveConfig = async (configPath) => {
   // Step 1a: Checks if config file exists
