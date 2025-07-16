@@ -222,7 +222,7 @@ const resolveConfig = async (configPath) => {
       // 1. check if the value begins with $COMMENT# (basically if a value starts with a comment variable, it is to be understood as a composed variable)
       if (!value.startsWith(`${$COMMENT}#`))
         return makeSuccessFalseTypeError(
-          `ERROR. The value "${value}", due to its inclusion of "${$COMMENT}#" would need to start with "${$COMMENT}#" in order to operate as a composed variable.`
+          `ERROR. The value "${value}", due to its inclusion of "${$COMMENT}#", would need to start with "${$COMMENT}#" in order to operate as a composed variable.`
         );
       // 2. separate the value by a space
       const valueSegments = value.split(" ");
@@ -343,7 +343,7 @@ const resolveConfig = async (configPath) => {
   // console.log("Extracts are:", extracts);
 
   /** @type {Map<string, ValueLocation>} */
-  const values_valueLocationsMap = new Map();
+  const values_valueLocations__map = new Map();
   /** @type {Array<Record<string, ValueLocation>>} */
   const values_valueLocations__duplicateValuesArray = [];
 
@@ -365,8 +365,8 @@ const resolveConfig = async (configPath) => {
     // with aliases excluded we can now focus on originals only
     if (flattenedKeys_originalsOnly__valuesSet.has(value)) {
       // basically you can have duplicate object string literal values as long as they are not the values from the original flattened config data (which includes composed variables)
-      if (!values_valueLocationsMap.has(value))
-        values_valueLocationsMap.set(value, extract);
+      if (!values_valueLocations__map.has(value))
+        values_valueLocations__map.set(value, extract);
       else values_valueLocations__duplicateValuesArray.push({ value: extract });
     }
   }
@@ -384,7 +384,7 @@ const resolveConfig = async (configPath) => {
   const unrecognizedValuesSet = new Set();
 
   for (const value of flattenedKeys_originalsOnly__valuesArray) {
-    if (!values_valueLocationsMap.has(value)) {
+    if (!values_valueLocations__map.has(value)) {
       // valueLocations only include string literal, so even if the value perfectly resolves, it doesn't exist in values_valueLocationsMap
       unrecognizedValuesSet.add(value);
     }
@@ -406,7 +406,7 @@ const resolveConfig = async (configPath) => {
   const nonAliasesKeys_valueLocations = {}; // unique ValueLocation objects
 
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
-    nonAliasesKeys_valueLocations[key] = values_valueLocationsMap.get(value);
+    nonAliasesKeys_valueLocations[key] = values_valueLocations__map.get(value);
   }
 
   /** @type {Record<string, ValueLocation>} */
