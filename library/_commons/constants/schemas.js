@@ -8,6 +8,13 @@ export const ConfigDataSchema = z
     z.record(
       z.unknown().superRefine((val, ctx) => {
         if (typeof val === "string") {
+          if (val === "") {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Value should not be an empty string.`,
+              path: ctx.path,
+            });
+          }
           return;
         }
 
