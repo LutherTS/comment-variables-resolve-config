@@ -1,4 +1,4 @@
-import { placeholderMessageId } from "../constants/bases.js";
+import { placeholderMessageId } from "../../library/_commons/constants/bases.js";
 
 /**
  * @typedef {import('eslint').Linter.LintMessage} LintMessage
@@ -18,7 +18,18 @@ import { placeholderMessageId } from "../constants/bases.js";
 
 /**
  * @typedef {{
- *   composedVariablesOnly?: boolean;
+ *   composedVariablesOnly?: false
+ *   makePlaceholders?: undefined;
+ * } | {
+ *   composedVariablesOnly: true;
+ *   makePlaceholders?: never;
+ * } | {
+ *   composedVariablesOnly?: false
+ *   makePlaceholders: {
+ *     composedValues_originalKeys: Record<string, string>;
+ *     aliasValues_originalKeys: Record<string, string>;
+ *     regularValuesOnly_originalKeys: Record<string, string>;
+ *   };
  * }} RuleOptions
  * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, [RuleOptions], unknown>} ExtractRule
  */

@@ -1,6 +1,6 @@
 {
   "name": "comment-variables-resolve-config",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "The shared package at the hearts of the comment-variables npm package and the (upcoming) Comment Variables VS Code extension.",
   "keywords": [
     "comment-variables"
