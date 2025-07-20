@@ -14,12 +14,13 @@ const data = {
       extractValueLocationsFromLintMessages:
         "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.", // $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
       reverseConfigData:
-        "Reverse the keys and the values of a flattened config data object.", // $COMMENT#JSDOC#DEFINITIONS#REVERSECONFIGDATA
+        "Reverses the keys and the values of a flattened config data object.", // $COMMENT#JSDOC#DEFINITIONS#REVERSECONFIGDATA
     }),
     params: Object.freeze({
       string: "The string.", // $COMMENT#JSDOC#PARAMS#STRING
       configData:
         "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)", // $COMMENT#JSDOC#PARAMS#CONFIGDATA
+      // configData: `The config's data property. (Values are typed \`unknown\` given the limitations in typing recursive values in JSDoc.)`, // $COMMENT#JSDOC#PARAMS#CONFIGDATA // wrong
       configDataMapOption:
         "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.", // $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION
       parentKeysOption:
@@ -36,6 +37,7 @@ const data = {
       options: "The additional options as follows:", // $COMMENT#JSDOC#PARAMS#OPTIONS
       settings: "The required settings as follows:", // $COMMENT#JSDOC#PARAMS#SETTINGS
       configDataToReverse: "The provided flattened config data to be reversed.", // $COMMENT#JSDOC#PARAMS#CONFIGDATATOREVERSE
+      // configData: "The provided flattened config data to be reversed.", // $COMMENT#JSDOC#PARAMS#CONFIGDATATOREVERSE // wrong
     }),
     returns: Object.freeze({
       escapeRegex: "The string with regex characters escaped.", // $COMMENT#JSDOC#RETURNS#ESCAPEREGEX

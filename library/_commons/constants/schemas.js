@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { configKeyRegex } from "./regexes.js";
 
-// Think about doing it with zod 4 by also preventing the presence of an empty string in values.
+// Think about doing it with zod 4 eventually.
 export const ConfigDataSchema = z
   .lazy(() =>
     z.record(
@@ -40,8 +40,6 @@ export const ConfigDataSchema = z
     )
   )
   .superRefine((obj, ctx) => {
-    const keysDuplicateChecksSet = new Set();
-
     for (const key of Object.keys(obj)) {
       if (key.includes("$")) {
         ctx.addIssue({
@@ -64,14 +62,6 @@ export const ConfigDataSchema = z
           path: [key],
         });
       }
-      if (keysDuplicateChecksSet.has(key)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Key "${key}" has already been assigned before. Even though this is valid JavaScript, reassigning keys in the object itself can mislead the understanding of live Comment Variables.`,
-          path: [key],
-        });
-      }
-      keysDuplicateChecksSet.add(key);
     }
   });
 

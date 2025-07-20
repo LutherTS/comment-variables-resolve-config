@@ -9,9 +9,9 @@ import type { Linter } from "eslint";
 // must be manually maintained
 
 /**
- * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
- * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
- * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
+ * @param {string} configPath $COMMENT#JSDOC#PARAMS#CONFIGPATH
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
  */
 declare const resolveConfig: (configPath: string) => Promise<
   | {
@@ -115,9 +115,9 @@ export const flattenedConfigPlaceholderLocalRegex: RegExp;
 export const flattenedConfigPlaceholderGlobalRegex: RegExp;
 
 /**
- * Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.
- * @param {string} message The human-readable message of the error.
- * @returns A `{success: false}` object with a single error in its error array of `{type: "error"}`.
+ * $COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR
+ * @param {string} message $COMMENT#JSDOC#PARAMS#MESSAGE
+ * @returns $COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR
  */
 export const makeSuccessFalseTypeError: (message: string) => {
   errors: {
@@ -128,11 +128,11 @@ export const makeSuccessFalseTypeError: (message: string) => {
 };
 
 /**
- * Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.
- * @param {LintMessage[]} lintMessages The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.
- * @param {string} pluginName The name of the plugin being used for filtering.
- * @param {string} ruleName The name of the rule being used for filtering.
- * @returns An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.
+ * $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
+ * @param {LintMessage[]} lintMessages $COMMENT#JSDOC#PARAMS#LINTMESSAGES
+ * @param {string} pluginName $COMMENT#JSDOC#PARAMS#PLUGINNAME
+ * @param {string} ruleName $COMMENT#JSDOC#PARAMS#RULENAME
+ * @returns $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
  */
 export const extractValueLocationsFromLintMessages: (
   lintMessages: Linter.LintMessage[],
@@ -145,15 +145,15 @@ export const extractValueLocationsFromLintMessages: (
 }[];
 
 /**
- * Escapes all regex characters with a `"\"` in a string to prepare it for use in a regex.
- * @param {string} string The string.
- * @returns The string with regex characters escaped.
+ * $COMMENT#JSDOC#DEFINITIONS#ESCAPEREGEX
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRING
+ * @returns $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
  */
 export const escapeRegex: (string: string) => string;
 
 /**
- * Makes a global regex for a given string that ensures it is surrounded by whitespace.
- * @param {string} string The string.
- * @returns The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace.
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRING
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX
  */
 export const makeIsolatedStringRegex: (string: string) => RegExp;

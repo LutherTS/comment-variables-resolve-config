@@ -40,9 +40,9 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  */
 
 /**
- * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
- * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
- * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
+ * @param {string} configPath $COMMENT#JSDOC#PARAMS#CONFIGPATH
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
  */
 const resolveConfig = async (configPath) => {
   // Step 1a: Checks if config file exists
@@ -148,7 +148,6 @@ const resolveConfig = async (configPath) => {
   const originalFlattenedConfigData = Object.fromEntries(
     flattenedConfigDataMap
   );
-  console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   // The integrity of the flattened config data needs to be established before working with it safely.
 
@@ -288,9 +287,7 @@ const resolveConfig = async (configPath) => {
 
   // Also including the reversed flattened config data.
 
-  const reversedFlattenedConfigData = Object.fromEntries(
-    Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
-  );
+  const reversedFlattenedConfigData = reverseConfigData(flattenedConfigData);
 
   // console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
   // console.log("flattenedKeys_originalsOnly is:", flattenedKeys_originalsOnly);
@@ -346,23 +343,34 @@ const resolveConfig = async (configPath) => {
   const values_valueLocations__map = new Map();
   /** @type {Array<Record<string, ValueLocation>>} */
   const values_valueLocations__duplicateValuesArray = [];
+  /** @type {Array<string} */
+  const allObjectStringValues = []; // aliases, and composed variables excluded
 
-  // making a set out of flattenedKeys_originalsOnly__valuesArray for faster lookups
-  const flattenedKeys_originalsOnly__valuesSet = new Set(
-    flattenedKeys_originalsOnly__valuesArray
-  );
+  // // making a set out of flattenedKeys_originalsOnly__valuesArray for faster lookups
+  // const flattenedKeys_originalsOnly__valuesSet = new Set(
+  //   flattenedKeys_originalsOnly__valuesArray
+  // );
 
   for (const extract of extracts) {
     const value = extract.value;
 
-    if (originalFlattenedConfigData[value]) continue; // that's an alias, since the value is the key in the original flattened config data
+    if (originalFlattenedConfigData[value]) continue;
+    // that's an alias, since the value is the key in the original flattened config data
+
     // with aliases excluded we can now focus on originals only
-    if (flattenedKeys_originalsOnly__valuesSet.has(value)) {
-      // basically you can have duplicate object string literal values as long as they are not the values from the original flattened config data (which includes composed variables)
-      if (!values_valueLocations__map.has(value))
-        values_valueLocations__map.set(value, extract);
-      else values_valueLocations__duplicateValuesArray.push({ value: extract });
-    }
+
+    // REMOVING THIS ALLOWS FOR OVERRIDDEN VALUES TO STILL SHOW UP IN values_valueLocations__map
+    // if (flattenedKeys_originalsOnly__valuesSet.has(value)) {
+
+    // basically you can have duplicate object string literal values as long as they are not the values from the original flattened config data (which includes composed variables) // NOT ANYMORE. Current rationale all duplicate unused object string literal values should be turned into template literal values in the fight against silent JavaScript object value overrides
+    if (!values_valueLocations__map.has(value)) {
+      values_valueLocations__map.set(value, extract);
+      if (!value.includes(`${$COMMENT}#`))
+        // ignoring composed variables
+        allObjectStringValues.push(value); // tracks potential original value overrides from legal JavaScript object value overrides
+    } else values_valueLocations__duplicateValuesArray.push({ value: extract });
+
+    // }
   }
 
   // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`.
@@ -389,9 +397,30 @@ const resolveConfig = async (configPath) => {
   // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
   if (unrecognizedValuesSet.size !== 0) {
     return makeSuccessFalseTypeError(
-      "ERROR. (`unrecognizedValuesSet` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual comment variables, not at the values level. More on that in a later release." // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
+      "ERROR. (`unrecognizedValuesSet` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level. More on that in a later release." // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
     );
   }
+
+  // Now to catch actual duplicate keys that silently override.
+
+  const flattenedConfigData__ValuesSet = new Set(
+    Object.values(flattenedConfigData)
+  );
+  /** @type {Array<string} */
+  const overriddenObjectStringValues = [];
+
+  for (const value of allObjectStringValues) {
+    if (!flattenedConfigData__ValuesSet.has(value))
+      overriddenObjectStringValues.push(value);
+  }
+
+  if (overriddenObjectStringValues.length !== 0) {
+    return makeSuccessFalseTypeError(
+      "ERROR. (`overriddenObjectStringValues` should remain empty.) It appears some of the values from your original config are being overridden in the final flattened config data through legal JavaScript object value overrides. This is likely to be unintentional. More on that in a later release." // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
+    );
+  }
+
+  // Concluding on value locations objects.
 
   /** @type {Record<string, ValueLocation>} */
   const nonAliasesKeys_valueLocations = {}; // unique ValueLocation objects

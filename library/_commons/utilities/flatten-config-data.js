@@ -8,12 +8,12 @@ import { makeSuccessFalseTypeError } from "./helpers.js";
  */
 
 /**
- * Flattens the config's data property into a one-dimensional object of $COMMENT-*-like keys and string values.
- * @param {ConfigData} configData The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)
- * @param {Object} [options] The additional options as follows:
- * @param {Map<string, {value: string; source: string}>} [options.configDataMap] The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.
- * @param {string[]} [options.parentKeys] The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).
- * @returns Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).
+ * $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA
+ * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATA
+ * @param {Object} [options] $COMMENT#JSDOC#PARAMS#OPTIONS
+ * @param {Map<string, {value: string; source: string}>} [options.configDataMap] $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION
+ * @param {string[]} [options.parentKeys] $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION
+ * @returns $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA
  */
 export const flattenConfigData = (
   configData,
@@ -22,7 +22,6 @@ export const flattenConfigData = (
   // Check for same-level duplicates first
   const currentLevelKeys = new Set();
   for (const key of Object.keys(configData)) {
-    console.log("key is", key);
     if (currentLevelKeys.has(key)) {
       return makeSuccessFalseTypeError(
         `ERROR. Duplicate key "${key}" at level ${parentKeys.join(" > ")}`
@@ -38,7 +37,6 @@ export const flattenConfigData = (
       .join("#")
       .replace(/\s/g, "_");
     const source = newKeys.join(" > ");
-    console.log("normalizedKey and value are:", normalizedKey, value);
 
     if (typeof value === "string") {
       if (configDataMap.has(normalizedKey)) {
