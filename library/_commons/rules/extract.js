@@ -84,6 +84,7 @@ const rule = {
     messages: {
       [placeholderMessageId]: `{{ ${placeholderDataId} }}`,
     },
+    fixable: "code",
   },
   create: (context) => {
     const options = context.options[0] || {}; // personal overkill
@@ -119,9 +120,7 @@ const rule = {
                 regularValuesOnly_originalKeys[propValueNode.value];
 
               if (originalKey /* && not done already */) {
-                // console.log("In fixing.");
-                // console.log("originalKey is:", originalKey);
-                // console.log("Value is:", propValueNode.value);
+                console.log("originalKey is:", originalKey);
                 context.report({
                   node: propValueNode,
                   messageId: placeholderMessageId,
@@ -133,8 +132,8 @@ const rule = {
                     }),
                   },
                   fix: (fixer) =>
-                    fixer.insertTextAfterRange(
-                      node.range,
+                    fixer.insertTextAfter(
+                      propValueNode,
                       ` /* ${$COMMENT}#${originalKey} */`
                     ),
                 });

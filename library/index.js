@@ -311,6 +311,7 @@ const resolveConfig = async (configPath) => {
   );
 
   const eslint = new ESLint({
+    errorOnUnmatchedPattern: false,
     overrideConfigFile: true,
     overrideConfig: [
       {
@@ -489,6 +490,8 @@ const resolveConfig = async (configPath) => {
   const makePlaceholdersAsObject = { makePlaceholders };
 
   const eslintForMakePlaceholders = new ESLint({
+    fix: true,
+    errorOnUnmatchedPattern: false,
     overrideConfigFile: true,
     overrideConfig: [
       {
@@ -514,9 +517,11 @@ const resolveConfig = async (configPath) => {
   const resultsForMakePlaceholders = await eslintForMakePlaceholders.lintFiles(
     files
   );
+  await ESLint.outputFixes(resultsForMakePlaceholders);
+
   console.log("Results for makePlaceholders are:", resultsForMakePlaceholders);
 
-  const total = results.reduce((sum, r) => {
+  const total = resultsForMakePlaceholders.reduce((sum, r) => {
     const add = r.output ? 1 : 0;
     return sum + add;
   }, 0);
