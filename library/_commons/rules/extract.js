@@ -22,7 +22,7 @@ const rule = {
         properties: {
           composedVariablesOnly: {
             type: "boolean",
-            default: false,
+            // default: false,
           },
           makePlaceholders: {
             type: "object",
@@ -30,17 +30,17 @@ const rule = {
               composedValues_originalKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
-                default: {},
+                // default: {},
               },
               aliasValues_originalKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
-                default: {},
+                // default: {},
               },
               regularValuesOnly_originalKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
-                default: {},
+                // default: {},
               },
             },
             required: [
@@ -49,28 +49,33 @@ const rule = {
               "regularValuesOnly_originalKeys",
             ],
             additionalProperties: false,
-            default: undefined, // personal overkill
+            // default: undefined, // personal overkill
           },
         },
         additionalProperties: false,
         default: {},
         oneOf: [
           {
+            // Only composedVariablesOnly (true or false)
             properties: {
-              composedVariablesOnly: { const: false },
-              makePlaceholders: { const: undefined },
+              composedVariablesOnly: { type: "boolean" },
+              makePlaceholders: { not: {} }, // Must be undefined/missing
             },
-          },
-          {
             required: ["composedVariablesOnly"],
-            properties: {
-              makePlaceholders: { const: undefined },
-            },
           },
           {
-            required: ["makePlaceholders"],
+            // Only makePlaceholders
             properties: {
-              composedVariablesOnly: { const: false },
+              makePlaceholders: { type: "object" },
+              composedVariablesOnly: { not: {} }, // Must be undefined/missing
+            },
+            required: ["makePlaceholders"],
+          },
+          {
+            // Neither (empty options)
+            properties: {
+              composedVariablesOnly: { not: {} },
+              makePlaceholders: { not: {} },
             },
           },
         ],
@@ -82,7 +87,7 @@ const rule = {
   },
   create: (context) => {
     const options = context.options[0] || {}; // personal overkill
-    const composedVariablesOnly = options.composedVariablesOnly;
+    const composedVariablesOnly = options.composedVariablesOnly ?? false;
     const makePlaceholders = options.makePlaceholders;
 
     // as a measure of caution, returns early if both composedVariablesOnly && makePlaceholders are defined/truthy
@@ -113,26 +118,26 @@ const rule = {
                 aliasValues_originalKeys[propValueNode.value] ||
                 regularValuesOnly_originalKeys[propValueNode.value];
 
-              if (originalKey /* and not done already */) {
-                console.log("In fixing.");
-                console.log("originalKey is:", originalKey);
-                console.log("Value is:", propValueNode.value);
-                // context.report({
-                //   node: propValueNode,
-                //   messageId: placeholderMessageId,
-                //   data: {
-                //     [placeholderDataId]: JSON.stringify({
-                //       value: propValueNode.value,
-                //       filePath: context.filename,
-                //       loc: propValueNode.loc,
-                //     }),
-                //   },
-                //   fix: (fixer) =>
-                //     fixer.insertTextAfterRange(
-                //       node.range,
-                //       ` /* ${$COMMENT}#${originalKey} */`
-                //     ),
-                // });
+              if (originalKey /* && not done already */) {
+                // console.log("In fixing.");
+                // console.log("originalKey is:", originalKey);
+                // console.log("Value is:", propValueNode.value);
+                context.report({
+                  node: propValueNode,
+                  messageId: placeholderMessageId,
+                  data: {
+                    [placeholderDataId]: JSON.stringify({
+                      value: propValueNode.value,
+                      filePath: context.filename,
+                      loc: propValueNode.loc,
+                    }),
+                  },
+                  fix: (fixer) =>
+                    fixer.insertTextAfterRange(
+                      node.range,
+                      ` /* ${$COMMENT}#${originalKey} */`
+                    ),
+                });
               }
             }
 

@@ -453,7 +453,7 @@ const resolveConfig = async (configPath) => {
   meaning this should actually be only in the JSComments CLI,
   also meaning originalFlattenedConfigData should be returned by resolveConfig */
 
-  console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
+  // console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   /** @type {Record<string, string>} */
   const composedValues_originalKeys = {};
@@ -473,56 +473,57 @@ const resolveConfig = async (configPath) => {
     else regularValuesOnly_originalKeys[value] = key;
   } // no need for continues, potential collisions are caught eventually below (or in effect will have been caught above in the final implementation)
 
-  console.log("composedValues_originalKeys is:", composedValues_originalKeys);
-  console.log("aliasValues_originalKeys is:", aliasValues_originalKeys);
-  console.log(
-    "regularValuesOnly_originalKeys is:",
-    regularValuesOnly_originalKeys
-  );
+  // console.log("composedValues_originalKeys is:", composedValues_originalKeys);
+  // console.log("aliasValues_originalKeys is:", aliasValues_originalKeys);
+  // console.log(
+  //   "regularValuesOnly_originalKeys is:",
+  //   regularValuesOnly_originalKeys
+  // );
 
   const makePlaceholders = {
     composedValues_originalKeys,
     aliasValues_originalKeys,
     regularValuesOnly_originalKeys,
   };
-  console.log("makePlaceholders is:", makePlaceholders);
+  // console.log("makePlaceholders is:", makePlaceholders);
+  const makePlaceholdersAsObject = { makePlaceholders };
 
-  // const eslintForMakePlaceholders = new ESLint({
-  //   overrideConfigFile: true,
-  //   overrideConfig: [
-  //     {
-  //       files,
-  //       languageOptions: typeScriptAndJSXCompatible,
-  //       plugins: {
-  //         [commentVariablesPluginName]: {
-  //           rules: {
-  //             [extractRuleName]: extractObjectStringLiteralValues,
-  //           },
-  //         },
-  //       },
-  //       rules: {
-  //         [`${commentVariablesPluginName}/${extractRuleName}`]: [
-  //           "warn",
-  //           makePlaceholders,
-  //         ],
-  //       },
-  //     },
-  //   ],
-  // });
+  const eslintForMakePlaceholders = new ESLint({
+    overrideConfigFile: true,
+    overrideConfig: [
+      {
+        files,
+        languageOptions: typeScriptAndJSXCompatible,
+        plugins: {
+          [commentVariablesPluginName]: {
+            rules: {
+              [extractRuleName]: extractObjectStringLiteralValues,
+            },
+          },
+        },
+        rules: {
+          [`${commentVariablesPluginName}/${extractRuleName}`]: [
+            "warn",
+            makePlaceholdersAsObject,
+          ],
+        },
+      },
+    ],
+  });
 
-  // const resultsForMakePlaceholders = await eslintForMakePlaceholders.lintFiles(
-  //   files
-  // );
-  // console.log("Results for makePlaceholders are:", resultsForMakePlaceholders);
+  const resultsForMakePlaceholders = await eslintForMakePlaceholders.lintFiles(
+    files
+  );
+  console.log("Results for makePlaceholders are:", resultsForMakePlaceholders);
 
-  // const total = results.reduce((sum, r) => {
-  //   const add = r.output ? 1 : 0;
-  //   return sum + add;
-  // }, 0);
+  const total = results.reduce((sum, r) => {
+    const add = r.output ? 1 : 0;
+    return sum + add;
+  }, 0);
 
-  // console.log(
-  //   `✅ Made placeholders on ${total} file${total === 1 ? "" : "s"}.`
-  // );
+  console.log(
+    `✅ Made placeholders on ${total} file${total === 1 ? "" : "s"}.`
+  );
 
   /* TEST END */
 
