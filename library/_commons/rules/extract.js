@@ -22,7 +22,6 @@ const rule = {
         properties: {
           composedVariablesOnly: {
             type: "boolean",
-            // default: false,
           },
           makePlaceholders: {
             type: "object",
@@ -30,17 +29,14 @@ const rule = {
               composedValues_originalKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
-                // default: {},
               },
               aliasValues_originalKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
-                // default: {},
               },
               regularValuesOnly_originalKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
-                // default: {},
               },
             },
             required: [
@@ -49,12 +45,18 @@ const rule = {
               "regularValuesOnly_originalKeys",
             ],
             additionalProperties: false,
-            // default: undefined, // personal overkill
           },
         },
         additionalProperties: false,
         default: {},
         oneOf: [
+          {
+            // Neither (empty options)
+            properties: {
+              composedVariablesOnly: { not: {} },
+              makePlaceholders: { not: {} },
+            },
+          },
           {
             // Only composedVariablesOnly (true or false)
             properties: {
@@ -71,13 +73,6 @@ const rule = {
             },
             required: ["makePlaceholders"],
           },
-          {
-            // Neither (empty options)
-            properties: {
-              composedVariablesOnly: { not: {} },
-              makePlaceholders: { not: {} },
-            },
-          },
         ],
       },
     ],
@@ -87,7 +82,7 @@ const rule = {
     fixable: "code",
   },
   create: (context) => {
-    const options = context.options[0] || {}; // personal overkill
+    const options = context.options[0] || {};
     const composedVariablesOnly = options.composedVariablesOnly ?? false;
     const makePlaceholders = options.makePlaceholders;
 
@@ -106,6 +101,13 @@ const rule = {
               prop.value.value.includes(`${$COMMENT}#`))
           ) {
             const propValueNode = prop.value;
+            const data = {
+              [placeholderDataId]: JSON.stringify({
+                value: propValueNode.value,
+                filePath: context.filename,
+                loc: propValueNode.loc,
+              }),
+            };
 
             if (makePlaceholders) {
               const {
@@ -119,50 +121,35 @@ const rule = {
                 aliasValues_originalKeys[propValueNode.value] ||
                 regularValuesOnly_originalKeys[propValueNode.value];
 
-              const sourceCode = context.sourceCode;
-              const commentsAfter = sourceCode.getCommentsAfter(propValueNode);
-              console.log("commentsAfter are:", commentsAfter);
-              const hasExistingComment = commentsAfter.some((comment) =>
-                comment.value.includes(`${$COMMENT}#`)
-              );
+              if (originalKey) {
+                const placeholder = `${$COMMENT}#${originalKey}`;
 
-              if (
-                originalKey &&
-                !hasExistingComment /* && not done already */
-              ) {
-                console.log("originalKey is:", originalKey);
-                context.report({
-                  node: propValueNode,
-                  messageId: placeholderMessageId,
-                  data: {
-                    [placeholderDataId]: JSON.stringify({
-                      value: propValueNode.value,
-                      filePath: context.filename,
-                      loc: propValueNode.loc,
-                    }),
-                  },
-                  fix: (fixer) =>
-                    fixer.insertTextAfter(
-                      propValueNode,
-                      ` /* ${$COMMENT}#${originalKey} */`
-                    ),
-                });
+                const sourceCode = context.sourceCode;
+                const commentsAfter =
+                  sourceCode.getCommentsAfter(propValueNode);
+
+                const hasExistingPlaceholder = commentsAfter.some((comment) =>
+                  comment.value.includes(placeholder)
+                );
+
+                if (!hasExistingPlaceholder) {
+                  context.report({
+                    node: propValueNode,
+                    messageId: placeholderMessageId,
+                    data,
+                    fix: (fixer) =>
+                      fixer.insertTextAfter(
+                        propValueNode,
+                        ` /* ${placeholder} */`
+                      ),
+                  });
+                }
               }
-            }
-
-            // const commentAfter =
-            //   context.sourceCode.getCommentsAfter(propValueNode)[0];
-            else
+            } else
               context.report({
                 node: propValueNode,
                 messageId: placeholderMessageId,
-                data: {
-                  [placeholderDataId]: JSON.stringify({
-                    value: propValueNode.value,
-                    filePath: context.filename,
-                    loc: propValueNode.loc,
-                  }),
-                },
+                data,
               });
           }
         }
