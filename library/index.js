@@ -24,7 +24,7 @@ import {
 import {
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
-  reverseConfigData,
+  reverseFlattenedConfigData,
 } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 
@@ -177,6 +177,14 @@ const resolveConfig = async (configPath) => {
     }
   }
 
+  // checkes that no alias is its own key/alias
+  for (const alias of Object.keys(aliases_flattenedKeys)) {
+    if (aliases_flattenedKeys[alias] === alias)
+      return makeSuccessFalseTypeError(
+        `ERROR. The alias "${alias}" is its own key/alias.`
+      );
+  }
+
   // PASSED THIS STAGE, we're now clearly distinguishing:
   // - originalFlattenedConfigData, which is the untreated raw config data
   // - aliases_flattenedKeys, which is only the aliases
@@ -274,12 +282,12 @@ const resolveConfig = async (configPath) => {
   /** @type {Set<string>} */
   const flattenedConfigDataDuplicateChecksSet = new Set();
 
+  // now that composed variables have created new values ...
   for (const value of Object.values(flattenedConfigData)) {
-    // now that composed variables have created new values ...
+    // ... checks that no two final values are duplicate
     if (flattenedConfigDataDuplicateChecksSet.has(value)) {
-      // ... checks that no two final values are duplicate
       return makeSuccessFalseTypeError(
-        `ERROR. The new value "${value}" is already assigned to an existing key.`
+        `ERROR. The finalized value "${value}" is already assigned to an existing key.`
       );
     }
     flattenedConfigDataDuplicateChecksSet.add(value);
@@ -287,7 +295,8 @@ const resolveConfig = async (configPath) => {
 
   // Also including the reversed flattened config data.
 
-  const reversedFlattenedConfigData = reverseConfigData(flattenedConfigData);
+  const reversedFlattenedConfigData =
+    reverseFlattenedConfigData(flattenedConfigData);
 
   // console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
   // console.log("flattenedKeys_originalsOnly is:", flattenedKeys_originalsOnly);

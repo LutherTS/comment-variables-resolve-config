@@ -65,11 +65,11 @@ export const extractValueLocationsFromLintMessages = (
 /* reverseConfigData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#REVERSECONFIGDATA
- * @param {Record<string, string>} configData $COMMENT#JSDOC#PARAMS#CONFIGDATATOREVERSE
- * @returns $COMMENT#JSDOC#RETURNS#REVERSECONFIGDATA
+ * $COMMENT#JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATA
+ * @returns $COMMENT#JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA
  */
-export const reverseConfigData = (configData) =>
+export const reverseFlattenedConfigData = (flattenedConfigData) =>
   Object.fromEntries(
-    Object.entries(configData).map(([key, value]) => [value, key])
+    Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
   );
