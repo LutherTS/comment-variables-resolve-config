@@ -24,12 +24,56 @@ const rule = {
             type: "boolean",
             default: false,
           },
-          // documentConfigData
-          // type "object" (Record<string, string>) (optional)
-          // passed object are the original and ... I'm gonna need a reversedOriginalFlattenedConfigData
-          // default: null
+          makePlaceholders: {
+            type: "object",
+            properties: {
+              composedValues_originalKeys: {
+                type: "object",
+                additionalProperties: { type: "string" },
+                default: {},
+              },
+              aliasValues_originalKeys: {
+                type: "object",
+                additionalProperties: { type: "string" },
+                default: {},
+              },
+              regularValuesOnly_originalKeys: {
+                type: "object",
+                additionalProperties: { type: "string" },
+                default: {},
+              },
+            },
+            required: [
+              "composedValues_originalKeys",
+              "aliasValues_originalKeys",
+              "regularValuesOnly_originalKeys",
+            ],
+            additionalProperties: false,
+            default: undefined, // personal overkill
+          },
         },
         additionalProperties: false,
+        default: {},
+        oneOf: [
+          {
+            properties: {
+              composedVariablesOnly: { const: false },
+              makePlaceholders: { const: undefined },
+            },
+          },
+          {
+            required: ["composedVariablesOnly"],
+            properties: {
+              makePlaceholders: { const: undefined },
+            },
+          },
+          {
+            required: ["makePlaceholders"],
+            properties: {
+              composedVariablesOnly: { const: false },
+            },
+          },
+        ],
       },
     ],
     messages: {
@@ -37,8 +81,12 @@ const rule = {
     },
   },
   create: (context) => {
-    const options = context.options[0] || {};
-    const composedVariablesOnly = options.composedVariablesOnly ?? false;
+    const options = context.options[0] || {}; // personal overkill
+    const composedVariablesOnly = options.composedVariablesOnly;
+    const makePlaceholders = options.makePlaceholders;
+
+    // as a measure of caution, returns early if both composedVariablesOnly && makePlaceholders are defined/truthy
+    if (composedVariablesOnly && makePlaceholders) return {};
 
     return {
       ObjectExpression: (node) => {
@@ -53,22 +101,55 @@ const rule = {
           ) {
             const propValueNode = prop.value;
 
+            if (makePlaceholders) {
+              const {
+                composedValues_originalKeys,
+                aliasValues_originalKeys,
+                regularValuesOnly_originalKeys,
+              } = makePlaceholders;
+
+              const originalKey =
+                composedValues_originalKeys[propValueNode.value] ||
+                aliasValues_originalKeys[propValueNode.value] ||
+                regularValuesOnly_originalKeys[propValueNode.value];
+
+              if (originalKey /* and not done already */) {
+                console.log("In fixing.");
+                console.log("originalKey is:", originalKey);
+                console.log("Value is:", propValueNode.value);
+                // context.report({
+                //   node: propValueNode,
+                //   messageId: placeholderMessageId,
+                //   data: {
+                //     [placeholderDataId]: JSON.stringify({
+                //       value: propValueNode.value,
+                //       filePath: context.filename,
+                //       loc: propValueNode.loc,
+                //     }),
+                //   },
+                //   fix: (fixer) =>
+                //     fixer.insertTextAfterRange(
+                //       node.range,
+                //       ` /* ${$COMMENT}#${originalKey} */`
+                //     ),
+                // });
+              }
+            }
+
             // const commentAfter =
             //   context.sourceCode.getCommentsAfter(propValueNode)[0];
-
-            context.report({
-              node: propValueNode,
-              messageId: placeholderMessageId,
-              data: {
-                [placeholderDataId]: JSON.stringify({
-                  value: propValueNode.value,
-                  filePath: context.filename,
-                  loc: propValueNode.loc,
-                }),
-              },
-              fix: undefined, // documentConfigData ?
-              // (fixer) => fixer.insertTextAfterRange(node.range, ` /* this */`) : undefined
-            });
+            else
+              context.report({
+                node: propValueNode,
+                messageId: placeholderMessageId,
+                data: {
+                  [placeholderDataId]: JSON.stringify({
+                    value: propValueNode.value,
+                    filePath: context.filename,
+                    loc: propValueNode.loc,
+                  }),
+                },
+              });
           }
         }
       },
