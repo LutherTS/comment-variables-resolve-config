@@ -119,7 +119,17 @@ const rule = {
                 aliasValues_originalKeys[propValueNode.value] ||
                 regularValuesOnly_originalKeys[propValueNode.value];
 
-              if (originalKey /* && not done already */) {
+              const sourceCode = context.sourceCode;
+              const commentsAfter = sourceCode.getCommentsAfter(propValueNode);
+              console.log("commentsAfter are:", commentsAfter);
+              const hasExistingComment = commentsAfter.some((comment) =>
+                comment.value.includes(`${$COMMENT}#`)
+              );
+
+              if (
+                originalKey &&
+                !hasExistingComment /* && not done already */
+              ) {
                 console.log("originalKey is:", originalKey);
                 context.report({
                   node: propValueNode,
