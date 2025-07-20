@@ -13,6 +13,8 @@ const data = {
         'Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.', // $COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR
       extractValueLocationsFromLintMessages:
         "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.", // $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
+      reverseConfigData:
+        "Reverse the keys and the values of a flattened config data object.", // $COMMENT#JSDOC#DEFINITIONS#REVERSECONFIGDATA
     }),
     params: Object.freeze({
       string: "The string.", // $COMMENT#JSDOC#PARAMS#STRING
@@ -33,6 +35,7 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD", // $COMMENT#JSDOC#PARAMS#RULENAME
       options: "The additional options as follows:", // $COMMENT#JSDOC#PARAMS#OPTIONS
       settings: "The required settings as follows:", // $COMMENT#JSDOC#PARAMS#SETTINGS
+      configDataToReverse: "The provided flattened config data to be reversed.", // $COMMENT#JSDOC#PARAMS#CONFIGDATATOREVERSE
     }),
     returns: Object.freeze({
       escapeRegex: "The string with regex characters escaped.", // $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
@@ -46,6 +49,7 @@ const data = {
         'A `{success: false}` object with a single error in its error array of `{type: "error"}`.', // $COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR
       extractValueLocationsFromLintMessages:
         "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.", // $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
+      reverseConfigData: "The reversed version of the provided config data.",
     }),
   }),
   forComposedVariables: Object.freeze({

@@ -19,6 +19,18 @@ export const flattenConfigData = (
   configData,
   { configDataMap = new Map(), parentKeys = [] } = {}
 ) => {
+  // Check for same-level duplicates first
+  const currentLevelKeys = new Set();
+  for (const key of Object.keys(configData)) {
+    console.log("key is", key);
+    if (currentLevelKeys.has(key)) {
+      return makeSuccessFalseTypeError(
+        `ERROR. Duplicate key "${key}" at level ${parentKeys.join(" > ")}`
+      );
+    }
+    currentLevelKeys.add(key);
+  }
+
   for (const [key, value] of Object.entries(configData)) {
     const newKeys = [...parentKeys, key];
     const normalizedKey = newKeys
@@ -26,6 +38,7 @@ export const flattenConfigData = (
       .join("#")
       .replace(/\s/g, "_");
     const source = newKeys.join(" > ");
+    console.log("normalizedKey and value are:", normalizedKey, value);
 
     if (typeof value === "string") {
       if (configDataMap.has(normalizedKey)) {

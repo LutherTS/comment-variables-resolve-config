@@ -61,3 +61,15 @@ export const extractValueLocationsFromLintMessages = (
       .filter((msg) => msg.ruleId === `${pluginName}/${ruleName}`)
       .map((msg) => JSON.parse(msg.message))
   );
+
+/* reverseConfigData */
+
+/**
+ * Reverse the keys and the values of a flattened config data object.
+ * @param {Record<string, string>} configData The provided flattened config data to be reversed.
+ * @returns The reversed version of the provided config data.
+ */
+export const reverseConfigData = (configData) =>
+  Object.fromEntries(
+    Object.entries(configData).map(([key, value]) => [value, key])
+  );

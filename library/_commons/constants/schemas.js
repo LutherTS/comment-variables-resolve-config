@@ -40,6 +40,8 @@ export const ConfigDataSchema = z
     )
   )
   .superRefine((obj, ctx) => {
+    const keysDuplicateChecksSet = new Set();
+
     for (const key of Object.keys(obj)) {
       if (key.includes("$")) {
         ctx.addIssue({
@@ -62,6 +64,14 @@ export const ConfigDataSchema = z
           path: [key],
         });
       }
+      if (keysDuplicateChecksSet.has(key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Key "${key}" has already been assigned before. Even though this is valid JavaScript, reassigning keys in the object itself can mislead the understanding of live Comment Variables.`,
+          path: [key],
+        });
+      }
+      keysDuplicateChecksSet.add(key);
     }
   });
 

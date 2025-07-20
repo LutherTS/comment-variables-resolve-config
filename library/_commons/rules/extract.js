@@ -24,6 +24,10 @@ const rule = {
             type: "boolean",
             default: false,
           },
+          // documentConfigData
+          // type "object" (Record<string, string>) (optional)
+          // passed object are the original and ... I'm gonna need a reversedOriginalFlattenedConfigData
+          // default: null
         },
         additionalProperties: false,
       },
@@ -48,6 +52,10 @@ const rule = {
               prop.value.value.includes(`${$COMMENT}#`))
           ) {
             const propValueNode = prop.value;
+
+            // const commentAfter =
+            //   context.sourceCode.getCommentsAfter(propValueNode)[0];
+
             context.report({
               node: propValueNode,
               messageId: placeholderMessageId,
@@ -58,6 +66,8 @@ const rule = {
                   loc: propValueNode.loc,
                 }),
               },
+              fix: undefined, // documentConfigData ?
+              // (fixer) => fixer.insertTextAfterRange(node.range, ` /* this */`) : undefined
             });
           }
         }

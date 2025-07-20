@@ -24,6 +24,7 @@ import {
 import {
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
+  reverseConfigData,
 } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 
@@ -47,7 +48,9 @@ const resolveConfig = async (configPath) => {
   // Step 1a: Checks if config file exists
 
   if (!fs.existsSync(configPath)) {
-    return makeSuccessFalseTypeError("ERROR. No config file found.");
+    return makeSuccessFalseTypeError(
+      "ERROR. No config file found for Comment Variables."
+    );
   }
 
   // Step 1b: Checks if config file is JavaScript file
@@ -145,6 +148,7 @@ const resolveConfig = async (configPath) => {
   const originalFlattenedConfigData = Object.fromEntries(
     flattenedConfigDataMap
   );
+  console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   // The integrity of the flattened config data needs to be established before working with it safely.
 
@@ -250,7 +254,7 @@ const resolveConfig = async (configPath) => {
         if (resolvedValue.includes(`${$COMMENT}#`))
           return makeSuccessFalseTypeError(
             `ERROR. A potential composed variable cannot be used as the comment variable of another composed variable.`
-          );
+          ); // works even with aliases of composed variables
       }
       // 7. now that it is secure, replace all keys by their values
       const resolvedSegments = keySegments.map(
