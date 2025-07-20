@@ -27,6 +27,9 @@ declare const resolveConfig: (configPath: string) => Promise<
       passedIgnores: string[];
       config: object;
       rawConfigAndImportPaths: string[];
+      originalFlattenedConfigData: {
+        [k: string]: string;
+      };
       flattenedConfigData: Record<string, string>;
       aliases_flattenedKeys: Record<string, string>;
       reversedFlattenedConfigData: {
