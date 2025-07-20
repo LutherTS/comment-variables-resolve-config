@@ -16,11 +16,11 @@ const data = {
       reverseConfigData:
         "Reverses the keys and the values of a flattened config data object." /* $COMMENT#JSDOC#DEFINITIONS#REVERSECONFIGDATA */,
       coreCommentsFlow:
-        "The core flow at the heart of resolving and compressing comments.",
+        "The core flow at the heart of resolving and compressing comments." /* $COMMENT#JSDOC#DEFINITIONS#CORECOMMENTSFLOW */,
       resolveCommentsFlow:
-        "The flow that resolves `$COMMENT` placeholders intro actual comments.",
+        "The flow that resolves `$COMMENT` placeholders intro actual comments." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECOMMENTSFLOW */,
       compressCommentsFlow:
-        "The flow that compresses actual comments into `$COMMENT` placeholders.",
+        "The flow that compresses actual comments into `$COMMENT` placeholders." /* $COMMENT#JSDOC#DEFINITIONS#COMPRESSCOMMENTSFLOW */,
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
@@ -47,15 +47,15 @@ const data = {
       configDataToReverse:
         "The provided flattened config data to be reversed." /* $COMMENT#JSDOC#PARAMS#CONFIGDATATOREVERSE */,
       ruleNameCurrentlyUsed:
-        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#CURRENTLYUSED",
+        "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#CURRENTLYUSED" /* $COMMENT#JSDOC#PARAMS#RULENAMECURRENTLYUSED */,
       ignores:
-        "The array of paths and globs for the flow's ESLint instance to ignore.",
+        "The array of paths and globs for the flow's ESLint instance to ignore." /* $COMMENT#JSDOC#PARAMS#IGNORES */,
       flattenedConfigDataEither:
-        "Either the flattened config data or the reversed flattened config data, since they share the same structure.",
+        "Either the flattened config data or the reversed flattened config data, since they share the same structure." /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAEITHER */,
       flattenedConfigData:
-        "The flattened config data, with `$COMMENT` placeholders as keys and actual comments as values.",
+        "The flattened config data, with `$COMMENT` placeholders as keys and actual comments as values." /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATA */,
       reversedFlattenedConfigData:
-        "The reversed flattened config data, with actual comments as keys and `$COMMENT` placeholders as values.",
+        "The reversed flattened config data, with actual comments as keys and `$COMMENT` placeholders as values." /* $COMMENT#JSDOC#PARAMS#REVERSEDFLATTENEDCONFIGDATA */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -80,7 +80,8 @@ const data = {
     theNameOf: "The name of the" /* $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF */,
     forFilteringPeriod:
       "being used for filtering." /* $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD */,
-    currentlyUsed: 'currently used. (Either `"resolve"` or `"compress"`.)',
+    currentlyUsed:
+      'currently used. (Either `"resolve"` or `"compress"`.)' /* $COMMENT#FORCOMPOSEDVARIABLES#CURRENTLYUSED */,
   }),
 };
 
