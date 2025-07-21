@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import url from "url";
 
 import { ESLint } from "eslint";
 
@@ -27,6 +26,7 @@ import {
   reverseFlattenedConfigData,
 } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
+import { freshImport } from "./_commons/utilities/fresh-import-a.js";
 
 import {
   ConfigDataSchema,
@@ -58,19 +58,19 @@ const resolveConfig = async (configPath) => {
   const configExtension = path.extname(configPath);
   if (configExtension !== ".js") {
     return makeSuccessFalseTypeError(
-      "ERROR. Config file passed is not JavaScript (.js)."
+      "ERROR. Config file passed is not strictly JavaScript (.js)."
     );
   }
 
   // Step 2: Acquires the config
 
-  const configModule = await /** @type {unknown} */ (
-    import(`${url.pathToFileURL(configPath)}?t=${Date.now()}`)
-  ); // `?t=${Date.now()}` for cache-busting
-  const config = /** @type {unknown} */ (configModule.default);
+  const configModule = await freshImport(configPath);
+  if (configModule === null)
+    return makeSuccessFalseTypeError(
+      "ERROR. Config module could not get resolved."
+    );
 
-  // I THAT'S HERE THAT THE CONFIG ISN'T FRESHLY EVALUATED.
-  console.log("config for freshness:", config);
+  const config = configModule.default;
 
   // Step 3: Validates config object
 

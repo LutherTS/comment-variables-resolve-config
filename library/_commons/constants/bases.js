@@ -60,3 +60,6 @@ export const placeholderMessageId = "placeholderMessageId";
 
 // dataId
 export const placeholderDataId = "placeholderDataId";
+
+// process environments
+export const MODULE_TO_LOAD = "MODULE_TO_LOAD";
