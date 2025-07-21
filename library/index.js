@@ -69,6 +69,9 @@ const resolveConfig = async (configPath) => {
   ); // `?t=${Date.now()}` for cache-busting
   const config = /** @type {unknown} */ (configModule.default);
 
+  // I THAT'S HERE THAT THE CONFIG ISN'T FRESHLY EVALUATED.
+  console.log("config for freshness:", config);
+
   // Step 3: Validates config object
 
   // validates config
