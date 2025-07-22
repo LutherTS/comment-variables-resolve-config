@@ -38,11 +38,18 @@ const rule = {
                 type: "object",
                 additionalProperties: { type: "string" },
               },
+              // NEW PROPERTY
+              aliases_flattenedKeys: {
+                type: "object",
+                additionalProperties: { type: "string" },
+              },
             },
             required: [
               "composedValues_originalKeys",
               "aliasValues_originalKeys",
               "regularValuesOnly_originalKeys",
+              // NEW PROPERTY
+              "aliases_flattenedKeys",
             ],
             additionalProperties: false,
           },
@@ -89,32 +96,106 @@ const rule = {
     // as a measure of caution, returns early if both composedVariablesOnly && makePlaceholders are defined/truthy
     if (composedVariablesOnly && makePlaceholders) return {};
 
-    return {
-      ObjectExpression: (node) => {
-        for (const prop of node.properties) {
-          if (
-            prop.type === "Property" &&
-            prop.value &&
-            prop.value.type === "Literal" &&
-            typeof prop.value.value === "string" &&
-            (!composedVariablesOnly ||
-              prop.value.value.includes(`${$COMMENT}#`))
-          ) {
-            const propValueNode = prop.value;
-            const data = {
-              [placeholderDataId]: JSON.stringify({
-                value: propValueNode.value,
-                filePath: context.filename,
-                loc: propValueNode.loc,
-              }),
-            };
+    if (!composedVariablesOnly && !makePlaceholders) {
+      /* case 1 */
+      return {
+        ObjectExpression: (node) => {
+          for (const prop of node.properties) {
+            if (
+              prop.type === "Property" &&
+              prop.value &&
+              prop.value.type === "Literal" &&
+              typeof prop.value.value === "string"
+            ) {
+              const propValueNode = prop.value;
+              const data = {
+                [placeholderDataId]: JSON.stringify({
+                  value: propValueNode.value,
+                  filePath: context.filename,
+                  loc: propValueNode.loc,
+                }),
+              };
 
-            if (makePlaceholders) {
-              const {
-                composedValues_originalKeys,
-                aliasValues_originalKeys,
-                regularValuesOnly_originalKeys,
-              } = makePlaceholders;
+              context.report({
+                node: propValueNode,
+                messageId: placeholderMessageId,
+                data,
+              });
+            }
+          }
+        },
+      };
+    }
+
+    if (composedVariablesOnly) {
+      /* case 2 */
+      return {
+        ObjectExpression: (node) => {
+          for (const prop of node.properties) {
+            if (
+              prop.type === "Property" &&
+              prop.value &&
+              prop.value.type === "Literal" &&
+              typeof prop.value.value === "string" &&
+              prop.value.value.includes(`${$COMMENT}#`)
+            ) {
+              const propValueNode = prop.value;
+              const data = {
+                [placeholderDataId]: JSON.stringify({
+                  value: propValueNode.value,
+                  filePath: context.filename,
+                  loc: propValueNode.loc,
+                }),
+              };
+
+              context.report({
+                node: propValueNode,
+                messageId: placeholderMessageId,
+                data,
+              });
+            }
+          }
+        },
+      };
+    }
+
+    if (makePlaceholders) {
+      /* case 3 */
+      const {
+        composedValues_originalKeys,
+        aliasValues_originalKeys,
+        regularValuesOnly_originalKeys,
+        aliases_flattenedKeys,
+      } = makePlaceholders;
+
+      const flattenedKeysWithAliases = new Set(
+        Object.values(aliases_flattenedKeys)
+      );
+
+      // currently only needed here for command placeholders
+      const flattenedKeys_aliasPlaceholdersSets__map = new Map(
+        [...flattenedKeysWithAliases].map((e) => {
+          /** @type {Set<string>} */
+          const aliasSet = new Set();
+          return [e, aliasSet];
+        })
+      );
+      Object.entries(aliases_flattenedKeys).forEach(([eKey, eVal]) => {
+        flattenedKeys_aliasPlaceholdersSets__map
+          .get(eVal)
+          .add(`${$COMMENT}#${eKey}`);
+      });
+
+      return {
+        ObjectExpression: (node) => {
+          for (const prop of node.properties) {
+            if (
+              prop.type === "Property" &&
+              prop.value &&
+              prop.value.type === "Literal" &&
+              typeof prop.value.value === "string"
+            ) {
+              const propValueNode = prop.value;
 
               const originalKey =
                 composedValues_originalKeys[propValueNode.value] ||
@@ -128,11 +209,40 @@ const rule = {
                 const commentsAfter =
                   sourceCode.getCommentsAfter(propValueNode);
 
-                const hasExistingPlaceholder = commentsAfter.some((comment) =>
+                let hasExistingPlaceholder = commentsAfter.some((comment) =>
                   comment.value.includes(placeholder)
                 );
 
-                if (!hasExistingPlaceholder) {
+                // now so aliases are recognized and not prefixed
+                let hasExistingAliasPlaceholder = false;
+
+                // this should actually be only for aliases
+                if (aliasValues_originalKeys[propValueNode.value]) {
+                  const aliasPlaceholdersSet =
+                    flattenedKeys_aliasPlaceholdersSets__map.get(originalKey);
+
+                  if (aliasPlaceholdersSet) {
+                    const aliasPlaceholdersArray = [...aliasPlaceholdersSet];
+
+                    hasExistingAliasPlaceholder = commentsAfter.some(
+                      (comment) =>
+                        aliasPlaceholdersArray.some((aliasPlaceholder) =>
+                          comment.value.includes(aliasPlaceholder)
+                        )
+                    );
+                  }
+                }
+
+                // and now you can leave aliases alone
+                if (!hasExistingPlaceholder && !hasExistingAliasPlaceholder) {
+                  const data = {
+                    [placeholderDataId]: JSON.stringify({
+                      value: propValueNode.value,
+                      filePath: context.filename,
+                      loc: propValueNode.loc,
+                    }),
+                  };
+
                   context.report({
                     node: propValueNode,
                     messageId: placeholderMessageId,
@@ -145,16 +255,11 @@ const rule = {
                   });
                 }
               }
-            } else
-              context.report({
-                node: propValueNode,
-                messageId: placeholderMessageId,
-                data,
-              });
+            }
           }
-        }
-      },
-    };
+        },
+      };
+    }
   },
 };
 

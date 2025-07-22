@@ -29,6 +29,7 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
  *     composedValues_originalKeys: Record<string, string>;
  *     aliasValues_originalKeys: Record<string, string>;
  *     regularValuesOnly_originalKeys: Record<string, string>;
+ *     aliases_flattenedKeys: Record<string, string>;
  *   };
  * }} RuleOptions
  * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, [RuleOptions], unknown>} ExtractRule
