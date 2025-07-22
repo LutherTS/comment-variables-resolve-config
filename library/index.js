@@ -180,11 +180,16 @@ const resolveConfig = async (configPath) => {
     }
   }
 
-  // checkes that no alias is its own key/alias
-  for (const alias of Object.keys(aliases_flattenedKeys)) {
-    if (aliases_flattenedKeys[alias] === alias)
+  for (const [key, value] of Object.entries(aliases_flattenedKeys)) {
+    // checkes that no alias is its own key/alias
+    if (aliases_flattenedKeys[key] === key)
       return makeSuccessFalseTypeError(
-        `ERROR. The alias "${alias}" is its own key/alias.`
+        `ERROR. The alias "${key}" is its own key/alias.`
+      );
+    // checks that no value is an actual key
+    if (aliases_flattenedKeys[value])
+      return makeSuccessFalseTypeError(
+        `ERROR. The alias "${key}" can't be the alias of "${value}" because "${value}" is already an alias.`
       );
   }
 
