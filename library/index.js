@@ -532,8 +532,8 @@ const resolveConfig = async (configPath) => {
 /* makeResolvedConfigData */
 
 /**
- *
- * @param {string} value
+ * Resolve a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
+ * @param {string} value The composed variable as is.
  * @param {Record<string, string>} flattenedConfigData
  * @returns
  */
