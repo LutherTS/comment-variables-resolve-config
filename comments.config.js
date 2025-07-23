@@ -83,9 +83,9 @@ const data = {
       resolveConfigDataStringValue:
         "The string value resolved as the relevant Comment Variable that it is." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE */,
       resolveConfigData:
-        "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA */,
+        "Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA */,
       makeResolvedConfigData:
-        "JSDOC#RETURNS#RESOLVECONFIGDATA" /* $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA */,
+        "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA */,
     }),
   }),
   forComposedVariables: Object.freeze({

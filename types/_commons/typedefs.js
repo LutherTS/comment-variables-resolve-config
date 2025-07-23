@@ -47,4 +47,14 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
  * }} FlattenConfigDataResults
  */
 
+/**
+ * @typedef {{
+ *   errors: {
+ *     message: string;
+ *     type: "error"; // explicitly picking errors because warnings should eventually be inside success true
+ *   }[];
+ *   success: false;
+ * }} SuccessFalseWithErrors
+ */
+
 export {}; // Makes the file a module.

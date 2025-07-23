@@ -40,6 +40,7 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 /**
  * @typedef {import("../types/_commons/typedefs.js").ValueLocation} ValueLocation
  * @typedef {import("../types/_commons/typedefs.js").ConfigData} ConfigData
+ * @typedef {import("../types/_commons/typedefs.js").SuccessFalseWithErrors} SuccessFalseWithErrors
  */
 
 /**
@@ -535,13 +536,19 @@ const resolveConfig = async (configPath) => {
  * Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
  * @param {string} composedVariable The composed variable as is.
  * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @returns The resolved composed variable as a single natural string.
  */
-const resolveComposedVariable = (composedVariable, flattenedConfigData) => {
+const resolveComposedVariable = (
+  composedVariable,
+  flattenedConfigData,
+  aliases_flattenedKeys
+) => {
   const composedVariableSegments = composedVariable.split(" ");
   const resolvedSegments = composedVariableSegments.map((e) => {
     const segmentKey = e.replace(`${$COMMENT}#`, "");
-    return flattenedConfigData[segmentKey];
+    const resolvedSegmentKey = aliases_flattenedKeys[segmentKey] || segmentKey;
+    return flattenedConfigData[resolvedSegmentKey];
   });
   return resolvedSegments.join(" ");
 };
@@ -549,30 +556,38 @@ const resolveComposedVariable = (composedVariable, flattenedConfigData) => {
 /**
  * Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.
  * @param {string} stringValue The encountered string value to be resolved.
- * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @returns The string value resolved as the relevant Comment Variable that it is.
  */
 const resolveConfigDataStringValue = (
   stringValue,
-  aliases_flattenedKeys,
-  flattenedConfigData
+  flattenedConfigData,
+  aliases_flattenedKeys
 ) => {
-  const keyThroughAlias = aliases_flattenedKeys?.[stringValue];
-  if (keyThroughAlias) {
+  const valueThroughAlias = flattenedConfigData?.[stringValue];
+  if (valueThroughAlias) {
     // stringValue is an alias variable
-    const linkedValue = flattenedConfigData[keyThroughAlias];
-    // linkedValue is now either a composed variable or a comment variable
-    if (linkedValue.includes(`${$COMMENT}#`)) {
-      // linkedValue is a composed variable
-      return resolveComposedVariable(linkedValue, flattenedConfigData);
+    // valueThroughAlias is its value
+    // valueThroughAlias is now either a composed variable or a comment variable
+    if (valueThroughAlias.includes(`${$COMMENT}#`)) {
+      // valueThroughAlias is a composed variable
+      return resolveComposedVariable(
+        valueThroughAlias,
+        flattenedConfigData,
+        aliases_flattenedKeys
+      );
     } else {
-      // linkedValue is a comment variable
-      return linkedValue;
+      // valueThroughAlias is a comment variable
+      return valueThroughAlias;
     }
   } else if (stringValue.includes(`${$COMMENT}#`)) {
     // stringValue is a composed variable
-    return resolveComposedVariable(stringValue, flattenedConfigData);
+    return resolveComposedVariable(
+      stringValue,
+      flattenedConfigData,
+      aliases_flattenedKeys
+    );
   } else {
     // stringValue is a comment variable
     return stringValue;
@@ -582,20 +597,20 @@ const resolveConfigDataStringValue = (
 /**
  * Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.
  * @param {ConfigData} configData The original config data obtained from resolveConfig.
- * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @param {(value: string) => string} callback The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.
- * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ * @returns Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.
  */
 const resolveConfigData = (
   configData,
-  aliases_flattenedKeys,
   flattenedConfigData,
+  aliases_flattenedKeys,
   callback = (value) =>
     resolveConfigDataStringValue(
       value,
-      aliases_flattenedKeys,
-      flattenedConfigData
+      flattenedConfigData,
+      aliases_flattenedKeys
     )
 ) => {
   /** @type {Record<string, unknown>} */
@@ -609,8 +624,8 @@ const resolveConfigData = (
     } else if (value && typeof value === "object" && !Array.isArray(value)) {
       results[key] = resolveConfigData(
         value,
-        aliases_flattenedKeys,
         flattenedConfigData,
+        aliases_flattenedKeys,
         callback
       );
     } else {
@@ -620,21 +635,18 @@ const resolveConfigData = (
     }
   }
 
-  return {
-    ...successTrue,
-    resolvedConfigData: results,
-  };
+  return results;
 };
 
 /**
  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
  * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
- * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ * @returns Just the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
 const makeResolvedConfigData = async (configPath) => {
   const resolveConfigResults = await resolveConfig(configPath);
   if (!resolveConfigResults.success) {
-    return resolveConfigResults.errors;
+    return resolveConfigResults;
   }
 
   const { config, aliases_flattenedKeys, flattenedConfigData } =
@@ -644,16 +656,23 @@ const makeResolvedConfigData = async (configPath) => {
 
   const resolveConfigDataResults = resolveConfigData(
     configData,
-    aliases_flattenedKeys,
-    flattenedConfigData
+    flattenedConfigData,
+    aliases_flattenedKeys
   );
-  if (!resolveConfigDataResults.success) {
-    return resolveConfigDataResults.errors;
+  if (
+    resolveConfigDataResults.success !== undefined &&
+    resolveConfigDataResults.success === false
+  ) {
+    // ...So. If theoretically somebody calls one of their top keys success and sets if value to false, it would passes the test... But resolveConfig already ensures that all strings are actually strings or objects (not boolean), so we're good here.
+    return /** @type {SuccessFalseWithErrors} */ (resolveConfigDataResults);
   }
+
+  /** @type {Record<string, unknown>} */
+  const resolvedConfigData = resolveConfigDataResults;
 
   return {
     ...successTrue,
-    resolvedConfigData: resolveConfigDataResults.resolvedConfigData,
+    resolvedConfigData,
   };
 };
 

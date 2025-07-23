@@ -164,13 +164,16 @@ export const makeIsolatedStringRegex: (string: string) => RegExp;
 /**
  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
  * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
- * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ * @returns Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.
  */
 export const makeResolvedConfigData: (configPath: string) => Promise<
   | {
-      type: "error" | "warning";
-      message: string;
-    }[]
+      success: false;
+      errors: Array<{
+        type: "error" | "warning";
+        message: string;
+      }>;
+    }
   | {
       resolvedConfigData: Record<string, unknown>;
       success: true;
