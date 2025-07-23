@@ -395,9 +395,24 @@ const resolveConfig = async (configPath) => {
 
   // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
   if (values_valueLocations__duplicateValuesArray.length !== 0) {
-    return makeSuccessFalseTypeError(
-      "ERROR. (`values_valueLocations__duplicateValuesArray` should remain empty.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release. (If you really need two keys to have the same value, we're introducing aliases.)" // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
-    );
+    // return makeSuccessFalseTypeError(
+    //   `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release. (If you really need two keys to have the same value, we're introducing aliases.)` // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
+    // );
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message: `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. (If you really need two keys to have the same value, we're introducing aliases.)`, // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
+        },
+        {
+          ...typeError,
+          message: `Look to the following value: ${
+            Object.keys(values_valueLocations__duplicateValuesArray)[0]
+          }`,
+        },
+      ],
+    };
   }
 
   /** @type {Set<string>} */
@@ -414,9 +429,24 @@ const resolveConfig = async (configPath) => {
 
   // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
   if (unrecognizedValuesSet.size !== 0) {
-    return makeSuccessFalseTypeError(
-      "ERROR. (`unrecognizedValuesSet` should remain empty.) One or some of the values of your comment-variables config data are not string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level. More on that in a later release." // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
-    );
+    // return makeSuccessFalseTypeError(
+    //   `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level. More on that in a later release.` // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
+    // );
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message: `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level.`, // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
+        },
+        {
+          ...typeError,
+          message: `Look to the following (perhaps evaluated) value: ${
+            [...unrecognizedValuesSet][0]
+          }`,
+        },
+      ],
+    };
   }
 
   // Now to catch actual duplicate keys that silently override.
@@ -433,9 +463,22 @@ const resolveConfig = async (configPath) => {
   }
 
   if (overriddenObjectStringValues.length !== 0) {
-    return makeSuccessFalseTypeError(
-      "ERROR. (`overriddenObjectStringValues` should remain empty.) It appears some of the values from your original config are being overridden in the final flattened config data through legal JavaScript object value overrides. This is likely to be unintentional. More on that in a later release." // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
-    );
+    // return makeSuccessFalseTypeError(
+    //   `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data through legal JavaScript object value overrides. This is likely to be unintentional. More on that in a later release.` // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
+    // );
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data through legal JavaScript object value overrides. This is likely to be unintentional.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
+        },
+        {
+          ...typeError,
+          message: `Look to the following value: ${overriddenObjectStringValues[0]}`,
+        },
+      ],
+    };
   }
 
   // Concluding on value locations objects.
