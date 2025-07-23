@@ -43,9 +43,9 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
- * @param {string} configPath $COMMENT#JSDOC#PARAMS#CONFIGPATH
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
+ * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
+ * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
+ * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
  */
 const resolveConfig = async (configPath) => {
   // Step 1a: Checks if config file exists
@@ -585,7 +585,7 @@ const resolveConfigDataStringValue = (
  * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
  * @param {(value: string) => string} callback The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.
- * @returns An object with `success: true` and the resolved config data if success, or with `success: false` and errors if unsuccessful.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
 const resolveConfigData = (
   configData,
@@ -627,8 +627,9 @@ const resolveConfigData = (
 };
 
 /**
- *
- * @param {string} configPath
+ * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
+ * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
 const makeResolvedConfigData = async (configPath) => {
   const resolveConfigResults = await resolveConfig(configPath);
@@ -650,7 +651,10 @@ const makeResolvedConfigData = async (configPath) => {
     return resolveConfigDataResults.errors;
   }
 
-  return resolveConfigDataResults.resolvedConfigData;
+  return {
+    ...successTrue,
+    resolvedConfigData: resolveConfigDataResults.resolvedConfigData,
+  };
 };
 
 export default resolveConfig;
