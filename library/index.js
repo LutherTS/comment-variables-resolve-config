@@ -532,14 +532,14 @@ const resolveConfig = async (configPath) => {
 /* makeResolvedConfigData */
 
 /**
- * Resolve a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
- * @param {string} value The composed variable as is.
- * @param {Record<string, string>} flattenedConfigData
- * @returns
+ * Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
+ * @param {string} composedVariable The composed variable as is.
+ * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @returns The resolved composed variable as a single natural string.
  */
-const resolveComposedVariable = (value, flattenedConfigData) => {
-  const valueSegments = value.split(" ");
-  const resolvedSegments = valueSegments.map((e) => {
+const resolveComposedVariable = (composedVariable, flattenedConfigData) => {
+  const composedVariableSegments = composedVariable.split(" ");
+  const resolvedSegments = composedVariableSegments.map((e) => {
     const segmentKey = e.replace(`${$COMMENT}#`, "");
     return flattenedConfigData[segmentKey];
   });
@@ -547,10 +547,11 @@ const resolveComposedVariable = (value, flattenedConfigData) => {
 };
 
 /**
- *
- * @param {string} stringValue
- * @param {Record<string, string>} aliases_flattenedKeys
- * @param {Record<string, string>} flattenedConfigData
+ * Resolves a string value from Comment Variables config data taking into account the possible that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.
+ * @param {string} stringValue The encountered string value to be resolved.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
+ * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @returns The string value resolved as the relevant Comment Variable that it is.
  */
 const resolveConfigDataStringValue = (
   stringValue,
@@ -579,11 +580,12 @@ const resolveConfigDataStringValue = (
 };
 
 /**
- *
- * @param {ConfigData} configData
- * @param {Record<string, string>} aliases_flattenedKeys
- * @param {Record<string, string>} flattenedConfigData
- * @param {(value: string) => string} callback
+ * Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.
+ * @param {ConfigData} configData The original config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
+ * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {(value: string) => string} callback The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.
+ * @returns An object with `success: true` and the resolved config data if success, or with `success: false` and errors if unsuccessful.
  */
 const resolveConfigData = (
   configData,

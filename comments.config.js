@@ -15,6 +15,12 @@ const data = {
         "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations." /* $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES */,
       reverseFlattenedConfigData:
         "Reverses the keys and the values of a flattened config data object." /* $COMMENT#JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA */,
+      resolveComposedVariable:
+        "Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.",
+      resolveConfigDataStringValue:
+        "Resolves a string value from Comment Variables config data taking into account the possible that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.",
+      resolveConfigData:
+        "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
@@ -38,8 +44,14 @@ const data = {
         "The additional options as follows:" /* $COMMENT#JSDOC#PARAMS#OPTIONS */,
       settings:
         "The required settings as follows:" /* $COMMENT#JSDOC#PARAMS#SETTINGS */,
-      flattenedConfigData:
-        "The provided flattened config data to be reversed." /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATA */,
+      flattenedConfigDataA:
+        "The provided flattened config data to be reversed." /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAA */,
+      composedVariable: "The composed variable as is.",
+      flattenedConfigDataB:
+        "The flattened config data obtained from resolveConfig.",
+      stringValue: "The encountered string value to be resolved.",
+      aliases_flattenedKeys:
+        "The aliases-to-flattened-keys dictionary obtained from resolveConfig.",
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -56,6 +68,10 @@ const data = {
         "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each." /* $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES */,
       reverseFlattenedConfigData:
         "The reversed version of the provided config data." /* $COMMENT#JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA */,
+      resolveComposedVariable:
+        "The resolved composed variable as a single natural string.",
+      resolveConfigDataStringValue:
+        "The string value resolved as the relevant Comment Variable that it is.",
     }),
   }),
   forComposedVariables: Object.freeze({

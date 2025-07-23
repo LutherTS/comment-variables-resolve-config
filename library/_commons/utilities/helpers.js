@@ -66,7 +66,7 @@ export const extractValueLocationsFromLintMessages = (
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA
- * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATA
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAA
  * @returns $COMMENT#JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA
  */
 export const reverseFlattenedConfigData = (flattenedConfigData) =>
