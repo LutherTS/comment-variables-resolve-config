@@ -547,7 +547,7 @@ const resolveComposedVariable = (composedVariable, flattenedConfigData) => {
 };
 
 /**
- * Resolves a string value from Comment Variables config data taking into account the possible that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.
+ * Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.
  * @param {string} stringValue The encountered string value to be resolved.
  * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
  * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.

@@ -18,11 +18,11 @@ const data = {
       resolveComposedVariable:
         "Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE */,
       resolveConfigDataStringValue:
-        "Resolves a string value from Comment Variables config data taking into account the possible that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE */,
+        "Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE */,
       resolveConfigData:
-        "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA */,
+        "$COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA */,
       makeResolvedConfigData:
-        "Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
+        "$COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA */,
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
@@ -33,7 +33,7 @@ const data = {
       parentKeysOption:
         "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`)." /* $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION */,
       configPathA:
-        'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
+        'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATHA */ /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
       message:
         "The human-readable message of the error." /* $COMMENT#JSDOC#PARAMS#MESSAGE */,
       lintMessages:
@@ -61,7 +61,7 @@ const data = {
       callback:
         "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default." /* $COMMENT#JSDOC#PARAMS#CALLBACK */,
       configPathB:
-        "The absolute path of the config manually provided by you inside of your own codebase.",
+        "The absolute path of the config manually provided by you inside of your own codebase." /* $COMMENT#JSDOC#PARAMS#CONFIGPATHB */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -84,10 +84,16 @@ const data = {
         "The string value resolved as the relevant Comment Variable that it is." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE */,
       resolveConfigData:
         "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA */,
-      makeResolvedConfigData: "JSDOC#RETURNS#RESOLVECONFIGDATA",
+      makeResolvedConfigData:
+        "JSDOC#RETURNS#RESOLVECONFIGDATA" /* $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA */,
     }),
   }),
   forComposedVariables: Object.freeze({
+    pluginName: "plugin" /* $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME */,
+    ruleName: "rule" /* $COMMENT#FORCOMPOSEDVARIABLES#RULENAME */,
+    theNameOf: "The name of the" /* $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF */,
+    forFilteringPeriod:
+      "being used for filtering." /* $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD */,
     flattenedConfigDataB:
       "The flattened config data" /* $COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB */,
     aliases_flattenedKeys:
@@ -96,11 +102,11 @@ const data = {
       "The original config data" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB */,
     obtainedResolveConfig:
       "obtained from resolveConfig." /* $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG */,
-    pluginName: "plugin" /* $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME */,
-    ruleName: "rule" /* $COMMENT#FORCOMPOSEDVARIABLES#RULENAME */,
-    theNameOf: "The name of the" /* $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF */,
-    forFilteringPeriod:
-      "being used for filtering." /* $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD */,
+    recursivelyResolvesTo:
+      "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an" /* $COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO */,
+    createsThat: "Creates that" /* $COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT */,
+    objectConfigData:
+      "object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA */,
   }),
 };
 

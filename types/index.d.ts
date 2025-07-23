@@ -160,3 +160,19 @@ export const escapeRegex: (string: string) => string;
  * @returns The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace.
  */
 export const makeIsolatedStringRegex: (string: string) => RegExp;
+
+/**
+ * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
+ * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ */
+export const makeResolvedConfigData: (configPath: string) => Promise<
+  | {
+      type: "error" | "warning";
+      message: string;
+    }[]
+  | {
+      resolvedConfigData: Record<string, unknown>;
+      success: true;
+    }
+>;
