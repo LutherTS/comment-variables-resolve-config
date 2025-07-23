@@ -15,17 +15,25 @@ const data = {
         "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations." /* $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES */,
       reverseFlattenedConfigData:
         "Reverses the keys and the values of a flattened config data object." /* $COMMENT#JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA */,
+      resolveComposedVariable:
+        "Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE */,
+      resolveConfigDataStringValue:
+        "Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE */,
+      resolveConfigData:
+        "$COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA */,
+      makeResolvedConfigData:
+        "$COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA */,
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
-      configData:
-        "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#JSDOC#PARAMS#CONFIGDATA */,
+      configDataA:
+        "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAA */,
       configDataMapOption:
         "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`." /* $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION */,
       parentKeysOption:
         "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`)." /* $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION */,
-      configPath:
-        'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
+      configPathA:
+        'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATHA */ /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
       message:
         "The human-readable message of the error." /* $COMMENT#JSDOC#PARAMS#MESSAGE */,
       lintMessages:
@@ -38,8 +46,22 @@ const data = {
         "The additional options as follows:" /* $COMMENT#JSDOC#PARAMS#OPTIONS */,
       settings:
         "The required settings as follows:" /* $COMMENT#JSDOC#PARAMS#SETTINGS */,
-      flattenedConfigData:
-        "The provided flattened config data to be reversed." /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATA */,
+      flattenedConfigDataA:
+        "The provided flattened config data to be reversed." /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAA */,
+      composedVariable:
+        "The composed variable as is." /* $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLE */,
+      flattenedConfigDataB:
+        "$COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG" /* $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB */,
+      stringValue:
+        "The encountered string value to be resolved." /* $COMMENT#JSDOC#PARAMS#STRINGVALUE */,
+      aliases_flattenedKeys:
+        "$COMMENT#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG" /* $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS */,
+      configDataB:
+        "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAB */,
+      callback:
+        "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default." /* $COMMENT#JSDOC#PARAMS#CALLBACK */,
+      configPathB:
+        "The absolute path of the config manually provided by you inside of your own codebase." /* $COMMENT#JSDOC#PARAMS#CONFIGPATHB */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -56,6 +78,14 @@ const data = {
         "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each." /* $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES */,
       reverseFlattenedConfigData:
         "The reversed version of the provided config data." /* $COMMENT#JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA */,
+      resolveComposedVariable:
+        "The resolved composed variable as a single natural string." /* $COMMENT#JSDOC#RETURNS#RESOLVECOMPOSEDVARIABLE */,
+      resolveConfigDataStringValue:
+        "The string value resolved as the relevant Comment Variable that it is." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE */,
+      resolveConfigData:
+        "Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA */,
+      makeResolvedConfigData:
+        "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA */,
     }),
   }),
   forComposedVariables: Object.freeze({
@@ -64,6 +94,19 @@ const data = {
     theNameOf: "The name of the" /* $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF */,
     forFilteringPeriod:
       "being used for filtering." /* $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD */,
+    flattenedConfigDataB:
+      "The flattened config data" /* $COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB */,
+    aliases_flattenedKeys:
+      "The aliases-to-flattened-keys dictionary" /* $COMMENT#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS */,
+    configDataB:
+      "The original config data" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB */,
+    obtainedResolveConfig:
+      "obtained from resolveConfig." /* $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG */,
+    recursivelyResolvesTo:
+      "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an" /* $COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO */,
+    createsThat: "Creates that" /* $COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT */,
+    objectConfigData:
+      "object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA */,
   }),
 };
 
