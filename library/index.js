@@ -35,8 +35,11 @@ import {
 
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
+/* resolveConfig */
+
 /**
  * @typedef {import("../types/_commons/typedefs.js").ValueLocation} ValueLocation
+ * @typedef {import("../types/_commons/typedefs.js").ConfigData} ConfigData
  */
 
 /**
@@ -526,6 +529,128 @@ const resolveConfig = async (configPath) => {
   };
 };
 
+/* makeResolvedConfigData */
+
+/**
+ *
+ * @param {string} value
+ * @param {Record<string, string>} flattenedConfigData
+ * @returns
+ */
+const resolveComposedVariable = (value, flattenedConfigData) => {
+  const valueSegments = value.split(" ");
+  const resolvedSegments = valueSegments.map((e) => {
+    const segmentKey = e.replace(`${$COMMENT}#`, "");
+    return flattenedConfigData[segmentKey];
+  });
+  return resolvedSegments.join(" ");
+};
+
+/**
+ *
+ * @param {string} stringValue
+ * @param {Record<string, string>} aliases_flattenedKeys
+ * @param {Record<string, string>} flattenedConfigData
+ */
+const resolveConfigDataStringValue = (
+  stringValue,
+  aliases_flattenedKeys,
+  flattenedConfigData
+) => {
+  const keyThroughAlias = aliases_flattenedKeys?.[stringValue];
+  if (keyThroughAlias) {
+    // stringValue is an alias variable
+    const linkedValue = flattenedConfigData[keyThroughAlias];
+    // linkedValue is now either a composed variable or a comment variable
+    if (linkedValue.includes(`${$COMMENT}#`)) {
+      // linkedValue is a composed variable
+      return resolveComposedVariable(linkedValue, flattenedConfigData);
+    } else {
+      // linkedValue is a comment variable
+      return linkedValue;
+    }
+  } else if (stringValue.includes(`${$COMMENT}#`)) {
+    // stringValue is a composed variable
+    return resolveComposedVariable(stringValue, flattenedConfigData);
+  } else {
+    // stringValue is a comment variable
+    return stringValue;
+  }
+};
+
+/**
+ *
+ * @param {ConfigData} configData
+ * @param {Record<string, string>} aliases_flattenedKeys
+ * @param {Record<string, string>} flattenedConfigData
+ * @param {(value: string) => string} callback
+ */
+const resolveConfigData = (
+  configData,
+  aliases_flattenedKeys,
+  flattenedConfigData,
+  callback = (value) =>
+    resolveConfigDataStringValue(
+      value,
+      aliases_flattenedKeys,
+      flattenedConfigData
+    )
+) => {
+  /** @type {Record<string, unknown>} */
+  const results = {};
+
+  for (const key in configData) {
+    const value = configData[key];
+
+    if (typeof value === "string") {
+      results[key] = callback(value);
+    } else if (value && typeof value === "object" && !Array.isArray(value)) {
+      results[key] = resolveConfigData(
+        value,
+        aliases_flattenedKeys,
+        flattenedConfigData,
+        callback
+      );
+    } else {
+      return makeSuccessFalseTypeError(
+        `ERROR. Value "${value}" is supposed to be either a string or a nested object.`
+      );
+    }
+  }
+
+  return {
+    ...successTrue,
+    resolvedConfigData: results,
+  };
+};
+
+/**
+ *
+ * @param {string} configPath
+ */
+const makeResolvedConfigData = async (configPath) => {
+  const resolveConfigResults = await resolveConfig(configPath);
+  if (!resolveConfigResults.success) {
+    return resolveConfigResults.errors;
+  }
+
+  const { config, aliases_flattenedKeys, flattenedConfigData } =
+    resolveConfigResults;
+  /** @type {ConfigData} */
+  const configData = config.data;
+
+  const resolveConfigDataResults = resolveConfigData(
+    configData,
+    aliases_flattenedKeys,
+    flattenedConfigData
+  );
+  if (!resolveConfigDataResults.success) {
+    return resolveConfigDataResults.errors;
+  }
+
+  return resolveConfigDataResults.resolvedConfigData;
+};
+
 export default resolveConfig;
 
 export {
@@ -540,6 +665,7 @@ export {
   extractObjectStringLiteralValues,
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
+  makeResolvedConfigData,
 };
 
 export {
