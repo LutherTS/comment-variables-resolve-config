@@ -204,6 +204,17 @@ const resolveConfig = async (configPath) => {
       return makeSuccessFalseTypeError(
         `ERROR. The alias "${key}" can't be the alias of "${value}" because "${value}" is already an alias.`
       );
+    // checks if an alias variable's resolved value being a composed variable includes that alias as a segment
+    if (
+      flattenedKeys_originalsOnly[aliases_flattenedKeys[key]].includes(
+        `${$COMMENT}#${key}`
+      )
+    )
+      return makeSuccessFalseTypeError(
+        `ERROR. The alias "${key}" links to composed variable "${
+          flattenedKeys_originalsOnly[aliases_flattenedKeys[key]]
+        }" that includes its placeholder as a segment.`
+      );
   }
 
   // PASSED THIS STAGE, we're now clearly distinguishing:
@@ -281,7 +292,7 @@ const resolveConfig = async (configPath) => {
 
         if (resolvedValue.includes(`${$COMMENT}#`))
           return makeSuccessFalseTypeError(
-            `ERROR. A potential composed variable cannot be used as the comment variable of another composed variable.`
+            `ERROR. A potential composed variable cannot be used as a segment of another composed variable. (Value: "${resolvedValue}")`
           ); // works even with aliases of composed variables
       }
       // 7. now that it is secure, replace all keys by their values
