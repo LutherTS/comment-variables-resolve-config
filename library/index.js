@@ -634,9 +634,9 @@ const resolveConfigData = (
 /**
  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
  * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
- * @returns Just the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
-const makeResolvedConfigData = async (resolveConfigResultsSuccessTrue) => {
+const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
   const { config, aliases_flattenedKeys, flattenedConfigData } =
     resolveConfigResultsSuccessTrue;
   /** @type {ConfigData} */
@@ -663,44 +663,6 @@ const makeResolvedConfigData = async (resolveConfigResultsSuccessTrue) => {
     resolvedConfigData,
   };
 };
-
-// /**
-//  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
-//  * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
-//  * @returns Just the resolved config data if successful, or with `success: false` and errors if unsuccessful.
-//  */
-// const makeResolvedConfigData = async (configPath) => {
-//   const resolveConfigResults = await resolveConfig(configPath);
-//   if (!resolveConfigResults.success) {
-//     return resolveConfigResults;
-//   }
-
-//   const { config, aliases_flattenedKeys, flattenedConfigData } =
-//     resolveConfigResults;
-//   /** @type {ConfigData} */
-//   const configData = config.data;
-
-//   const resolveConfigDataResults = resolveConfigData(
-//     configData,
-//     flattenedConfigData,
-//     aliases_flattenedKeys
-//   );
-//   if (
-//     resolveConfigDataResults.success !== undefined &&
-//     resolveConfigDataResults.success === false
-//   ) {
-//     // ...So. If theoretically somebody calls one of their top keys success and sets if value to false, it would passes the test... But resolveConfig already ensures that all strings are actually strings or objects (not boolean), so we're good here.
-//     return /** @type {SuccessFalseWithErrors} */ (resolveConfigDataResults);
-//   }
-
-//   /** @type {Record<string, unknown>} */
-//   const resolvedConfigData = resolveConfigDataResults;
-
-//   return {
-//     ...successTrue,
-//     resolvedConfigData,
-//   };
-// };
 
 export default resolveConfig;
 

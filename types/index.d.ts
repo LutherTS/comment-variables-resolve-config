@@ -163,10 +163,26 @@ export const makeIsolatedStringRegex: (string: string) => RegExp;
 
 /**
  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
- * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
- * @returns Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.
+ * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
-export const makeResolvedConfigData: (configPath: string) => Promise<
+export const makeResolvedConfigData: (resolveConfigResultsSuccessTrue: {
+  success: true;
+  configPath: string;
+  passedIgnores: string[];
+  config: object;
+  rawConfigAndImportPaths: string[];
+  flattenedConfigData: Record<string, string>;
+  aliases_flattenedKeys: Record<string, string>;
+  reversedFlattenedConfigData: {
+    [k: string]: string;
+  };
+  keys_valueLocations: {
+    [k: string]: ValueLocation;
+  };
+  nonAliasesKeys_valueLocations: Record<string, ValueLocation>;
+  aliasesKeys_valueLocations: Record<string, ValueLocation>;
+}) =>
   | {
       success: false;
       errors: Array<{
@@ -175,7 +191,6 @@ export const makeResolvedConfigData: (configPath: string) => Promise<
       }>;
     }
   | {
-      resolvedConfigData: Record<string, unknown>;
       success: true;
-    }
->;
+      resolvedConfigData: Record<string, unknown>;
+    };
