@@ -509,7 +509,7 @@ const resolveConfig = async (configPath) => {
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...successTrue,
-    configPath, // finalized
+    configPath, // finalized and absolute
     passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
     rawConfigAndImportPaths, // NEW and now in resolveConfig
