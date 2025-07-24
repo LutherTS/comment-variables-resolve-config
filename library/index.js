@@ -41,7 +41,10 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  * @typedef {import("../types/_commons/typedefs.js").ValueLocation} ValueLocation
  * @typedef {import("../types/_commons/typedefs.js").ConfigData} ConfigData
  * @typedef {import("../types/_commons/typedefs.js").SuccessFalseWithErrors} SuccessFalseWithErrors
+ * @typedef {import("../types/_commons/typedefs.js").ResolveConfigResultsSuccessTrue} ResolveConfigResultsSuccessTrue
  */
+
+// ResolveConfigResultsSuccessTrue
 
 /**
  * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
@@ -368,11 +371,6 @@ const resolveConfig = async (configPath) => {
   /** @type {Array<string} */
   const allObjectStringValues = []; // aliases, and composed variables excluded
 
-  // // making a set out of flattenedKeys_originalsOnly__valuesArray for faster lookups
-  // const flattenedKeys_originalsOnly__valuesSet = new Set(
-  //   flattenedKeys_originalsOnly__valuesArray
-  // );
-
   for (const extract of extracts) {
     const value = extract.value;
 
@@ -381,18 +379,13 @@ const resolveConfig = async (configPath) => {
 
     // with aliases excluded we can now focus on originals only
 
-    // REMOVING THIS ALLOWS FOR OVERRIDDEN VALUES TO STILL SHOW UP IN values_valueLocations__map
-    // if (flattenedKeys_originalsOnly__valuesSet.has(value)) {
-
-    // basically you can have duplicate object string literal values as long as they are not the values from the original flattened config data (which includes composed variables) // NOT ANYMORE. Current rationale all duplicate unused object string literal values should be turned into template literal values in the fight against silent JavaScript object value overrides
+    // Current rationale is all duplicate unused object string literal values should be turned into template literal values in the fight against silent JavaScript object value overrides.
     if (!values_valueLocations__map.has(value)) {
       values_valueLocations__map.set(value, extract);
       if (!value.includes(`${$COMMENT}#`))
         // ignoring composed variables
         allObjectStringValues.push(value); // tracks potential original value overrides from legal JavaScript object value overrides
     } else values_valueLocations__duplicateValuesArray.push({ value: extract });
-
-    // }
   }
 
   // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`.
@@ -516,7 +509,7 @@ const resolveConfig = async (configPath) => {
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...successTrue,
-    configPath, // finalized
+    configPath, // finalized and absolute
     passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
     rawConfigAndImportPaths, // NEW and now in resolveConfig
@@ -640,17 +633,12 @@ const resolveConfigData = (
 
 /**
  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
- * @param {string} configPath The absolute path of the config manually provided by you inside of your own codebase.
- * @returns Just the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
-const makeResolvedConfigData = async (configPath) => {
-  const resolveConfigResults = await resolveConfig(configPath);
-  if (!resolveConfigResults.success) {
-    return resolveConfigResults;
-  }
-
+const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
   const { config, aliases_flattenedKeys, flattenedConfigData } =
-    resolveConfigResults;
+    resolveConfigResultsSuccessTrue;
   /** @type {ConfigData} */
   const configData = config.data;
 

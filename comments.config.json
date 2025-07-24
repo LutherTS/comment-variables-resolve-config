@@ -1,0 +1,64 @@
+{
+  "jsDoc": {
+    "definitions": {
+      "escapeRegex": "Escapes all regex characters with a `\"\\\"` in a string to prepare it for use in a regex.",
+      "makeIsolatedStringRegex": "Makes a global regex for a given string that ensures it is surrounded by whitespace.",
+      "flattenConfigData": "Flattens the config's data property into a one-dimensional object of $COMMENT-*-like keys and string values.",
+      "resolveConfig": "Verifies, validates and resolves the config path to retrieve the config's data and ignores.",
+      "makeSuccessFalseTypeError": "Makes a `{success: false}` object with a single error in its errors array of `{type: \"error\"}` based on the message it is meant to display.",
+      "extractValueLocationsFromLintMessages": "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.",
+      "reverseFlattenedConfigData": "Reverses the keys and the values of a flattened config data object.",
+      "resolveComposedVariable": "Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.",
+      "resolveConfigDataStringValue": "Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.",
+      "resolveConfigData": "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
+      "makeResolvedConfigData": "Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved."
+    },
+    "params": {
+      "string": "The string.",
+      "configData": "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)",
+      "configDataMapOption": "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.",
+      "parentKeysOption": "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).",
+      "configPathA": "The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `\"commentVariables.config\": true` in `.vscode/settings.json` for the VS Code extension.",
+      "message": "The human-readable message of the error.",
+      "lintMessages": "The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.",
+      "pluginName": "The name of the plugin being used for filtering.",
+      "ruleName": "The name of the rule being used for filtering.",
+      "options": "The additional options as follows:",
+      "settings": "The required settings as follows:",
+      "flattenedConfigDataA": "The provided flattened config data to be reversed.",
+      "composedVariable": "The composed variable as is.",
+      "flattenedConfigDataB": "The flattened config data obtained from resolveConfig.",
+      "stringValue": "The encountered string value to be resolved.",
+      "aliases_flattenedKeys": "The aliases-to-flattened-keys dictionary obtained from resolveConfig.",
+      "configDataB": "The original config data obtained from resolveConfig.",
+      "callback": "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.",
+      "resolveConfigResultsSuccessTrue": "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed."
+    },
+    "returns": {
+      "escapeRegex": "The string with regex characters escaped.",
+      "makeIsolatedStringRegex": "The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace.",
+      "flattenConfigData": "Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).",
+      "resolveConfig": "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.",
+      "makeSuccessFalseTypeError": "A `{success: false}` object with a single error in its error array of `{type: \"error\"}`.",
+      "extractValueLocationsFromLintMessages": "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.",
+      "reverseFlattenedConfigData": "The reversed version of the provided config data.",
+      "resolveComposedVariable": "The resolved composed variable as a single natural string.",
+      "resolveConfigDataStringValue": "The string value resolved as the relevant Comment Variable that it is.",
+      "resolveConfigData": "Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.",
+      "makeResolvedConfigData": "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful."
+    }
+  },
+  "forComposedVariables": {
+    "pluginName": "plugin",
+    "ruleName": "rule",
+    "theNameOf": "The name of the",
+    "forFilteringPeriod": "being used for filtering.",
+    "flattenedConfigDataB": "The flattened config data",
+    "aliases_flattenedKeys": "The aliases-to-flattened-keys dictionary",
+    "configDataB": "The original config data",
+    "obtainedResolveConfig": "obtained from resolveConfig.",
+    "recursivelyResolvesTo": "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an",
+    "createsThat": "Creates that",
+    "objectConfigData": "object with the same keys and the same shape as the original config data now with all string values entirely resolved."
+  }
+}

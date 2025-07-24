@@ -26,8 +26,8 @@ const data = {
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
-      configDataA:
-        "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAA */,
+      configData:
+        "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#JSDOC#PARAMS#CONFIGDATA */,
       configDataMapOption:
         "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`." /* $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION */,
       parentKeysOption:
@@ -60,8 +60,8 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAB */,
       callback:
         "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default." /* $COMMENT#JSDOC#PARAMS#CALLBACK */,
-      configPathB:
-        "The absolute path of the config manually provided by you inside of your own codebase." /* $COMMENT#JSDOC#PARAMS#CONFIGPATHB */,
+      resolveConfigResultsSuccessTrue:
+        "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed." /* $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE */,
     }),
     returns: Object.freeze({
       escapeRegex:

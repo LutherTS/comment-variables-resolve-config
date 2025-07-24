@@ -57,4 +57,24 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
  * }} SuccessFalseWithErrors
  */
 
+/**
+ * @typedef {{
+ *   success: true;
+ *   configPath: string;
+ *   passedIgnores: string[];
+ *   config: object;
+ *   rawConfigAndImportPaths: string[];
+ *   flattenedConfigData: Record<string, string>;
+ *   aliases_flattenedKeys: Record<string, string>;
+ *   reversedFlattenedConfigData: {
+ *     [k: string]: string;
+ *   };
+ *   keys_valueLocations: {
+ *     [k: string]: ValueLocation;
+ *   };
+ *   nonAliasesKeys_valueLocations: Record<string, ValueLocation>;
+ *   aliasesKeys_valueLocations: Record<string, ValueLocation>;
+ * }} ResolveConfigResultsSuccessTrue
+ */
+
 export {}; // Makes the file a module.
