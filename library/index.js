@@ -19,6 +19,10 @@ import {
   flattenedConfigKeyRegex,
   flattenedConfigPlaceholderLocalRegex,
 } from "./_commons/constants/regexes.js";
+import {
+  ConfigDataSchema,
+  ConfigIgnoresSchema,
+} from "./_commons/constants/schemas.js";
 
 import {
   makeSuccessFalseTypeError,
@@ -27,11 +31,6 @@ import {
 } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 import { freshImport } from "./_commons/utilities/fresh-import-a.js";
-
-import {
-  ConfigDataSchema,
-  ConfigIgnoresSchema,
-} from "./_commons/constants/schemas.js";
 
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
@@ -44,15 +43,13 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  * @typedef {import("../types/_commons/typedefs.js").ResolveConfigResultsSuccessTrue} ResolveConfigResultsSuccessTrue
  */
 
-// ResolveConfigResultsSuccessTrue
-
 /**
- * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
- * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
- * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
+ * @param {string} configPath $COMMENT#JSDOC#PARAMS#CONFIGPATHA
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
  */
 const resolveConfig = async (configPath) => {
-  // Step 1a: Checks if config file exists
+  // Step 1a: Checks if config file exists.
 
   if (!fs.existsSync(configPath)) {
     return makeSuccessFalseTypeError(
@@ -60,7 +57,7 @@ const resolveConfig = async (configPath) => {
     );
   }
 
-  // Step 1b: Checks if config file is JavaScript file
+  // Step 1b: Checks if config file is JavaScript file (.js only).
 
   const configExtension = path.extname(configPath);
   if (configExtension !== ".js") {
@@ -69,7 +66,7 @@ const resolveConfig = async (configPath) => {
     );
   }
 
-  // Step 2: Acquires the config
+  // Step 2: Acquires the config.
 
   const configModule = await freshImport(configPath);
   if (configModule === null)
@@ -79,7 +76,7 @@ const resolveConfig = async (configPath) => {
 
   const config = configModule.default;
 
-  // Step 3: Validates config object
+  // Step 3: Validates config object.
 
   // validates config
   if (!config || typeof config !== "object" || Array.isArray(config)) {
@@ -145,7 +142,7 @@ const resolveConfig = async (configPath) => {
 
   const { configDataMap } = flattenedConfigDataResults;
 
-  // ALL flattenConfigData VERIFICATIONS SHOULD BE MADE HERE, OUTSIDE THE RECURSION
+  // ALL flattenConfigData VERIFICATIONS SHOULD BE MADE HERE, OUTSIDE THE RECURSION.
 
   // strips metadata
   /**@type {Map<string, string>} */
@@ -162,15 +159,20 @@ const resolveConfig = async (configPath) => {
   // The integrity of the flattened config data needs to be established before working with it safely.
 
   // Aliases logic:
-  // - instead of returning an error because an existing flattened key is in the value...
+  // instead of returning an error because an existing flattened key is in the values...
   /** @type {Record<string, string>} */
   const aliases_flattenedKeys = {};
   /** @type {Record<string, string>} */
   const flattenedKeys_originalsOnly = {};
-  for (const [key, value] of Object.entries(originalFlattenedConfigData)) {
+
+  const originalFlattenedConfigData__EntriesArray = Object.entries(
+    originalFlattenedConfigData
+  );
+
+  for (const [key, value] of originalFlattenedConfigData__EntriesArray) {
     // ...in aliases_flattenedKeys...
     if (originalFlattenedConfigData[value]) {
-      // ...the pair is now an alias... // checked
+      // ...the pair is now an alias...
       aliases_flattenedKeys[key] = value;
 
       continue;
@@ -187,7 +189,11 @@ const resolveConfig = async (configPath) => {
     }
   }
 
-  for (const [key, value] of Object.entries(aliases_flattenedKeys)) {
+  const aliases_flattenedKeys__EntriesArray = Object.entries(
+    aliases_flattenedKeys
+  );
+
+  for (const [key, value] of aliases_flattenedKeys__EntriesArray) {
     // checkes that no alias is its own key/alias
     if (aliases_flattenedKeys[key] === key)
       return makeSuccessFalseTypeError(
@@ -204,7 +210,7 @@ const resolveConfig = async (configPath) => {
   // - originalFlattenedConfigData, which is the untreated raw config data
   // - aliases_flattenedKeys, which is only the aliases
   // - flattenedKeys_originalsOnly, which is only the originals
-  // Do also keep in mind that aliases are in an object of their own, so there aren't affecting duplicate checks, especially since raw duplication is already addressed with flattenConfigData.
+  // Do also keep in mind that aliases are in an object of their own, so they aren't affecting duplicate checks, especially since raw duplication is already addressed with flattenConfigData.
 
   const flattenedKeys_originalsOnly__valuesArray = Object.values(
     flattenedKeys_originalsOnly
@@ -225,7 +231,7 @@ const resolveConfig = async (configPath) => {
   }
 
   // It is AFTER duplication has been checked on values that we can safely consider handling composed variables.
-  // To do so, we'll go through flattenedKeys_originalsOnly and then create flattenedConfigData, the true final one, that checks each Object.entries sur flattenedKeys_originalsOnly.
+  // To do so, we'll go through flattenedKeys_originalsOnly and then create flattenedConfigData, the true final one, that checks each Object.entries on flattenedKeys_originalsOnly.
 
   /** @type {Record<string, string>} */
   const flattenedConfigData = {};
@@ -245,12 +251,12 @@ const resolveConfig = async (configPath) => {
         );
       // 2. separate the value by a space
       const valueSegments = value.split(" ");
-      // 3. check if the array of value segments is >= 2 (a single comment variable will create a duplicate, so duplicate value behavior is only reserved for aliases via the actual original key as value) // The thing about this system is, we address the parts where values are keys or placeholders, by respectively making them aliases (keys as values are aliases) and composed variables instead (placeholders, composed, as values are composed variables).
+      // 3. check if the array of value segments is >= 2 (a single comment variable will create a duplicate, so duplicate value behavior is only reserved for aliases via the actual original key as value) // The thing about this system is, we address the parts where values are keys or placeholders, by respectively making them alias variables (keys as values are aliases) and composed variables instead (placeholders, composed, as values are composed variables).
       if (valueSegments.length < 2)
         return makeSuccessFalseTypeError(
           `ERROR. A composed variable needs at least two comment variables separated by a single space in order to be a composed variable, which the value "${value}" does not.`
         );
-      // 4. check if all separated pass flattenedConfigPlaceholderLocalRegex
+      // 4. check if all segments pass flattenedConfigPlaceholderLocalRegex
       for (const valueSegment of valueSegments) {
         if (!flattenedConfigPlaceholderLocalRegex.test(valueSegment)) {
           return makeSuccessFalseTypeError(
@@ -258,7 +264,7 @@ const resolveConfig = async (configPath) => {
           );
         }
       }
-      // 5. remove $COMMENT# from all separated
+      // 5. remove $COMMENT# from all segments
       const keySegments = valueSegments.map((e) =>
         e.replace(`${$COMMENT}#`, "")
       );
@@ -297,8 +303,10 @@ const resolveConfig = async (configPath) => {
   /** @type {Set<string>} */
   const flattenedConfigDataDuplicateChecksSet = new Set();
 
+  const flattenedConfigData__ValuesArray = Object.values(flattenedConfigData);
+
   // now that composed variables have created new values ...
-  for (const value of Object.values(flattenedConfigData)) {
+  for (const value of flattenedConfigData__ValuesArray) {
     // ... checks that no two final values are duplicate
     if (flattenedConfigDataDuplicateChecksSet.has(value)) {
       return makeSuccessFalseTypeError(
@@ -322,9 +330,8 @@ const resolveConfig = async (configPath) => {
   //   reversedFlattenedConfigData
   // );
 
-  /* NEW!!! */
-  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI needs to be used with extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
-  // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but here because it's ignored it actually shows me all references outside the ignored files.
+  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI oughts to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
+  // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
   const findAllImportsResults = findAllImports(configPath);
   if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
@@ -382,25 +389,21 @@ const resolveConfig = async (configPath) => {
     // Current rationale is all duplicate unused object string literal values should be turned into template literal values in the fight against silent JavaScript object value overrides.
     if (!values_valueLocations__map.has(value)) {
       values_valueLocations__map.set(value, extract);
-      if (!value.includes(`${$COMMENT}#`))
-        // ignoring composed variables
-        allObjectStringValues.push(value); // tracks potential original value overrides from legal JavaScript object value overrides
+      // ignoring composed variables
+      if (!value.includes(`${$COMMENT}#`)) allObjectStringValues.push(value); // tracks potential original value overrides from legal JavaScript object value overrides
     } else values_valueLocations__duplicateValuesArray.push({ value: extract });
   }
 
-  // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`.
+  // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`. (The full lists are actually valuable in that they can mention the numbers of errors that need to be fixed.)
 
   // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
   if (values_valueLocations__duplicateValuesArray.length !== 0) {
-    // return makeSuccessFalseTypeError(
-    //   `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. More on that in a later release. (If you really need two keys to have the same value, we're introducing aliases.)` // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
-    // );
     return {
       ...successFalse,
       errors: [
         {
           ...typeError,
-          message: `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction. (If you really need two keys to have the same value, we're introducing aliases.)`, // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
+          message: `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction.`, // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
         },
         {
           ...typeError,
@@ -426,9 +429,6 @@ const resolveConfig = async (configPath) => {
 
   // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
   if (unrecognizedValuesSet.size !== 0) {
-    // return makeSuccessFalseTypeError(
-    //   `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level. More on that in a later release.` // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
-    // );
     return {
       ...successFalse,
       errors: [
@@ -449,7 +449,7 @@ const resolveConfig = async (configPath) => {
   // Now to catch actual duplicate keys that silently override.
 
   const flattenedConfigData__ValuesSet = new Set(
-    Object.values(flattenedConfigData)
+    flattenedConfigData__ValuesArray
   );
   /** @type {Array<string} */
   const overriddenObjectStringValues = [];
@@ -460,9 +460,6 @@ const resolveConfig = async (configPath) => {
   }
 
   if (overriddenObjectStringValues.length !== 0) {
-    // return makeSuccessFalseTypeError(
-    //   `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data through legal JavaScript object value overrides. This is likely to be unintentional. More on that in a later release.` // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
-    // );
     return {
       ...successFalse,
       errors: [
@@ -490,7 +487,7 @@ const resolveConfig = async (configPath) => {
   /** @type {Record<string, ValueLocation>} */
   const aliasesKeys_valueLocations = {}; // expected duplicate ValueLocation objects
 
-  for (const [key, value] of Object.entries(aliases_flattenedKeys)) {
+  for (const [key, value] of aliases_flattenedKeys__EntriesArray) {
     aliasesKeys_valueLocations[key] = nonAliasesKeys_valueLocations[value];
   }
 
@@ -512,12 +509,12 @@ const resolveConfig = async (configPath) => {
     configPath, // finalized and absolute
     passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
     config, // and the config itself too
-    rawConfigAndImportPaths, // NEW and now in resolveConfig
-    originalFlattenedConfigData, // BRAND NEW for jscomments placeholders
+    rawConfigAndImportPaths, // now in resolveConfig
+    originalFlattenedConfigData, // for jscomments placeholders
     aliases_flattenedKeys,
     flattenedConfigData,
     reversedFlattenedConfigData,
-    keys_valueLocations, // NEW (formerly valueLocations)
+    keys_valueLocations, // (formerly valueLocations)
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
   };
@@ -526,11 +523,11 @@ const resolveConfig = async (configPath) => {
 /* makeResolvedConfigData */
 
 /**
- * Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
- * @param {string} composedVariable The composed variable as is.
- * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
- * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
- * @returns The resolved composed variable as a single natural string.
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE
+ * @param {string} composedVariable $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLE
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
+ * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVECOMPOSEDVARIABLE
  */
 const resolveComposedVariable = (
   composedVariable,
@@ -547,11 +544,11 @@ const resolveComposedVariable = (
 };
 
 /**
- * Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.
- * @param {string} stringValue The encountered string value to be resolved.
- * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
- * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
- * @returns The string value resolved as the relevant Comment Variable that it is.
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE
+ * @param {string} stringValue $COMMENT#JSDOC#PARAMS#STRINGVALUE
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
+ * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE
  */
 const resolveConfigDataStringValue = (
   stringValue,
@@ -588,12 +585,12 @@ const resolveConfigDataStringValue = (
 };
 
 /**
- * Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.
- * @param {ConfigData} configData The original config data obtained from resolveConfig.
- * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
- * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
- * @param {(value: string) => string} callback The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.
- * @returns Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA
+ * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAB
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
+ * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
+ * @param {(value: string) => string} callback $COMMENT#JSDOC#PARAMS#CALLBACK
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA
  */
 const resolveConfigData = (
   configData,
@@ -632,9 +629,9 @@ const resolveConfigData = (
 };
 
 /**
- * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
- * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
- * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
+ * $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA
+ * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE
+ * @returns $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA
  */
 const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
   const { config, aliases_flattenedKeys, flattenedConfigData } =

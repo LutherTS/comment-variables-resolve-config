@@ -11,7 +11,8 @@
       "resolveComposedVariable": "Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.",
       "resolveConfigDataStringValue": "Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.",
       "resolveConfigData": "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
-      "makeResolvedConfigData": "Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved."
+      "makeResolvedConfigData": "Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
+      "freshImport": "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility."
     },
     "params": {
       "string": "The string.",
@@ -32,7 +33,8 @@
       "aliases_flattenedKeys": "The aliases-to-flattened-keys dictionary obtained from resolveConfig.",
       "configDataB": "The original config data obtained from resolveConfig.",
       "callback": "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.",
-      "resolveConfigResultsSuccessTrue": "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed."
+      "resolveConfigResultsSuccessTrue": "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.",
+      "moduleUrl": "The absolute path of the module to import."
     },
     "returns": {
       "escapeRegex": "The string with regex characters escaped.",
@@ -45,7 +47,14 @@
       "resolveComposedVariable": "The resolved composed variable as a single natural string.",
       "resolveConfigDataStringValue": "The string value resolved as the relevant Comment Variable that it is.",
       "resolveConfigData": "Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.",
-      "makeResolvedConfigData": "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful."
+      "makeResolvedConfigData": "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.",
+      "freshImport": "Either an object with its `default` property sets to the default export of the module successfully loaded or `null` when an error arises. (Debugging is currently manual by looking at the error being caught in the child process.)"
+    },
+    "constants": {
+      "configKeyRegex": "Ensures keys should only include lowercase letters (`Ll`), uppercase letters (`Lu`), other letters (`Lo`), dash punctuation (`Pd`), connector punctuation (`Pc`), numbers (`N`) and whitespaces (`s`).",
+      "flattenedConfigKeyRegex": "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), without whitespaces (`\\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together).",
+      "flattenedConfigPlaceholderLocalRegex": "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces.",
+      "flattenedConfigPlaceholderGlobalRegex": "Same as `flattenedConfigPlaceholderLocalRegex` but globally."
     }
   },
   "forComposedVariables": {
