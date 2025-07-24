@@ -38,7 +38,6 @@ const rule = {
                 type: "object",
                 additionalProperties: { type: "string" },
               },
-              // NEW PROPERTY
               aliases_flattenedKeys: {
                 type: "object",
                 additionalProperties: { type: "string" },
@@ -48,7 +47,6 @@ const rule = {
               "composedValues_originalKeys",
               "aliasValues_originalKeys",
               "regularValuesOnly_originalKeys",
-              // NEW PROPERTY
               "aliases_flattenedKeys",
             ],
             additionalProperties: false,
@@ -58,25 +56,25 @@ const rule = {
         default: {},
         oneOf: [
           {
-            // Neither (empty options)
+            // neither (empty options)
             properties: {
               composedVariablesOnly: { not: {} },
               makePlaceholders: { not: {} },
             },
           },
           {
-            // Only composedVariablesOnly (true or false)
+            // only composedVariablesOnly (true or false)
             properties: {
               composedVariablesOnly: { type: "boolean" },
-              makePlaceholders: { not: {} }, // Must be undefined/missing
+              makePlaceholders: { not: {} }, // must be undefined/missing
             },
             required: ["composedVariablesOnly"],
           },
           {
-            // Only makePlaceholders
+            // only makePlaceholders
             properties: {
               makePlaceholders: { type: "object" },
-              composedVariablesOnly: { not: {} }, // Must be undefined/missing
+              composedVariablesOnly: { not: {} }, // must be undefined/missing
             },
             required: ["makePlaceholders"],
           },

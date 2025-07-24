@@ -63,6 +63,26 @@ declare const resolveConfig: (configPath: string) => Promise<
 
 export default resolveConfig;
 
+export const defaultConfigFileName: "comments.config.js";
+export const commentVariablesPluginName: "comment-variables";
+export const extractRuleName: "extract-object-string-literal-values";
+export const placeholderMessageId: "placeholderMessageId";
+export const placeholderDataId: "placeholderDataId";
+export const configFlag: "--config";
+export const lintConfigImportsFlag: "--lint-config-imports";
+export const myIgnoresOnlyFlag: "--my-ignores-only";
+export const $COMMENT: "$COMMENT";
+
+export const knownIgnores: [
+  "node_modules",
+  "dist",
+  "out",
+  ".next",
+  ".react-router",
+  ".parcel-cache",
+  ".react-router-parcel"
+];
+
 export const successFalse: Readonly<{
   success: false;
 }>;
@@ -76,24 +96,6 @@ export const typeWarning: Readonly<{
   type: "warning";
 }>;
 
-export const defaultConfigFileName: "comments.config.js";
-export const commentVariablesPluginName: "comment-variables";
-export const extractRuleName: "extract-object-string-literal-values";
-export const placeholderMessageId: "placeholderMessageId";
-export const placeholderDataId: "placeholderDataId";
-export const configFlag: "--config";
-export const lintConfigImportsFlag: "--lint-config-imports";
-export const myIgnoresOnlyFlag: "--my-ignores-only";
-export const $COMMENT: "$COMMENT";
-export const knownIgnores: [
-  "node_modules",
-  "dist",
-  "out",
-  ".next",
-  ".react-router",
-  ".parcel-cache",
-  ".react-router-parcel"
-];
 export const typeScriptAndJSXCompatible: {
   parser: TSESLintParser;
   parserOptions: {
@@ -106,15 +108,34 @@ export const typeScriptAndJSXCompatible: {
 export const extractObjectStringLiteralValues: TSESLint.RuleModule<
   typeof placeholderMessageId,
   [
-    {
-      composedVariablesOnly?: boolean;
-    }
-  ]
+    | {
+        composedVariablesOnly?: false;
+        makePlaceholders?: undefined;
+      }
+    | {
+        composedVariablesOnly: true;
+        makePlaceholders?: never;
+      }
+    | {
+        composedVariablesOnly?: false;
+        makePlaceholders: {
+          composedValues_originalKeys: Record<string, string>;
+          aliasValues_originalKeys: Record<string, string>;
+          regularValuesOnly_originalKeys: Record<string, string>;
+          aliases_flattenedKeys: Record<string, string>;
+        };
+      }
+  ],
+  unknown
 >;
 
+/** Ensures keys should only include lowercase letters (`Ll`), uppercase letters (`Lu`), other letters (`Lo`), dash punctuation (`Pd`), connector punctuation (`Pc`), numbers (`N`) and whitespaces (`s`). */
 export const configKeyRegex: RegExp;
+/** Same as `configKeyRegex` but without lowercase letters (`\p{Ll}`), without whitespaces (`\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together). */
 export const flattenedConfigKeyRegex: RegExp;
+/** Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `*  in the capture group, and using `_` as replacement for whitespaces. */
 export const flattenedConfigPlaceholderLocalRegex: RegExp;
+/** Same as `flattenedConfigPlaceholderLocalRegex` but globally. */
 export const flattenedConfigPlaceholderGlobalRegex: RegExp;
 
 /**
