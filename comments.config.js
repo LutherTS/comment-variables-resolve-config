@@ -62,6 +62,8 @@ const data = {
         "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default." /* $COMMENT#JSDOC#PARAMS#CALLBACK */,
       configPathB:
         "The absolute path of the config manually provided by you inside of your own codebase." /* $COMMENT#JSDOC#PARAMS#CONFIGPATHB */,
+      resolveConfigResultsSuccessTrue:
+        "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.",
     }),
     returns: Object.freeze({
       escapeRegex:
