@@ -112,7 +112,7 @@ const data = {
       flattenedConfigKeyRegex:
         "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), without whitespaces (`\\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together)." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX */,
       flattenedConfigPlaceholderLocalRegex:
-        "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$$` in the capture group, and using `_` as replacement for whitespaces." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX */,
+        "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX */,
       flattenedConfigPlaceholderGlobalRegex:
         "Same as `flattenedConfigPlaceholderLocalRegex` but globally." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX */,
     }),
