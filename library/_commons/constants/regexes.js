@@ -9,7 +9,7 @@ export const configKeyRegex = /^[\p{Ll}\p{Lu}\p{Lo}\p{Pd}\p{Pc}\p{N}\s]+$/u;
 export const flattenedConfigKeyRegex =
   /^(?!#)[\p{Lu}\p{Lo}\p{Pd}\p{Pc}\p{N}#]+$/u;
 
-/** Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `*  in the capture group, and using `_` as replacement for whitespaces. */
+/** Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces. */
 export const flattenedConfigPlaceholderLocalRegex = new RegExp(
   `${escapeRegex($COMMENT)}#(?!#)([\\p{Lu}\\p{Lo}\\p{Pd}\\p{Pc}\\p{N}#_]+)`,
   "u"

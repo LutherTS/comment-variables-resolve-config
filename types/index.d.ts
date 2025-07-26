@@ -133,7 +133,7 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
 export const configKeyRegex: RegExp;
 /** Same as `configKeyRegex` but without lowercase letters (`\p{Ll}`), without whitespaces (`\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together). */
 export const flattenedConfigKeyRegex: RegExp;
-/** Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `*  in the capture group, and using `_` as replacement for whitespaces. */
+/** Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces. */
 export const flattenedConfigPlaceholderLocalRegex: RegExp;
 /** Same as `flattenedConfigPlaceholderLocalRegex` but globally. */
 export const flattenedConfigPlaceholderGlobalRegex: RegExp;
