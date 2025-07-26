@@ -77,4 +77,8 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
  * }} ResolveConfigResultsSuccessTrue
  */
 
+/**
+ * @typedef {Set<"value" | "key" | "placeholder">} ForbiddenKeyNamesSet
+ */
+
 export {}; // Makes the file a module.

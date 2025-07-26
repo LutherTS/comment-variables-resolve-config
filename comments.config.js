@@ -25,6 +25,10 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA */,
       freshImport:
         "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility." /* $COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT */,
+      transformResolvedConfigData:
+        "Transforms resolved config data with keys and placeholders alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
+      makeNormalizedKey:
+        "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
@@ -66,6 +70,11 @@ const data = {
         "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed." /* $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE */,
       moduleUrl:
         "The absolute path of the module to import." /* $COMMENT#JSDOC#PARAMS#MODULEURL */,
+      resolvedConfigData:
+        "The resolved config data." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATA */,
+      parentKeys:
+        "JSDOC#PARAMS#PARENTKEYSOPTION" /* $COMMENT#JSDOC#PARAMS#PARENTKEYS */,
+      keys: "The list of keys at hand in order of traversal." /* $COMMENT#JSDOC#PARAMS#KEYS */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -92,6 +101,10 @@ const data = {
         "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful." /* $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA */,
       freshImport:
         "Either an object with its `default` property sets to the default export of the module successfully loaded or `null` when an error arises. (Debugging is currently manual by looking at the error being caught in the child process.)" /* $COMMENT#JSDOC#RETURNS#FRESHIMPORT */,
+      transformResolvedConfigData:
+        "The transformed resolved config data with keys and placeholders readily accessible alongside values." /* $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA */,
+      makeNormalizedKey:
+        "The normalized key of a Comment Variable." /* $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
     }),
     constants: Object.freeze({
       configKeyRegex:
