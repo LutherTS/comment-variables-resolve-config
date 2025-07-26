@@ -273,7 +273,7 @@
         "placeholder": "$COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX"
       },
       "flattenedConfigPlaceholderLocalRegex": {
-        "value": "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces.",
+        "value": "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$$` in the capture group, and using `_` as replacement for whitespaces.",
         "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX",
         "placeholder": "$COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX"
       },
