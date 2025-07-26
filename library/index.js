@@ -640,6 +640,42 @@ const resolveConfigData = (
 };
 
 /**
+ * Transforms resolved config data with keys and placeholders alongside values.
+ * @param {Record<string, unknown>} resolvedConfigData
+ * @param {string[]} normalizedParentKeys
+ * @returns The transformed resolved config data keys and placeholders readily accessible alongside values.
+ */
+const transformResolvedConfigData = (
+  resolvedConfigData,
+  normalizedParentKeys = []
+) => {
+  /** @type {Record<string, unknown>} */
+  const results = {};
+
+  for (const [k, v] of Object.entries(resolvedConfigData)) {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      // If it's an object, recurse.
+      results[k] = transformResolvedConfigData(v, [
+        ...normalizedParentKeys,
+        k.toUpperCase(), // normalizing
+      ]);
+    } else {
+      // If it's a primitive value, transform it.
+      results[k] = {
+        value: v,
+        key: [
+          ...normalizedParentKeys,
+          k.toUpperCase(), // normalizing
+        ].join("#"),
+        placeholder: `${$COMMENT}#${key}`,
+      };
+    }
+  }
+
+  return results;
+};
+
+/**
  * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
  * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
  * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
@@ -665,10 +701,13 @@ const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
 
   /** @type {Record<string, unknown>} */
   const resolvedConfigData = resolveConfigDataResults;
+  const transformedResolvedConfigData = transformResolvedConfigData(
+    resolveConfigDataResults
+  );
 
   return {
     ...successTrue,
-    resolvedConfigData,
+    resolvedConfigData: transformedResolvedConfigData,
   };
 };
 
