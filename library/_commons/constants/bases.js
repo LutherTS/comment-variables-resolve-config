@@ -1,5 +1,9 @@
 import tseslint from "typescript-eslint";
 
+/**
+ * @typedef {import("../../../types/_commons/typedefs.js").ForbiddenKeyNamesSet} ForbiddenKeyNamesSet
+ */
+
 // comments.config.js
 export const defaultConfigFileName = "comments.config.js";
 
@@ -63,3 +67,7 @@ export const placeholderDataId = "placeholderDataId";
 
 // process environments
 export const MODULE_TO_LOAD = "MODULE_TO_LOAD";
+
+// forbidden names for config data keys
+/** @type {ForbiddenKeyNamesSet>} */
+export const forbiddenKeyNamesSet = new Set(["value", "key", "placeholder"]);

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { forbiddenKeyNamesSet } from "./bases.js";
 import { configKeyRegex } from "./regexes.js";
 
 // Think about doing it with zod 4 eventually.
@@ -59,6 +60,13 @@ export const ConfigDataSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: `Key "${key}" should only include whitespaces (s), lowercase letters (Ll), uppercase letters (Lu), other letters (Lo), numbers (N), dash punctuation (Pd), and connector punctuation (Pc).`,
+          path: [key],
+        });
+      }
+      if (forbiddenKeyNamesSet.has(key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `A key like "${key}" is not allowed to be named "value", "key", or "placeholder".`,
           path: [key],
         });
       }

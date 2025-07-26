@@ -28,6 +28,7 @@ import {
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
   reverseFlattenedConfigData,
+  makeNormalizedKey,
 } from "./_commons/utilities/helpers.js";
 import { flattenConfigData } from "./_commons/utilities/flatten-config-data.js";
 import { freshImport } from "./_commons/utilities/fresh-import-a.js";
@@ -641,32 +642,27 @@ const resolveConfigData = (
 
 /**
  * Transforms resolved config data with keys and placeholders alongside values.
- * @param {Record<string, unknown>} resolvedConfigData
- * @param {string[]} normalizedParentKeys
- * @returns The transformed resolved config data keys and placeholders readily accessible alongside values.
+ * @param {Record<string, unknown>} resolvedConfigData The resolved config data.
+ * @param {string[]} parentsKeys The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).
+ * @returns The transformed resolved config data with keys and placeholders readily accessible alongside values.
  */
-const transformResolvedConfigData = (
-  resolvedConfigData,
-  normalizedParentKeys = []
-) => {
+const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
   /** @type {Record<string, unknown>} */
   const results = {};
 
   for (const [k, v] of Object.entries(resolvedConfigData)) {
+    const newKeys = [...parentsKeys, k];
+
     if (v && typeof v === "object" && !Array.isArray(v)) {
       // If it's an object, recurse.
-      results[k] = transformResolvedConfigData(v, [
-        ...normalizedParentKeys,
-        k.toUpperCase(), // normalizing
-      ]);
+      results[k] = transformResolvedConfigData(v, newKeys);
     } else {
       // If it's a primitive value, transform it.
+      const key = makeNormalizedKey(newKeys);
+
       results[k] = {
         value: v,
-        key: [
-          ...normalizedParentKeys,
-          k.toUpperCase(), // normalizing
-        ].join("#"),
+        key,
         placeholder: `${$COMMENT}#${key}`,
       };
     }
@@ -701,9 +697,8 @@ const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
 
   /** @type {Record<string, unknown>} */
   const resolvedConfigData = resolveConfigDataResults;
-  const transformedResolvedConfigData = transformResolvedConfigData(
-    resolveConfigDataResults
-  );
+  const transformedResolvedConfigData =
+    transformResolvedConfigData(resolvedConfigData);
 
   return {
     ...successTrue,

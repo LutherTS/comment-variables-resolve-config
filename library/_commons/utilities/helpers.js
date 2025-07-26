@@ -73,3 +73,13 @@ export const reverseFlattenedConfigData = (flattenedConfigData) =>
   Object.fromEntries(
     Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
   );
+
+/* makeNormalizedKey */
+
+/**
+ * Normalizes and makes a Comment Variable key from the list of keys that trace to its value.
+ * @param {string[]} keys The list of keys at hand in order of traversal.
+ * @returns The normalized key of a Comment Variable.
+ */
+export const makeNormalizedKey = (keys) =>
+  keys.map((e) => e.toUpperCase().replace(/\s/g, "_")).join("#");

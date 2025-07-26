@@ -1,6 +1,6 @@
 import { successTrue } from "../constants/bases.js";
 
-import { makeSuccessFalseTypeError } from "./helpers.js";
+import { makeSuccessFalseTypeError, makeNormalizedKey } from "./helpers.js";
 
 /**
  * @typedef {import("../../../types/_commons/typedefs.js").ConfigData} ConfigData
@@ -21,13 +21,11 @@ export const flattenConfigData = (
 ) => {
   for (const [key, value] of Object.entries(configData)) {
     const newKeys = [...parentKeys, key];
-    const normalizedKey = newKeys
-      .map((k) => k.toUpperCase())
-      .join("#")
-      .replace(/\s/g, "_");
-    const source = newKeys.join(" > ");
 
     if (typeof value === "string") {
+      const normalizedKey = makeNormalizedKey(newKeys);
+      const source = newKeys.join(" > ");
+
       if (configDataMap.has(normalizedKey)) {
         // checks the uniqueness of each normalized key
         return makeSuccessFalseTypeError(
