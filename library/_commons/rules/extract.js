@@ -3,6 +3,7 @@ import {
   placeholderDataId,
   $COMMENT,
 } from "../constants/bases.js";
+import { makeIsolatedStringRegex } from "../utilities/helpers.js";
 
 /**
  * @typedef {import("../../../types/_commons/typedefs.js").ExtractRule} ExtractRule
@@ -51,6 +52,49 @@ const rule = {
             ],
             additionalProperties: false,
           },
+          // NEW PROPERTY
+          findInstancesInConfig: {
+            type: "object",
+            properties: {
+              placeholder: {
+                type: "string",
+              },
+              key: {
+                type: "string",
+              },
+              valueLocation: {
+                type: "object",
+                properties: {
+                  value: { type: "string " },
+                  filePath: { type: "string " },
+                  loc: {
+                    type: "object",
+                    properties: {
+                      start: {
+                        type: "object",
+                        properties: {
+                          column: { type: "number" },
+                          line: { type: "number" },
+                        },
+                        additionalProperties: false,
+                      },
+                      end: {
+                        type: "object",
+                        properties: {
+                          column: { type: "number" },
+                          line: { type: "number" },
+                        },
+                        additionalProperties: false,
+                      },
+                    },
+                    additionalProperties: false,
+                  },
+                },
+              },
+            },
+            required: ["placeholder", "key", "valueLocation"],
+            additionalProperties: false,
+          },
         },
         additionalProperties: false,
         default: {},
@@ -60,6 +104,7 @@ const rule = {
             properties: {
               composedVariablesOnly: { not: {} },
               makePlaceholders: { not: {} },
+              findInstancesInConfig: { not: {} },
             },
           },
           {
@@ -67,6 +112,7 @@ const rule = {
             properties: {
               composedVariablesOnly: { type: "boolean" },
               makePlaceholders: { not: {} }, // must be undefined/missing
+              findInstancesInConfig: { not: {} }, // must be undefined/missing
             },
             required: ["composedVariablesOnly"],
           },
@@ -75,8 +121,18 @@ const rule = {
             properties: {
               makePlaceholders: { type: "object" },
               composedVariablesOnly: { not: {} }, // must be undefined/missing
+              findInstancesInConfig: { not: {} }, // must be undefined/missing
             },
             required: ["makePlaceholders"],
+          },
+          {
+            // only findInstancesInConfig
+            properties: {
+              findInstancesInConfig: { type: "object" },
+              composedVariablesOnly: { not: {} }, // must be undefined/missing
+              makePlaceholders: { not: {} }, // must be undefined/missing
+            },
+            required: ["findInstancesInConfig"],
           },
         ],
       },
@@ -90,11 +146,13 @@ const rule = {
     const options = context.options[0] || {};
     const composedVariablesOnly = options.composedVariablesOnly ?? false;
     const makePlaceholders = options.makePlaceholders;
+    const findInstancesInConfig = options.findInstancesInConfig;
 
     // as a measure of caution, returns early if both composedVariablesOnly && makePlaceholders are defined/truthy
-    if (composedVariablesOnly && makePlaceholders) return {};
+    if (composedVariablesOnly && makePlaceholders && findInstancesInConfig)
+      return {};
 
-    if (!composedVariablesOnly && !makePlaceholders) {
+    if (!composedVariablesOnly && !makePlaceholders && !findInstancesInConfig) {
       /* case 1 */
       return {
         ObjectExpression: (node) => {
@@ -252,6 +310,49 @@ const rule = {
                       ),
                   });
                 }
+              }
+            }
+          }
+        },
+      };
+    }
+
+    if (findInstancesInConfig) {
+      /* case 4 */
+      const { placeholder, key, valueLocation } = findInstancesInConfig;
+
+      return {
+        ObjectExpression: (node) => {
+          for (const prop of node.properties) {
+            if (
+              prop.type === "Property" &&
+              prop.value &&
+              prop.value.type === "Literal" &&
+              typeof prop.value.value === "string" &&
+              // if the encounter instance isn't on the same line as would be its generated placeholder
+              prop.value.loc.end.line !== valueLocation.loc.end.line
+            ) {
+              const propValueNode = prop.value;
+
+              if (
+                makeIsolatedStringRegex(placeholder).test(
+                  propValueNode.value // for segments in composed variables
+                ) ||
+                propValueNode.value === key // for alias variables
+              ) {
+                const data = {
+                  [placeholderDataId]: JSON.stringify({
+                    value: propValueNode.value,
+                    filePath: context.filename,
+                    loc: propValueNode.loc, // send the whole location
+                  }),
+                };
+
+                context.report({
+                  node: propValueNode,
+                  messageId: placeholderMessageId,
+                  data,
+                });
               }
             }
           }
