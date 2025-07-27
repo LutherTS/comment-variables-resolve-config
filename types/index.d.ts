@@ -111,10 +111,12 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
     | {
         composedVariablesOnly?: false;
         makePlaceholders?: undefined;
+        findInstancesInConfig?: undefined;
       }
     | {
         composedVariablesOnly: true;
         makePlaceholders?: never;
+        findInstancesInConfig?: never;
       }
     | {
         composedVariablesOnly?: false;
@@ -123,6 +125,16 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
           aliasValues_originalKeys: Record<string, string>;
           regularValuesOnly_originalKeys: Record<string, string>;
           aliases_flattenedKeys: Record<string, string>;
+        };
+        findInstancesInConfig?: never;
+      }
+    | {
+        composedVariablesOnly?: false;
+        makePlaceholders?: never;
+        findInstancesInConfig: {
+          placeholder: string;
+          key: string;
+          valueLocation: ValueLocation;
         };
       }
   ],
