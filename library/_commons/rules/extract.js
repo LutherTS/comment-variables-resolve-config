@@ -54,7 +54,6 @@ const rule = {
             ],
             additionalProperties: false,
           },
-          // NEW PROPERTY
           findInstancesInConfig: {
             type: "object",
             properties: {
@@ -164,7 +163,7 @@ const rule = {
               prop.value &&
               prop.value.type === "Literal" &&
               typeof prop.value.value === "string" &&
-              // add something that ignores multilined literal string values
+              // ignores multilined literal string values
               !prop.value.raw.includes("\\\n") &&
               !prop.value.raw.includes("\\\r") && // old MacOS style
               !prop.value.raw.includes("\\\r\n") // Windows style
