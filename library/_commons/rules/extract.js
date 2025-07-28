@@ -1,6 +1,8 @@
 import {
   placeholderMessageId,
   placeholderDataId,
+  commentVariablesPluginName,
+  extractRuleName,
   $COMMENT,
 } from "../constants/bases.js";
 import { makeIsolatedStringRegex } from "../utilities/helpers.js";
@@ -161,7 +163,11 @@ const rule = {
               prop.type === "Property" &&
               prop.value &&
               prop.value.type === "Literal" &&
-              typeof prop.value.value === "string"
+              typeof prop.value.value === "string" &&
+              // add something that ignores multilined literal string values
+              !prop.value.raw.includes("\\\n") &&
+              !prop.value.raw.includes("\\\r") && // old MacOS style
+              !prop.value.raw.includes("\\\r\n") // Windows style
             ) {
               const propValueNode = prop.value;
               const data = {
@@ -335,16 +341,19 @@ const rule = {
               const propValueNode = prop.value;
 
               if (
-                makeIsolatedStringRegex(placeholder).test(
-                  propValueNode.value // for segments in composed variables
-                ) ||
                 propValueNode.value === key // for alias variables
               ) {
                 const data = {
                   [placeholderDataId]: JSON.stringify({
                     value: propValueNode.value,
                     filePath: context.filename,
-                    loc: propValueNode.loc, // send the whole location
+                    loc: {
+                      ...propValueNode.loc,
+                      end: {
+                        ...propValueNode.loc.end,
+                        column: propValueNode.loc.end.column - 2,
+                      }, // no idea what that substraction is specifically needed
+                    },
                   }),
                 };
 
@@ -352,6 +361,50 @@ const rule = {
                   node: propValueNode,
                   messageId: placeholderMessageId,
                   data,
+                });
+              } else if (
+                makeIsolatedStringRegex(placeholder).test(
+                  propValueNode.value // for segments in composed variables
+                )
+              ) {
+                const matches = [
+                  ...propValueNode.value.matchAll(
+                    makeIsolatedStringRegex(placeholder)
+                  ),
+                ];
+
+                const positions = matches.map((match) => ({
+                  match: match[0],
+                  start: match.index,
+                  end: match.index + match[0].length,
+                }));
+
+                positions.forEach((e) => {
+                  const loc = {
+                    ...propValueNode.loc,
+                    start: {
+                      ...propValueNode.loc.start,
+                      column: propValueNode.loc.start.column + e.start,
+                    },
+                    end: {
+                      ...propValueNode.loc.end,
+                      column: propValueNode.loc.start.column + e.end,
+                    },
+                  };
+
+                  const data = {
+                    [placeholderDataId]: JSON.stringify({
+                      value: e.match,
+                      filePath: context.filename,
+                      loc,
+                    }),
+                  };
+
+                  context.report({
+                    loc,
+                    messageId: placeholderMessageId,
+                    data,
+                  });
                 });
               }
             }
@@ -363,3 +416,9 @@ const rule = {
 };
 
 export default rule; // extract-object-string-literal-values
+
+export const extractRuleConfigData = Object.freeze({
+  pluginName: commentVariablesPluginName,
+  ruleName: extractRuleName,
+  rule,
+});
