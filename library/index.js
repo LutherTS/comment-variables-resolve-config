@@ -446,7 +446,7 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level.`, // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
+          message: `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not (valid) string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are (valid) string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level.`, // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
         },
         {
           ...typeError,
@@ -477,7 +477,7 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data through legal JavaScript object value overrides. This is likely to be unintentional.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
+          message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data, or you may have unused object string values lingering within files related to the config.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
         },
         {
           ...typeError,
@@ -744,3 +744,5 @@ export {
   escapeRegex,
   makeIsolatedStringRegex,
 } from "./_commons/utilities/helpers.js";
+
+export { extractRuleConfigData } from "./_commons/rules/extract.js";

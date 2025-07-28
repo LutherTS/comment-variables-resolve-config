@@ -111,10 +111,12 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
     | {
         composedVariablesOnly?: false;
         makePlaceholders?: undefined;
+        findInstancesInConfig?: undefined;
       }
     | {
         composedVariablesOnly: true;
         makePlaceholders?: never;
+        findInstancesInConfig?: never;
       }
     | {
         composedVariablesOnly?: false;
@@ -124,10 +126,61 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
           regularValuesOnly_originalKeys: Record<string, string>;
           aliases_flattenedKeys: Record<string, string>;
         };
+        findInstancesInConfig?: never;
+      }
+    | {
+        composedVariablesOnly?: false;
+        makePlaceholders?: never;
+        findInstancesInConfig: {
+          placeholder: string;
+          key: string;
+          valueLocation: ValueLocation;
+        };
       }
   ],
   unknown
 >;
+
+export const extractRuleConfigData: Readonly<{
+  pluginName: "comment-variables";
+  ruleName: "extract-object-string-literal-values";
+  rule: RuleModule<
+    "placeholderMessageId",
+    [
+      | {
+          composedVariablesOnly?: false;
+          makePlaceholders?: undefined;
+          findInstancesInConfig?: undefined;
+        }
+      | {
+          composedVariablesOnly: true;
+          makePlaceholders?: never;
+          findInstancesInConfig?: never;
+        }
+      | {
+          composedVariablesOnly?: false;
+          makePlaceholders: {
+            composedValues_originalKeys: Record<string, string>;
+            aliasValues_originalKeys: Record<string, string>;
+            regularValuesOnly_originalKeys: Record<string, string>;
+            aliases_flattenedKeys: Record<string, string>;
+          };
+          findInstancesInConfig?: never;
+        }
+      | {
+          composedVariablesOnly?: false;
+          makePlaceholders?: never;
+          findInstancesInConfig: {
+            placeholder: string;
+            key: string;
+            valueLocation: ValueLocation;
+          };
+        }
+    ],
+    unknown,
+    RuleListener
+  >;
+}>;
 
 /** Ensures keys should only include lowercase letters (`Ll`), uppercase letters (`Lu`), other letters (`Lo`), dash punctuation (`Pd`), connector punctuation (`Pc`), numbers (`N`) and whitespaces (`s`). */
 export const configKeyRegex: RegExp;

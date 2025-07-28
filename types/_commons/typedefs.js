@@ -18,18 +18,29 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
 
 /**
  * @typedef {{
- *   composedVariablesOnly?: false
+ *   composedVariablesOnly?: false;
  *   makePlaceholders?: undefined;
+ *   findInstancesInConfig?: undefined;
  * } | {
  *   composedVariablesOnly: true;
  *   makePlaceholders?: never;
+ *   findInstancesInConfig?: never;
  * } | {
- *   composedVariablesOnly?: false
+ *   composedVariablesOnly?: false;
  *   makePlaceholders: {
  *     composedValues_originalKeys: Record<string, string>;
  *     aliasValues_originalKeys: Record<string, string>;
  *     regularValuesOnly_originalKeys: Record<string, string>;
  *     aliases_flattenedKeys: Record<string, string>;
+ *   };
+ *   findInstancesInConfig?: never;
+ * } | {
+ *   composedVariablesOnly?: false;
+ *   makePlaceholders?: never;
+ *   findInstancesInConfig: {
+ *     placeholder: string;
+ *     key: string;
+ *     valueLocation: ValueLocation;
  *   };
  * }} RuleOptions
  * @typedef {import('@typescript-eslint/utils').TSESLint.RuleModule<typeof placeholderMessageId, [RuleOptions], unknown>} ExtractRule
