@@ -56,7 +56,7 @@ const resolveConfig = async (configPath) => {
 
   if (!fs.existsSync(configPath)) {
     return makeSuccessFalseTypeError(
-      "ERROR. No config file found for Comment Variables."
+      "ERROR. No config file found for Comment Variables." // So. The aim now is for this to effectively never happen when using the CLI tool. The CLI tool will intercept the configPath and create a template path if no config path is found.
     );
   }
 
@@ -772,6 +772,8 @@ export {
 
 export {
   defaultConfigFileName,
+  templateFileName, // which I'll be using soon
+  exampleFileName,
   configFlag,
   lintConfigImportsFlag,
   myIgnoresOnlyFlag,
