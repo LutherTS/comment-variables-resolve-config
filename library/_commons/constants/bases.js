@@ -57,10 +57,10 @@ export const typeScriptAndJSXCompatible = {
   },
 };
 
-// $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME name
+// plugin name
 export const commentVariablesPluginName = "comment-variables";
 
-// $COMMENT#FORCOMPOSEDVARIABLES#RULENAME name
+// rule name
 export const extractRuleName = "extract-object-string-literal-values";
 
 // messageId
