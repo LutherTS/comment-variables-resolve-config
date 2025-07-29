@@ -152,7 +152,7 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
 export const extractRuleConfigData: Readonly<{
   pluginName: "comment-variables";
   ruleName: "extract-object-string-literal-values";
-  rule: RuleModule<
+  rule: TSESLint.RuleModule<
     "placeholderMessageId",
     [
       | {
@@ -190,7 +190,7 @@ export const extractRuleConfigData: Readonly<{
         }
     ],
     unknown,
-    RuleListener
+    TSESLint.RuleListener
   >;
 }>;
 
