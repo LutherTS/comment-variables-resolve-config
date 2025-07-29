@@ -69,6 +69,7 @@ export const defaultConfigFileName: "comments.config.js";
 export const templateFileName: "comments.template.js";
 export const exampleFileName: "comments.example.js";
 export const commentVariablesPluginName: "comment-variables";
+export const cwd: string;
 export const extractRuleName: "extract-object-string-literal-values";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";

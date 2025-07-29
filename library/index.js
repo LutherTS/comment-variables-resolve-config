@@ -772,8 +772,9 @@ export {
 
 export {
   defaultConfigFileName,
-  templateFileName, // which I'll be using soon
+  templateFileName,
   exampleFileName,
+  cwd,
   configFlag,
   lintConfigImportsFlag,
   myIgnoresOnlyFlag,

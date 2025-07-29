@@ -11,6 +11,9 @@ export const defaultConfigFileName = "comments.config.js";
 export const templateFileName = "comments.template.js";
 export const exampleFileName = "comments.example.js";
 
+// current working directory
+export const cwd = process.cwd();
+
 // flags
 export const configFlag = "--config";
 export const lintConfigImportsFlag = "--lint-config-imports";
