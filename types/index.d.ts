@@ -66,6 +66,8 @@ declare const resolveConfig: (configPath: string) => Promise<
 export default resolveConfig;
 
 export const defaultConfigFileName: "comments.config.js";
+export const templateFileName: "comments.template.js";
+export const exampleFileName: "comments.example.js";
 export const commentVariablesPluginName: "comment-variables";
 export const extractRuleName: "extract-object-string-literal-values";
 export const placeholderMessageId: "placeholderMessageId";
@@ -136,7 +138,11 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
         findInstancesInConfig: {
           placeholder: string;
           key: string;
-          valueLocation: ValueLocation;
+          valueLocation: {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          };
         };
       }
   ],
@@ -175,7 +181,11 @@ export const extractRuleConfigData: Readonly<{
           findInstancesInConfig: {
             placeholder: string;
             key: string;
-            valueLocation: ValueLocation;
+            valueLocation: {
+              value: string;
+              filePath: string;
+              loc: SourceLocation;
+            };
           };
         }
     ],
@@ -254,10 +264,28 @@ export const makeResolvedConfigData: (resolveConfigResultsSuccessTrue: {
     [k: string]: string;
   };
   keys_valueLocations: {
-    [k: string]: ValueLocation;
+    [k: string]: {
+      value: string;
+      filePath: string;
+      loc: SourceLocation;
+    };
   };
-  nonAliasesKeys_valueLocations: Record<string, ValueLocation>;
-  aliasesKeys_valueLocations: Record<string, ValueLocation>;
+  nonAliasesKeys_valueLocations: Record<
+    string,
+    {
+      value: string;
+      filePath: string;
+      loc: SourceLocation;
+    }
+  >;
+  aliasesKeys_valueLocations: Record<
+    string,
+    {
+      value: string;
+      filePath: string;
+      loc: SourceLocation;
+    }
+  >;
 }) =>
   | {
       success: false;

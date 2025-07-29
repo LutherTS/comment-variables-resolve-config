@@ -7,6 +7,10 @@ import tseslint from "typescript-eslint";
 // comments.config.js
 export const defaultConfigFileName = "comments.config.js";
 
+// tutorial file names
+export const templateFileName = "comments.template.js";
+export const exampleFileName = "comments.example.js";
+
 // flags
 export const configFlag = "--config";
 export const lintConfigImportsFlag = "--lint-config-imports";
