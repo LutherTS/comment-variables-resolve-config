@@ -58,6 +58,8 @@ declare const resolveConfig: (configPath: string) => Promise<
           loc: SourceLocation;
         }
       >;
+      lintConfigImports: boolean | undefined;
+      myIgnoresOnly: boolean | undefined;
     }
 >;
 

@@ -22,6 +22,8 @@ import {
 import {
   ConfigDataSchema,
   ConfigIgnoresSchema,
+  ConfigLintConfigImportsSchema,
+  ConfigMyIgnoresOnlySchema,
 } from "./_commons/constants/schemas.js";
 
 import {
@@ -96,7 +98,7 @@ const resolveConfig = async (configPath) => {
     );
   }
 
-  const configDataResults = ConfigDataSchema.safeParse(config.data);
+  const configDataResults = ConfigDataSchema.safeParse(data);
 
   if (!configDataResults.success) {
     return {
@@ -115,9 +117,8 @@ const resolveConfig = async (configPath) => {
   }
 
   // validates config.ignores
-  const configIgnoresSchemaResults = ConfigIgnoresSchema.safeParse(
-    config.ignores
-  );
+  const ignores = /** @type {unknown} */ (config.ignores);
+  const configIgnoresSchemaResults = ConfigIgnoresSchema.safeParse(ignores);
 
   if (!configIgnoresSchemaResults.success) {
     return {
@@ -128,6 +129,50 @@ const resolveConfig = async (configPath) => {
           message: "ERROR. Config ignores could not pass validation from zod.",
         },
         ...configIgnoresSchemaResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  // NEW
+  // validates config.lintConfigImports
+  const lintConfigImports = /** @type {unknown} */ (config.lintConfigImports);
+  const configLintConfigImportsSchemaResults =
+    ConfigLintConfigImportsSchema.safeParse(lintConfigImports);
+
+  if (!configLintConfigImportsSchemaResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message: "ERROR. Config ignores could not pass validation from zod.",
+        },
+        ...configLintConfigImportsSchemaResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  // NEW
+  // validates config.myIgnoresOnly
+  const myIgnoresOnly = /** @type {unknown} */ (config.myIgnoresOnly);
+  const configMyIgnoresOnlySchemaResults =
+    ConfigMyIgnoresOnlySchema.safeParse(myIgnoresOnly);
+
+  if (!configMyIgnoresOnlySchemaResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message: "ERROR. Config ignores could not pass validation from zod.",
+        },
+        ...configMyIgnoresOnlySchemaResults.error.errors.map((e) => ({
           ...typeError,
           message: e.message,
         })),
@@ -519,7 +564,7 @@ const resolveConfig = async (configPath) => {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
     ...successTrue,
     configPath, // finalized and absolute
-    passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized
+    passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized, now exported from resolveConfig
     config, // and the config itself too
     rawConfigAndImportPaths, // now in resolveConfig
     originalFlattenedConfigData, // for jscomments placeholders
@@ -529,6 +574,8 @@ const resolveConfig = async (configPath) => {
     keys_valueLocations, // (formerly valueLocations)
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
+    lintConfigImports: configLintConfigImportsSchemaResults.data,
+    myIgnoresOnly: configMyIgnoresOnlySchemaResults.data,
   };
 };
 

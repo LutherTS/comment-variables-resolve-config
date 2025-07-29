@@ -81,3 +81,15 @@ export const ConfigIgnoresSchema = z.array(
     message: `The config's "ignores" key value should be an array of strings (or at the very least an empty array).`,
   }
 );
+
+export const ConfigLintConfigImportsSchema = z
+  .boolean({
+    message: `The config's "lintConfigImports" key's value, if provided, should only be a boolean.`,
+  })
+  .optional();
+
+export const ConfigMyIgnoresOnlySchema = z
+  .boolean({
+    message: `The config's "myIgnoresOnly" key's value, if provided, should only be a boolean.`,
+  })
+  .optional();
