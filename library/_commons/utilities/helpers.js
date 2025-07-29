@@ -62,7 +62,7 @@ export const extractValueLocationsFromLintMessages = (
       .map((msg) => JSON.parse(msg.message))
   );
 
-/* reverseConfigData */
+/* reverseFlattenedConfigData */
 
 /**
  * Reverses the keys and the values of a flattened config data object.
