@@ -23,24 +23,14 @@ export const myIgnoresOnlyFlag = "--my-ignores-only";
 export const $COMMENT = "$COMMENT";
 
 // ESLint ignores
-// export const knownIgnores = [
-//   "node_modules",
-//   "dist",
-//   "out",
-//   ".next",
-//   ".react-router",
-//   ".parcel-cache",
-//   ".react-router-parcel",
-// ];
-/* this is the format I'm after */
 export const knownIgnores = [
-  "/node_modules/",
-  "/dist/",
-  "/out/",
-  "/.next/",
-  "/.react-router/",
-  "/.parcel-cache/",
-  "/.react-router-parcel/",
+  "node_modules",
+  "dist",
+  "out",
+  ".next",
+  ".react-router",
+  ".parcel-cache",
+  ".react-router-parcel",
 ];
 
 // success objects
