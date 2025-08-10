@@ -240,7 +240,7 @@ const resolveConfig = async (configPath) => {
   );
 
   for (const [key, value] of aliases_flattenedKeys__EntriesArray) {
-    // checkes that no alias is its own key/alias
+    // checks that no alias is its own key/alias
     if (aliases_flattenedKeys[key] === key)
       return makeSuccessFalseTypeError(
         `ERROR. The alias "${key}" is its own key/alias.`
@@ -561,7 +561,7 @@ const resolveConfig = async (configPath) => {
   // console.log("keys_valueLocations are:", keys_valueLocations);
 
   return {
-    // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESS TRUE.
+    // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
     configPath, // finalized and absolute
     passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized, now exported from resolveConfig
