@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 
 import { ESLint } from "eslint";
-
 import { findAllImports } from "find-all-js-imports";
 
 import {
@@ -56,7 +55,7 @@ const resolveConfig = async (configPath) => {
 
   if (!fs.existsSync(configPath)) {
     return makeSuccessFalseTypeError(
-      "ERROR. No config file found for Comment Variables." // So. The aim now is for this to effectively never happen when using the CLI tool. The CLI tool will intercept the configPath and create a template path if no config path is found.
+      "ERROR. No config file found for Comment Variables." // This effectively never happens when using the CLI tool. The CLI tool intercepts the configPath and create a template path if no config path is found.
     );
   }
 
@@ -136,7 +135,6 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  // NEW
   // validates config.lintConfigImports
   const lintConfigImports = /** @type {unknown} */ (config.lintConfigImports);
   const configLintConfigImportsSchemaResults =
@@ -158,7 +156,6 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  // NEW
   // validates config.myIgnoresOnly
   const myIgnoresOnly = /** @type {unknown} */ (config.myIgnoresOnly);
   const configMyIgnoresOnlySchemaResults =
@@ -188,7 +185,7 @@ const resolveConfig = async (configPath) => {
 
   const { configDataMap } = flattenedConfigDataResults;
 
-  // ALL flattenConfigData VERIFICATIONS SHOULD BE MADE HERE, OUTSIDE THE RECURSION.
+  // ALL flattenConfigData VERIFICATIONS ARE MADE HERE, OUTSIDE THE RECURSION.
 
   // strips metadata
   /**@type {Map<string, string>} */
@@ -205,7 +202,6 @@ const resolveConfig = async (configPath) => {
   // The integrity of the flattened config data needs to be established before working with it safely.
 
   // Aliases logic:
-  // instead of returning an error because an existing flattened key is in the values...
   /** @type {Record<string, string>} */
   const aliases_flattenedKeys = {};
   /** @type {Record<string, string>} */
@@ -215,10 +211,11 @@ const resolveConfig = async (configPath) => {
     originalFlattenedConfigData
   );
 
+  // instead of returning an error because an existing flattened key is in the values ...
   for (const [key, value] of originalFlattenedConfigData__EntriesArray) {
-    // ...in aliases_flattenedKeys...
+    // ... in aliases_flattenedKeys ...
     if (originalFlattenedConfigData[value]) {
-      // ...the pair is now an alias...
+      // ... the pair is now an alias ...
       aliases_flattenedKeys[key] = value;
 
       continue;
@@ -245,7 +242,7 @@ const resolveConfig = async (configPath) => {
       return makeSuccessFalseTypeError(
         `ERROR. The alias "${key}" is its own key/alias.`
       );
-    // checks that no value is an actual key
+    // checks that no value is an actual alias
     if (aliases_flattenedKeys[value])
       return makeSuccessFalseTypeError(
         `ERROR. The alias "${key}" can't be the alias of "${value}" because "${value}" is already an alias.`
@@ -276,10 +273,10 @@ const resolveConfig = async (configPath) => {
   /** @type {Set<string>} */
   const flattenedKeys_originalsOnly__valuesDuplicateChecksSet = new Set();
 
+  // now that aliases whose values can be duplicate are removed ...
   for (const value of flattenedKeys_originalsOnly__valuesArray) {
-    // now that aliases whose values can be duplicate are removed ...
+    // ... checks that no two original values are duplicate
     if (flattenedKeys_originalsOnly__valuesDuplicateChecksSet.has(value)) {
-      // ... checks that no two original values are duplicate
       return makeSuccessFalseTypeError(
         `ERROR. The value "${value}" is already assigned to an existing key.`
       );
@@ -325,7 +322,7 @@ const resolveConfig = async (configPath) => {
       const keySegments = valueSegments.map((e) =>
         e.replace(`${$COMMENT}#`, "")
       );
-      // 6. check that all obtain keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
+      // 6. check that all obtained keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
       for (const keySegment of keySegments) {
         const resolvedValue =
           flattenedKeys_originalsOnly[keySegment] ||
@@ -362,9 +359,9 @@ const resolveConfig = async (configPath) => {
 
   const flattenedConfigData__ValuesArray = Object.values(flattenedConfigData);
 
-  // now that composed variables have created new values ...
+  // now that composed variables have created new values...
   for (const value of flattenedConfigData__ValuesArray) {
-    // ... checks that no two final values are duplicate
+    // ...checks that no two final values are duplicate
     if (flattenedConfigDataDuplicateChecksSet.has(value)) {
       return makeSuccessFalseTypeError(
         `ERROR. The finalized value "${value}" is already assigned to an existing key.`
@@ -387,7 +384,7 @@ const resolveConfig = async (configPath) => {
   //   reversedFlattenedConfigData
   // );
 
-  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI, but since the CLI oughts to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
+  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
   const findAllImportsResults = findAllImports(configPath);
@@ -439,7 +436,7 @@ const resolveConfig = async (configPath) => {
     const value = extract.value;
 
     if (originalFlattenedConfigData[value]) continue;
-    // that's an alias, since the value is the key in the original flattened config data
+    // that's an alias, since the value is a key in the original flattened config data
 
     // with aliases excluded we can now focus on originals only
 
@@ -522,7 +519,7 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data, or you may have unused object string values lingering within files related to the config.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
+          message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data, or you may have unused object string values lingering within files related to the config, in which case you ought to turn them into template literals for distinction.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
         },
         {
           ...typeError,
@@ -564,14 +561,14 @@ const resolveConfig = async (configPath) => {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
     configPath, // finalized and absolute
-    passedIgnores: configIgnoresSchemaResults.data, // addressed with --lint-config-imports and --my-ignores-only to be finalized, now exported from resolveConfig
+    passedIgnores: configIgnoresSchemaResults.data, // now exported from resolveConfig
     config, // and the config itself too
     rawConfigAndImportPaths, // now in resolveConfig
     originalFlattenedConfigData, // for jscomments placeholders
     aliases_flattenedKeys,
     flattenedConfigData,
     reversedFlattenedConfigData,
-    keys_valueLocations, // (formerly valueLocations)
+    keys_valueLocations,
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
     lintConfigImports: configLintConfigImportsSchemaResults.data,

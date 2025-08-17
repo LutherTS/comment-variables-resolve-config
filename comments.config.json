@@ -206,7 +206,7 @@
         "placeholder": "$COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA"
       },
       "resolveConfig": {
-        "value": "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.",
+        "value": "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, the original config, and more. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.",
         "key": "JSDOC#RETURNS#RESOLVECONFIG",
         "placeholder": "$COMMENT#JSDOC#RETURNS#RESOLVECONFIG"
       },
