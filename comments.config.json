@@ -12,7 +12,7 @@
         "placeholder": "$COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX"
       },
       "flattenConfigData": {
-        "value": "Flattens the config's data property into a one-dimensional object of $COMMENT-*-like keys and string values.",
+        "value": "Flattens the config's data property into a one-dimensional object of `$COMMENT`-like keys and string values.",
         "key": "JSDOC#DEFINITIONS#FLATTENCONFIGDATA",
         "placeholder": "$COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA"
       },
@@ -201,7 +201,7 @@
         "placeholder": "$COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX"
       },
       "flattenConfigData": {
-        "value": "Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).",
+        "value": "The flattened config data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).",
         "key": "JSDOC#RETURNS#FLATTENCONFIGDATA",
         "placeholder": "$COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA"
       },

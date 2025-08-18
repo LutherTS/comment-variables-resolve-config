@@ -26,8 +26,8 @@ export const flattenConfigData = (
       const normalizedKey = makeNormalizedKey(newKeys);
       const source = newKeys.join(" > ");
 
+      // checks the uniqueness of each normalized key
       if (configDataMap.has(normalizedKey)) {
-        // checks the uniqueness of each normalized key
         return makeSuccessFalseTypeError(
           `ERROR. The normalized key "${normalizedKey}" has already been assigned. Check between the two following key paths: \n"${
             configDataMap.get(normalizedKey).source
