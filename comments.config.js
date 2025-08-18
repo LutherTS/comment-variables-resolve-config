@@ -116,7 +116,7 @@ const data = {
       flattenedConfigPlaceholderGlobalRegex:
         "Same as `flattenedConfigPlaceholderLocalRegex` but globally." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX */,
       extractRuleConfigData:
-        'The core data needed to run the "extract" rule, fully named `"extract-object-string-literal-values"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for "a function that extract rule config data" instead of what it is, "the data of the extract rule config".)' /* $COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA */,
+        'The core data needed to run the "extract" rule, fully-named `"extract-object-string-literal-values"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for "a function that extract rule config data" instead of what it is, "the data of the extract rule config".)' /* $COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA */,
     }),
   }),
   forComposedVariables: Object.freeze({
