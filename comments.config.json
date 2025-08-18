@@ -52,7 +52,7 @@
         "placeholder": "$COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA"
       },
       "makeResolvedConfigData": {
-        "value": "Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
+        "value": "Creates that object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
         "key": "JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA",
         "placeholder": "$COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA"
       },
@@ -281,6 +281,11 @@
         "value": "Same as `flattenedConfigPlaceholderLocalRegex` but globally.",
         "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX",
         "placeholder": "$COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX"
+      },
+      "extractRuleConfigData": {
+        "value": "The core data needed to run the \"extract\" rule, fully named `\"extract-object-string-literal-values\"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for \"a function that extract rule config data\" instead of what it is, \"the data of the extract rule config\".)",
+        "key": "JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA",
+        "placeholder": "$COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA"
       }
     }
   },
@@ -339,6 +344,11 @@
       "value": "object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
       "key": "FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA",
       "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA"
+    },
+    "transformedObjectConfigData": {
+      "value": "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
+      "key": "FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA",
+      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA"
     }
   }
 }

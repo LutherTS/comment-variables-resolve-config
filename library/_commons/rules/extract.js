@@ -416,8 +416,9 @@ const rule = {
 
 export default rule; // extract-object-string-literal-values
 
+/** $COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA */
 export const extractRuleConfigData = Object.freeze({
   pluginName: commentVariablesPluginName,
   ruleName: extractRuleName,
   rule,
-});
+}); // the name could eventually be changed because it's function-sounding

@@ -74,8 +74,8 @@ export const extractRuleName: "extract-object-string-literal-values";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";
-export const lintConfigImportsFlag: "--lint-config-imports";
-export const myIgnoresOnlyFlag: "--my-ignores-only";
+// export const lintConfigImportsFlag: "--lint-config-imports";
+// export const myIgnoresOnlyFlag: "--my-ignores-only";
 export const $COMMENT: "$COMMENT";
 
 export const knownIgnores: [
@@ -150,6 +150,7 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
   unknown
 >;
 
+/** $COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA */
 export const extractRuleConfigData: Readonly<{
   pluginName: "comment-variables";
   ruleName: "extract-object-string-literal-values";

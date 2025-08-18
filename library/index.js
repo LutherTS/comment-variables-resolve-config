@@ -735,7 +735,7 @@ const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
     resolveConfigDataResults.success !== undefined &&
     resolveConfigDataResults.success === false
   ) {
-    // ...So. If theoretically somebody calls one of their top keys success and sets if value to false, it would passes the test... But resolveConfig already ensures that all strings are actually strings or objects (not boolean), so we're good here.
+    // ...So. If theoretically somebody calls one of their top keys success and sets its value to false, it would passes the test... But resolveConfig already ensures that all strings are actually strings or objects (not boolean), so we're good here.
     return /** @type {SuccessFalseWithErrors} */ (resolveConfigDataResults);
   }
 
@@ -773,8 +773,8 @@ export {
   exampleFileName,
   cwd,
   configFlag,
-  lintConfigImportsFlag,
-  myIgnoresOnlyFlag,
+  // lintConfigImportsFlag,
+  // myIgnoresOnlyFlag,
   $COMMENT,
   knownIgnores,
   placeholderMessageId,
