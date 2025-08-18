@@ -16,8 +16,8 @@ export const cwd = process.cwd();
 
 // flags
 export const configFlag = "--config";
-export const lintConfigImportsFlag = "--lint-config-imports";
-export const myIgnoresOnlyFlag = "--my-ignores-only";
+// export const lintConfigImportsFlag = "--lint-config-imports";
+// export const myIgnoresOnlyFlag = "--my-ignores-only";
 
 // placeholder prefix
 export const $COMMENT = "$COMMENT";

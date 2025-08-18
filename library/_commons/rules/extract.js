@@ -5,6 +5,7 @@ import {
   extractRuleName,
   $COMMENT,
 } from "../constants/bases.js";
+
 import { makeIsolatedStringRegex } from "../utilities/helpers.js";
 
 /**
@@ -149,7 +150,7 @@ const rule = {
     const makePlaceholders = options.makePlaceholders;
     const findInstancesInConfig = options.findInstancesInConfig;
 
-    // as a measure of caution, returns early if both composedVariablesOnly && makePlaceholders are defined/truthy
+    // as a measure of caution, returns early if composedVariablesOnly && makePlaceholders && findInstancesInConfig are defined/truthy
     if (composedVariablesOnly && makePlaceholders && findInstancesInConfig)
       return {};
 
@@ -188,7 +189,7 @@ const rule = {
       };
     }
 
-    if (composedVariablesOnly) {
+    if (composedVariablesOnly && !makePlaceholders && !findInstancesInConfig) {
       /* case 2 */
       return {
         ObjectExpression: (node) => {
@@ -220,7 +221,7 @@ const rule = {
       };
     }
 
-    if (makePlaceholders) {
+    if (!composedVariablesOnly && makePlaceholders && !findInstancesInConfig) {
       /* case 3 */
       const {
         composedValues_originalKeys,
@@ -322,7 +323,7 @@ const rule = {
       };
     }
 
-    if (findInstancesInConfig) {
+    if (!composedVariablesOnly && !makePlaceholders && findInstancesInConfig) {
       /* case 4 */
       const { placeholder, key, valueLocation } = findInstancesInConfig;
 
@@ -351,7 +352,7 @@ const rule = {
                       end: {
                         ...propValueNode.loc.end,
                         column: propValueNode.loc.end.column - 2,
-                      }, // no idea what that substraction is specifically needed
+                      }, // no idea why that substraction is specifically needed
                     },
                   }),
                 };
@@ -411,13 +412,16 @@ const rule = {
         },
       };
     }
+
+    return {};
   },
 };
 
 export default rule; // extract-object-string-literal-values
 
+/** The core data needed to run the "extract" rule, fully-named `"extract-object-string-literal-values"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for "a function that extract rule config data" instead of what it is, "the data of the extract rule config".) */
 export const extractRuleConfigData = Object.freeze({
   pluginName: commentVariablesPluginName,
   ruleName: extractRuleName,
   rule,
-});
+}); // the name could eventually be changed because it's function-sounding

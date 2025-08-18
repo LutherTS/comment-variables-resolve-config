@@ -8,12 +8,12 @@ import { makeSuccessFalseTypeError, makeNormalizedKey } from "./helpers.js";
  */
 
 /**
- * Flattens the config's data property into a one-dimensional object of $COMMENT-*-like keys and string values.
+ * Flattens the config's data property into a one-dimensional object of `$COMMENT`-like keys and string values.
  * @param {ConfigData} configData The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)
  * @param {Object} [options] The additional options as follows:
  * @param {Map<string, {value: string; source: string}>} [options.configDataMap] The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.
  * @param {string[]} [options.parentKeys] The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).
- * @returns Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).
+ * @returns The flattened config data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).
  */
 export const flattenConfigData = (
   configData,
@@ -26,8 +26,8 @@ export const flattenConfigData = (
       const normalizedKey = makeNormalizedKey(newKeys);
       const source = newKeys.join(" > ");
 
+      // checks the uniqueness of each normalized key
       if (configDataMap.has(normalizedKey)) {
-        // checks the uniqueness of each normalized key
         return makeSuccessFalseTypeError(
           `ERROR. The normalized key "${normalizedKey}" has already been assigned. Check between the two following key paths: \n"${
             configDataMap.get(normalizedKey).source

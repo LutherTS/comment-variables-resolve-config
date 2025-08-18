@@ -6,7 +6,7 @@ const data = {
       makeIsolatedStringRegex:
         "Makes a global regex for a given string that ensures it is surrounded by whitespace." /* $COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX */,
       flattenConfigData:
-        "Flattens the config's data property into a one-dimensional object of $COMMENT-*-like keys and string values." /* $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA */,
+        "Flattens the config's data property into a one-dimensional object of `$COMMENT`-like keys and string values." /* $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA */,
       resolveConfig:
         "Verifies, validates and resolves the config path to retrieve the config's data and ignores." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG */,
       makeSuccessFalseTypeError:
@@ -22,7 +22,7 @@ const data = {
       resolveConfigData:
         "$COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA */,
       makeResolvedConfigData:
-        "$COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA */,
+        "$COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT $COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA" /* $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA */,
       freshImport:
         "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility." /* $COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT */,
       transformResolvedConfigData:
@@ -82,9 +82,9 @@ const data = {
       makeIsolatedStringRegex:
         "The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace." /* $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX */,
       flattenConfigData:
-        "Both the flattened config data and its reversed version to ensure the strict reversibility of the `resolve` and `compress` commands in a success object (`success: true`). Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`)." /* $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA */,
+        "The flattened config data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`)." /* $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA */,
       resolveConfig:
-        "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIG */,
+        "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, the original config, and more. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIG */,
       makeSuccessFalseTypeError:
         'A `{success: false}` object with a single error in its error array of `{type: "error"}`.' /* $COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR */,
       extractValueLocationsFromLintMessages:
@@ -115,6 +115,8 @@ const data = {
         "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX */,
       flattenedConfigPlaceholderGlobalRegex:
         "Same as `flattenedConfigPlaceholderLocalRegex` but globally." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX */,
+      extractRuleConfigData:
+        'The core data needed to run the "extract" rule, fully-named `"extract-object-string-literal-values"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for "a function that extract rule config data" instead of what it is, "the data of the extract rule config".)' /* $COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA */,
     }),
   }),
   forComposedVariables: Object.freeze({
@@ -136,6 +138,8 @@ const data = {
     createsThat: "Creates that" /* $COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT */,
     objectConfigData:
       "object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA */,
+    transformedObjectConfigData:
+      "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders." /* $COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA */,
   }),
 };
 

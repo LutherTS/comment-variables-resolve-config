@@ -11,7 +11,7 @@ import type { Linter } from "eslint";
 /**
  * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
  * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
- * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, and the original config. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
+ * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, the original config, and more. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
  */
 declare const resolveConfig: (configPath: string) => Promise<
   | {
@@ -74,8 +74,8 @@ export const extractRuleName: "extract-object-string-literal-values";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";
-export const lintConfigImportsFlag: "--lint-config-imports";
-export const myIgnoresOnlyFlag: "--my-ignores-only";
+// export const lintConfigImportsFlag: "--lint-config-imports";
+// export const myIgnoresOnlyFlag: "--my-ignores-only";
 export const $COMMENT: "$COMMENT";
 
 export const knownIgnores: [
@@ -150,6 +150,7 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
   unknown
 >;
 
+/** The core data needed to run the "extract" rule, fully-named `"extract-object-string-literal-values"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for "a function that extract rule config data" instead of what it is, "the data of the extract rule config".) */
 export const extractRuleConfigData: Readonly<{
   pluginName: "comment-variables";
   ruleName: "extract-object-string-literal-values";
@@ -249,7 +250,7 @@ export const escapeRegex: (string: string) => string;
 export const makeIsolatedStringRegex: (string: string) => RegExp;
 
 /**
- * Creates that object with the same keys and the same shape as the original config data now with all string values entirely resolved.
+ * Creates that object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.
  * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
  * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
