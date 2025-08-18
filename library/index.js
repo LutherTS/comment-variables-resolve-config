@@ -330,7 +330,7 @@ const resolveConfig = async (configPath) => {
 
         if (!resolvedValue)
           return makeSuccessFalseTypeError(
-            `ERROR. Key segment "${keySegment}" extract from value "${value}" is neither an original key nor a vetted alias to one.`
+            `ERROR. Key segment "${keySegment}" extracted from value "${value}" is neither an original key nor a vetted alias to one.`
           );
 
         if (resolvedValue.includes(`${$COMMENT}#`))
