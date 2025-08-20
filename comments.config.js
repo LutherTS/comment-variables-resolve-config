@@ -145,9 +145,16 @@ const data = {
 
 const ignores = [];
 
+// NEW (worked!!)
+const composedVariablesExclusives = [
+  "FORCOMPOSEDVARIABLES#PLUGINNAME",
+  "FORCOMPOSEDVARIABLES#RULENAME",
+];
+
 const config = {
   data,
   ignores,
+  composedVariablesExclusives,
 };
 
 export default config;
