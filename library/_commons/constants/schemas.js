@@ -94,6 +94,7 @@ export const ConfigMyIgnoresOnlySchema = z
   })
   .optional();
 
+// NEW
 export const ConfigComposedVariablesExclusivesSchema = z
   .array(
     z.string({

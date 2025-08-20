@@ -145,7 +145,7 @@ const data = {
 
 const ignores = [];
 
-// NEW (worked!!)
+// NEW
 const composedVariablesExclusives = [
   "FORCOMPOSEDVARIABLES#PLUGINNAME",
   "FORCOMPOSEDVARIABLES#RULENAME",

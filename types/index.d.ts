@@ -78,8 +78,6 @@ export const placeholdersRuleName = "placeholders";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";
-// export const lintConfigImportsFlag: "--lint-config-imports";
-// export const myIgnoresOnlyFlag: "--my-ignores-only";
 export const $COMMENT: "$COMMENT";
 
 export const knownIgnores: [

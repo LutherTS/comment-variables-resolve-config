@@ -405,15 +405,6 @@ const resolveConfig = async (configPath) => {
   const reversedFlattenedConfigData =
     reverseFlattenedConfigData(flattenedConfigData);
 
-  // console.log("originalFlattenedConfigData is:", originalFlattenedConfigData);
-  // console.log("flattenedKeys_originalsOnly is:", flattenedKeys_originalsOnly);
-  // console.log("aliases_flattenedKeys is:", aliases_flattenedKeys);
-  // console.log("Flattened with composed variables is:", flattenedConfigData);
-  // console.log(
-  //   "Reversed with composed variables is:",
-  //   reversedFlattenedConfigData
-  // );
-
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
@@ -580,13 +571,6 @@ const resolveConfig = async (configPath) => {
     ...aliasesKeys_valueLocations,
   };
 
-  // console.log(
-  //   "nonAliasesKeys_valueLocations are:",
-  //   nonAliasesKeys_valueLocations
-  // );
-  // console.log("aliases_valueLocations are:", aliasesKeys_valueLocations);
-  // console.log("keys_valueLocations are:", keys_valueLocations);
-
   // NEW
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
   const composedVariablesExclusivesSchemaResultsData =
@@ -609,9 +593,9 @@ const resolveConfig = async (configPath) => {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
     configPath, // finalized and absolute
-    passedIgnores: configIgnoresSchemaResults.data, // now exported from resolveConfig
-    config, // and the config itself too
-    rawConfigAndImportPaths, // now in resolveConfig
+    passedIgnores: configIgnoresSchemaResults.data,
+    config,
+    rawConfigAndImportPaths,
     originalFlattenedConfigData, // for jscomments placeholders
     aliases_flattenedKeys,
     flattenedConfigData,
