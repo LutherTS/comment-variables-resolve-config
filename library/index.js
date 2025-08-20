@@ -587,6 +587,22 @@ const resolveConfig = async (configPath) => {
   // console.log("aliases_valueLocations are:", aliasesKeys_valueLocations);
   // console.log("keys_valueLocations are:", keys_valueLocations);
 
+  // NEW
+  // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
+  for (const e of composedVariablesExclusivesSchemaResults.data) {
+    const isAlias = !!aliases_flattenedKeys[e];
+    const isComposed = flattenedKeys_originalsOnly[e]?.includes(`${$COMMENT}#`);
+
+    if (isAlias)
+      return makeSuccessFalseTypeError(
+        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents an alias variable. Refer to its original instead.`
+      );
+    if (isComposed)
+      return makeSuccessFalseTypeError(
+        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
+      );
+  }
+
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
