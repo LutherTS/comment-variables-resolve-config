@@ -58,8 +58,9 @@ declare const resolveConfig: (configPath: string) => Promise<
           loc: SourceLocation;
         }
       >;
-      lintConfigImports: boolean | undefined;
-      myIgnoresOnly: boolean | undefined;
+      lintConfigImports: boolean;
+      myIgnoresOnly: boolean;
+      composedVariablesExclusives: string[];
     }
 >;
 
@@ -71,6 +72,9 @@ export const exampleFileName: "comments.example.js";
 export const commentVariablesPluginName: "comment-variables";
 export const cwd: string;
 export const extractRuleName: "extract-object-string-literal-values";
+export const resolveRuleName = "resolve";
+export const compressRuleName = "compress";
+export const placeholdersRuleName = "placeholders";
 export const placeholderMessageId: "placeholderMessageId";
 export const placeholderDataId: "placeholderDataId";
 export const configFlag: "--config";

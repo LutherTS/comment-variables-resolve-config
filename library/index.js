@@ -23,6 +23,7 @@ import {
   ConfigIgnoresSchema,
   ConfigLintConfigImportsSchema,
   ConfigMyIgnoresOnlySchema,
+  ConfigComposedVariablesExclusivesSchema,
 } from "./_commons/constants/schemas.js";
 
 import {
@@ -146,7 +147,8 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: "ERROR. Config ignores could not pass validation from zod.",
+          message:
+            "ERROR. Config lintConfigImports could not pass validation from zod.",
         },
         ...configLintConfigImportsSchemaResults.error.errors.map((e) => ({
           ...typeError,
@@ -167,9 +169,37 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: "ERROR. Config ignores could not pass validation from zod.",
+          message:
+            "ERROR. Config myIgnoresOnly could not pass validation from zod.",
         },
         ...configMyIgnoresOnlySchemaResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  // NEW
+  // validates config.composedVariablesExclusives
+  const composedVariablesExclusives = /** @type {unknown} */ (
+    config.composedVariablesExclusives
+  );
+  const composedVariablesExclusivesSchemaResults =
+    ConfigComposedVariablesExclusivesSchema.safeParse(
+      composedVariablesExclusives
+    );
+
+  if (!composedVariablesExclusivesSchemaResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            "ERROR. Config composedVariablesExclusives could not pass validation from zod.",
+        },
+        ...composedVariablesExclusivesSchemaResults.error.errors.map((e) => ({
           ...typeError,
           message: e.message,
         })),
@@ -557,6 +587,22 @@ const resolveConfig = async (configPath) => {
   // console.log("aliases_valueLocations are:", aliasesKeys_valueLocations);
   // console.log("keys_valueLocations are:", keys_valueLocations);
 
+  // NEW
+  // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
+  for (const e of composedVariablesExclusivesSchemaResults.data) {
+    const isAlias = !!aliases_flattenedKeys[e];
+    const isComposed = flattenedKeys_originalsOnly[e]?.includes(`${$COMMENT}#`);
+
+    if (isAlias)
+      return makeSuccessFalseTypeError(
+        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents an alias variable. Refer to its original instead.`
+      );
+    if (isComposed)
+      return makeSuccessFalseTypeError(
+        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
+      );
+  }
+
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
@@ -571,8 +617,11 @@ const resolveConfig = async (configPath) => {
     keys_valueLocations,
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
-    lintConfigImports: configLintConfigImportsSchemaResults.data,
-    myIgnoresOnly: configMyIgnoresOnlySchemaResults.data,
+    lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
+    myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
+    // NEW
+    composedVariablesExclusives:
+      composedVariablesExclusivesSchemaResults.data ?? [],
   };
 };
 
@@ -771,10 +820,11 @@ export {
   defaultConfigFileName,
   templateFileName,
   exampleFileName,
+  resolveRuleName,
+  compressRuleName,
+  placeholdersRuleName,
   cwd,
   configFlag,
-  // lintConfigImportsFlag,
-  // myIgnoresOnlyFlag,
   $COMMENT,
   knownIgnores,
   placeholderMessageId,
