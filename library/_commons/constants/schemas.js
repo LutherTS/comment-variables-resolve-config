@@ -103,4 +103,7 @@ export const ConfigComposedVariablesExclusivesSchema = z
       message: `The config's "composedVariablesExclusives" key value, if provided, should only be an array.`,
     }
   )
+  .refine((array) => new Set(array).size === array.length, {
+    message: `The config's "composedVariablesExclusives" key array should not contain duplicate values.`,
+  })
   .optional();
