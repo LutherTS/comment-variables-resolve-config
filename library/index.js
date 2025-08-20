@@ -180,7 +180,7 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  // NEW!!
+  // NEW
   // validates config.composedVariablesExclusives
   const composedVariablesExclusives = /** @type {unknown} */ (
     config.composedVariablesExclusives
