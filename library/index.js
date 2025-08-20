@@ -589,7 +589,9 @@ const resolveConfig = async (configPath) => {
 
   // NEW
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
-  for (const e of composedVariablesExclusivesSchemaResults.data) {
+  const composedVariablesExclusivesSchemaResultsData =
+    composedVariablesExclusivesSchemaResults.data ?? [];
+  for (const e of composedVariablesExclusivesSchemaResultsData) {
     const isAlias = !!aliases_flattenedKeys[e];
     const isComposed = flattenedKeys_originalsOnly[e]?.includes(`${$COMMENT}#`);
 
@@ -620,8 +622,7 @@ const resolveConfig = async (configPath) => {
     lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
     myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
     // NEW
-    composedVariablesExclusives:
-      composedVariablesExclusivesSchemaResults.data ?? [],
+    composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
   };
 };
 
