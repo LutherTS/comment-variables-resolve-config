@@ -424,4 +424,4 @@ export const extractRuleConfigData = Object.freeze({
   pluginName: commentVariablesPluginName,
   ruleName: extractRuleName,
   rule,
-}); // the name could eventually be changed because it's function-sounding
+});
