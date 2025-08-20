@@ -16,8 +16,6 @@ export const cwd = process.cwd();
 
 // flags
 export const configFlag = "--config";
-// export const lintConfigImportsFlag = "--lint-config-imports";
-// export const myIgnoresOnlyFlag = "--my-ignores-only";
 
 // placeholder prefix
 export const $COMMENT = "$COMMENT";
@@ -65,6 +63,9 @@ export const commentVariablesPluginName = "comment-variables";
 
 // rule name
 export const extractRuleName = "extract-object-string-literal-values";
+export const resolveRuleName = "resolve";
+export const compressRuleName = "compress";
+export const placeholdersRuleName = "placeholders"; // rule? (not a rule, used for command)
 
 // messageId
 export const placeholderMessageId = "placeholderMessageId";
