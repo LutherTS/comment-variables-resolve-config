@@ -23,6 +23,7 @@ import {
   ConfigIgnoresSchema,
   ConfigLintConfigImportsSchema,
   ConfigMyIgnoresOnlySchema,
+  ConfigComposedVariablesExclusivesSchema,
 } from "./_commons/constants/schemas.js";
 
 import {
@@ -146,7 +147,8 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: "ERROR. Config ignores could not pass validation from zod.",
+          message:
+            "ERROR. Config lintConfigImports could not pass validation from zod.",
         },
         ...configLintConfigImportsSchemaResults.error.errors.map((e) => ({
           ...typeError,
@@ -167,9 +169,37 @@ const resolveConfig = async (configPath) => {
       errors: [
         {
           ...typeError,
-          message: "ERROR. Config ignores could not pass validation from zod.",
+          message:
+            "ERROR. Config myIgnoresOnly could not pass validation from zod.",
         },
         ...configMyIgnoresOnlySchemaResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  // NEW!!
+  // validates config.composedVariablesExclusives
+  const composedVariablesExclusives = /** @type {unknown} */ (
+    config.composedVariablesExclusives
+  );
+  const composedVariablesExclusivesSchemaResults =
+    ConfigComposedVariablesExclusivesSchema.safeParse(
+      composedVariablesExclusives
+    );
+
+  if (!composedVariablesExclusivesSchemaResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            "ERROR. Config composedVariablesExclusives could not pass validation from zod.",
+        },
+        ...composedVariablesExclusivesSchemaResults.error.errors.map((e) => ({
           ...typeError,
           message: e.message,
         })),
@@ -571,8 +601,11 @@ const resolveConfig = async (configPath) => {
     keys_valueLocations,
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
-    lintConfigImports: configLintConfigImportsSchemaResults.data,
-    myIgnoresOnly: configMyIgnoresOnlySchemaResults.data,
+    lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
+    myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
+    // NEW
+    composedVariablesExclusives:
+      composedVariablesExclusivesSchemaResults.data ?? [],
   };
 };
 
@@ -773,8 +806,6 @@ export {
   exampleFileName,
   cwd,
   configFlag,
-  // lintConfigImportsFlag,
-  // myIgnoresOnlyFlag,
   $COMMENT,
   knownIgnores,
   placeholderMessageId,

@@ -75,7 +75,7 @@ export const ConfigDataSchema = z
 
 export const ConfigIgnoresSchema = z.array(
   z.string({
-    message: `The config's "ignores" key array should be made of string or be empty.`,
+    message: `The config's "ignores" key array should be made of strings or be empty.`,
   }),
   {
     message: `The config's "ignores" key value should be an array of strings (or at the very least an empty array).`,
@@ -92,4 +92,15 @@ export const ConfigMyIgnoresOnlySchema = z
   .boolean({
     message: `The config's "myIgnoresOnly" key's value, if provided, should only be a boolean.`,
   })
+  .optional();
+
+export const ConfigComposedVariablesExclusivesSchema = z
+  .array(
+    z.string({
+      message: `The config's "composedVariablesExclusives" key array should be made of strings or be empty.`,
+    }),
+    {
+      message: `The config's "composedVariablesExclusives" key value, if provided, should only be an array.`,
+    }
+  )
   .optional();
