@@ -70,6 +70,28 @@ export const ConfigDataSchema = z
           path: [key],
         });
       }
+      // ensures no comment syntax in keys (values are handled in entry index.js file)
+      if (key.includes("//")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Key "${key}" should not include "//" for structural reasons related to JavaScript comments.`,
+          path: [key],
+        });
+      }
+      if (key.includes("/*")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Key "${key}" should not include "/*" for structural reasons related to JavaScript comments.`,
+          path: [key],
+        });
+      }
+      if (key.includes("*/")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Key "${key}" should not include "*/" for structural reasons related to JavaScript comments.`,
+          path: [key],
+        });
+      }
     }
   });
 

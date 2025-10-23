@@ -260,6 +260,23 @@ const resolveConfig = async (configPath) => {
         `ERROR. Somehow the key "${key}" is not properly formatted. (This is mostly an internal mistake.)`
       );
     }
+
+    // ensures no comment syntax in values (keys are handled in schemas.js)
+    if (value.includes("//")) {
+      return makeSuccessFalseTypeError(
+        `Value "${value}" should not include "//" for structural reasons related to JavaScript comments.`
+      );
+    }
+    if (value.includes("/*")) {
+      return makeSuccessFalseTypeError(
+        `Value "${value}" should not include "/*" for structural reasons related to JavaScript comments.`
+      );
+    }
+    if (value.includes("*/")) {
+      return makeSuccessFalseTypeError(
+        `Value "${value}" should not include "*/" for structural reasons related to JavaScript comments.`
+      );
+    }
   }
 
   const aliases_flattenedKeys__EntriesArray = Object.entries(
