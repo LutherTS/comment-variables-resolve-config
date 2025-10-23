@@ -56,20 +56,6 @@ export const ConfigDataSchema = z
           path: [key],
         });
       }
-      if (!configKeyRegex.test(key)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Key "${key}" should only include whitespaces (s), lowercase letters (Ll), uppercase letters (Lu), other letters (Lo), numbers (N), dash punctuation (Pd), and connector punctuation (Pc).`,
-          path: [key],
-        });
-      }
-      if (forbiddenKeyNamesSet.has(key)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `A key like "${key}" is not allowed to be named "value", "key", or "placeholder".`,
-          path: [key],
-        });
-      }
       // ensures no comment syntax in keys (values are handled in entry index.js file)
       if (key.includes("//")) {
         ctx.addIssue({
@@ -89,6 +75,20 @@ export const ConfigDataSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: `Key "${key}" should not include "*/" for structural reasons related to JavaScript comments.`,
+          path: [key],
+        });
+      }
+      if (!configKeyRegex.test(key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Key "${key}" should only include whitespaces (s), lowercase letters (Ll), uppercase letters (Lu), other letters (Lo), numbers (N), dash punctuation (Pd), and connector punctuation (Pc).`,
+          path: [key],
+        });
+      }
+      if (forbiddenKeyNamesSet.has(key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `A key like "${key}" is not allowed to be named "value", "key", or "placeholder".`,
           path: [key],
         });
       }

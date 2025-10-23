@@ -264,17 +264,17 @@ const resolveConfig = async (configPath) => {
     // ensures no comment syntax in values (keys are handled in schemas.js)
     if (value.includes("//")) {
       return makeSuccessFalseTypeError(
-        `Value "${value}" should not include "//" for structural reasons related to JavaScript comments.`
+        `ERROR. Value "${value}" should not include "//" for structural reasons related to JavaScript comments.`
       );
     }
     if (value.includes("/*")) {
       return makeSuccessFalseTypeError(
-        `Value "${value}" should not include "/*" for structural reasons related to JavaScript comments.`
+        `ERROR. Value "${value}" should not include "/*" for structural reasons related to JavaScript comments.`
       );
     }
     if (value.includes("*/")) {
       return makeSuccessFalseTypeError(
-        `Value "${value}" should not include "*/" for structural reasons related to JavaScript comments.`
+        `ERROR. Value "${value}" should not include "*/" for structural reasons related to JavaScript comments.`
       );
     }
   }
