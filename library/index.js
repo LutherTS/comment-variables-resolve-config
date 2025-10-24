@@ -758,7 +758,8 @@ const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
       results[k] = {
         value: v,
         key,
-        placeholder: `${$COMMENT}#${key}`,
+        // Now with only keys alongside values, no longer placeholders. This is because placeholders can be easily reconstructed (like below), they are translated on hover via the TypeScript server plugin which is misleading when reading the resolved config data, and in order to shorten the size of the generated JSON and `.mjs` files.
+        // placeholder: `${$COMMENT}#${key}`,
       };
     }
   }

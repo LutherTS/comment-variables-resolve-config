@@ -62,7 +62,7 @@
         "placeholder": "$COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT"
       },
       "transformResolvedConfigData": {
-        "value": "Transforms resolved config data with keys and placeholders alongside values.",
+        "value": "Transforms resolved config data with keys alongside values.",
         "key": "JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA",
         "placeholder": "$COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA"
       },

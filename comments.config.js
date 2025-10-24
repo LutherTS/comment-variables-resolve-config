@@ -26,7 +26,7 @@ const data = {
       freshImport:
         "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility." /* $COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT */,
       transformResolvedConfigData:
-        "Transforms resolved config data with keys and placeholders alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
+        "Transforms resolved config data with keys alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
       makeNormalizedKey:
         "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
     }),
