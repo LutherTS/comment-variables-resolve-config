@@ -89,7 +89,7 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
  */
 
 /**
- * @typedef {Set<"value" | "key" | "placeholder">} ForbiddenKeyNamesSet
+ * @typedef {Set<"value" | "key">} ForbiddenKeyNamesSet
  */
 
 export {}; // Makes the file a module.

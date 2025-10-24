@@ -78,4 +78,4 @@ export const MODULE_TO_LOAD = "MODULE_TO_LOAD";
 
 // forbidden names for config data keys
 /** @type {ForbiddenKeyNamesSet>} */
-export const forbiddenKeyNamesSet = new Set(["value", "key", "placeholder"]);
+export const forbiddenKeyNamesSet = new Set(["value", "key"]);

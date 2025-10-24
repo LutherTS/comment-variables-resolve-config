@@ -88,7 +88,9 @@ export const ConfigDataSchema = z
       if (forbiddenKeyNamesSet.has(key)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `A key like "${key}" is not allowed to be named "value", "key", or "placeholder".`,
+          // "placeholder" is no longer a reserved word in the Comment Variables ecosystem.
+          // message: `A key like "${key}" is not allowed to be named "value", "key", or "placeholder".`,
+          message: `A key like "${key}" is not allowed to be named "value" or "key".`,
           path: [key],
         });
       }
