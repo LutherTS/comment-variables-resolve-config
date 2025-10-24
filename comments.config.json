@@ -3,352 +3,284 @@
     "definitions": {
       "escapeRegex": {
         "value": "Escapes all regex characters with a `\"\\\"` in a string to prepare it for use in a regex.",
-        "key": "JSDOC#DEFINITIONS#ESCAPEREGEX",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#ESCAPEREGEX"
+        "key": "JSDOC#DEFINITIONS#ESCAPEREGEX"
       },
       "makeIsolatedStringRegex": {
         "value": "Makes a global regex for a given string that ensures it is surrounded by whitespace.",
-        "key": "JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX"
+        "key": "JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX"
       },
       "flattenConfigData": {
         "value": "Flattens the config's data property into a one-dimensional object of `$COMMENT`-like keys and string values.",
-        "key": "JSDOC#DEFINITIONS#FLATTENCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA"
+        "key": "JSDOC#DEFINITIONS#FLATTENCONFIGDATA"
       },
       "resolveConfig": {
         "value": "Verifies, validates and resolves the config path to retrieve the config's data and ignores.",
-        "key": "JSDOC#DEFINITIONS#RESOLVECONFIG",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG"
+        "key": "JSDOC#DEFINITIONS#RESOLVECONFIG"
       },
       "makeSuccessFalseTypeError": {
         "value": "Makes a `{success: false}` object with a single error in its errors array of `{type: \"error\"}` based on the message it is meant to display.",
-        "key": "JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR"
+        "key": "JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR"
       },
       "extractValueLocationsFromLintMessages": {
         "value": "Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.",
-        "key": "JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES"
+        "key": "JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES"
       },
       "reverseFlattenedConfigData": {
         "value": "Reverses the keys and the values of a flattened config data object.",
-        "key": "JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA"
+        "key": "JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA"
       },
       "resolveComposedVariable": {
         "value": "Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.",
-        "key": "JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE"
+        "key": "JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE"
       },
       "resolveConfigDataStringValue": {
         "value": "Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.",
-        "key": "JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE"
+        "key": "JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE"
       },
       "resolveConfigData": {
         "value": "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
-        "key": "JSDOC#DEFINITIONS#RESOLVECONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA"
+        "key": "JSDOC#DEFINITIONS#RESOLVECONFIGDATA"
       },
       "makeResolvedConfigData": {
         "value": "Creates that object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
-        "key": "JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA"
+        "key": "JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA"
       },
       "freshImport": {
         "value": "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility.",
-        "key": "JSDOC#DEFINITIONS#FRESHIMPORT",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT"
+        "key": "JSDOC#DEFINITIONS#FRESHIMPORT"
       },
       "transformResolvedConfigData": {
         "value": "Transforms resolved config data with keys alongside values.",
-        "key": "JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA"
+        "key": "JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA"
       },
       "makeNormalizedKey": {
         "value": "Normalizes and makes a Comment Variable key from the list of keys that trace to its value.",
-        "key": "JSDOC#DEFINITIONS#MAKENORMALIZEDKEY",
-        "placeholder": "$COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY"
+        "key": "JSDOC#DEFINITIONS#MAKENORMALIZEDKEY"
       }
     },
     "params": {
       "string": {
         "value": "The string.",
-        "key": "JSDOC#PARAMS#STRING",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#STRING"
+        "key": "JSDOC#PARAMS#STRING"
       },
       "configData": {
         "value": "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)",
-        "key": "JSDOC#PARAMS#CONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#CONFIGDATA"
+        "key": "JSDOC#PARAMS#CONFIGDATA"
       },
       "configDataMapOption": {
         "value": "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.",
-        "key": "JSDOC#PARAMS#CONFIGDATAMAPOPTION",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION"
+        "key": "JSDOC#PARAMS#CONFIGDATAMAPOPTION"
       },
       "parentKeysOption": {
         "value": "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).",
-        "key": "JSDOC#PARAMS#PARENTKEYSOPTION",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION"
+        "key": "JSDOC#PARAMS#PARENTKEYSOPTION"
       },
       "configPathA": {
         "value": "The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `\"commentVariables.config\": true` in `.vscode/settings.json` for the VS Code extension.",
-        "key": "JSDOC#PARAMS#CONFIGPATHA",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#CONFIGPATHA"
+        "key": "JSDOC#PARAMS#CONFIGPATHA"
       },
       "message": {
         "value": "The human-readable message of the error.",
-        "key": "JSDOC#PARAMS#MESSAGE",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#MESSAGE"
+        "key": "JSDOC#PARAMS#MESSAGE"
       },
       "lintMessages": {
         "value": "The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.",
-        "key": "JSDOC#PARAMS#LINTMESSAGES",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#LINTMESSAGES"
+        "key": "JSDOC#PARAMS#LINTMESSAGES"
       },
       "pluginName": {
         "value": "The name of the plugin being used for filtering.",
-        "key": "JSDOC#PARAMS#PLUGINNAME",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#PLUGINNAME"
+        "key": "JSDOC#PARAMS#PLUGINNAME"
       },
       "ruleName": {
         "value": "The name of the rule being used for filtering.",
-        "key": "JSDOC#PARAMS#RULENAME",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#RULENAME"
+        "key": "JSDOC#PARAMS#RULENAME"
       },
       "options": {
         "value": "The additional options as follows:",
-        "key": "JSDOC#PARAMS#OPTIONS",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#OPTIONS"
+        "key": "JSDOC#PARAMS#OPTIONS"
       },
       "settings": {
         "value": "The required settings as follows:",
-        "key": "JSDOC#PARAMS#SETTINGS",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#SETTINGS"
+        "key": "JSDOC#PARAMS#SETTINGS"
       },
       "flattenedConfigDataA": {
         "value": "The provided flattened config data to be reversed.",
-        "key": "JSDOC#PARAMS#FLATTENEDCONFIGDATAA",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAA"
+        "key": "JSDOC#PARAMS#FLATTENEDCONFIGDATAA"
       },
       "composedVariable": {
         "value": "The composed variable as is.",
-        "key": "JSDOC#PARAMS#COMPOSEDVARIABLE",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLE"
+        "key": "JSDOC#PARAMS#COMPOSEDVARIABLE"
       },
       "flattenedConfigDataB": {
         "value": "The flattened config data obtained from resolveConfig.",
-        "key": "JSDOC#PARAMS#FLATTENEDCONFIGDATAB",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB"
+        "key": "JSDOC#PARAMS#FLATTENEDCONFIGDATAB"
       },
       "stringValue": {
         "value": "The encountered string value to be resolved.",
-        "key": "JSDOC#PARAMS#STRINGVALUE",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#STRINGVALUE"
+        "key": "JSDOC#PARAMS#STRINGVALUE"
       },
       "aliases_flattenedKeys": {
         "value": "The aliases-to-flattened-keys dictionary obtained from resolveConfig.",
-        "key": "JSDOC#PARAMS#ALIASES_FLATTENEDKEYS",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS"
+        "key": "JSDOC#PARAMS#ALIASES_FLATTENEDKEYS"
       },
       "configDataB": {
         "value": "The original config data obtained from resolveConfig.",
-        "key": "JSDOC#PARAMS#CONFIGDATAB",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#CONFIGDATAB"
+        "key": "JSDOC#PARAMS#CONFIGDATAB"
       },
       "callback": {
         "value": "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.",
-        "key": "JSDOC#PARAMS#CALLBACK",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#CALLBACK"
+        "key": "JSDOC#PARAMS#CALLBACK"
       },
       "resolveConfigResultsSuccessTrue": {
         "value": "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.",
-        "key": "JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE"
+        "key": "JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE"
       },
       "moduleUrl": {
         "value": "The absolute path of the module to import.",
-        "key": "JSDOC#PARAMS#MODULEURL",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#MODULEURL"
+        "key": "JSDOC#PARAMS#MODULEURL"
       },
       "resolvedConfigData": {
         "value": "The resolved config data.",
-        "key": "JSDOC#PARAMS#RESOLVEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATA"
+        "key": "JSDOC#PARAMS#RESOLVEDCONFIGDATA"
       },
       "parentKeys": {
         "value": "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).",
-        "key": "JSDOC#PARAMS#PARENTKEYS",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#PARENTKEYS"
+        "key": "JSDOC#PARAMS#PARENTKEYS"
       },
       "keys": {
         "value": "The list of keys at hand in order of traversal.",
-        "key": "JSDOC#PARAMS#KEYS",
-        "placeholder": "$COMMENT#JSDOC#PARAMS#KEYS"
+        "key": "JSDOC#PARAMS#KEYS"
       }
     },
     "returns": {
       "escapeRegex": {
         "value": "The string with regex characters escaped.",
-        "key": "JSDOC#RETURNS#ESCAPEREGEX",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#ESCAPEREGEX"
+        "key": "JSDOC#RETURNS#ESCAPEREGEX"
       },
       "makeIsolatedStringRegex": {
         "value": "The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace.",
-        "key": "JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX"
+        "key": "JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX"
       },
       "flattenConfigData": {
         "value": "The flattened config data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).",
-        "key": "JSDOC#RETURNS#FLATTENCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA"
+        "key": "JSDOC#RETURNS#FLATTENCONFIGDATA"
       },
       "resolveConfig": {
         "value": "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, the original config, and more. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.",
-        "key": "JSDOC#RETURNS#RESOLVECONFIG",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#RESOLVECONFIG"
+        "key": "JSDOC#RETURNS#RESOLVECONFIG"
       },
       "makeSuccessFalseTypeError": {
         "value": "A `{success: false}` object with a single error in its error array of `{type: \"error\"}`.",
-        "key": "JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR"
+        "key": "JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR"
       },
       "extractValueLocationsFromLintMessages": {
         "value": "An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.",
-        "key": "JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES"
+        "key": "JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES"
       },
       "reverseFlattenedConfigData": {
         "value": "The reversed version of the provided config data.",
-        "key": "JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA"
+        "key": "JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA"
       },
       "resolveComposedVariable": {
         "value": "The resolved composed variable as a single natural string.",
-        "key": "JSDOC#RETURNS#RESOLVECOMPOSEDVARIABLE",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#RESOLVECOMPOSEDVARIABLE"
+        "key": "JSDOC#RETURNS#RESOLVECOMPOSEDVARIABLE"
       },
       "resolveConfigDataStringValue": {
         "value": "The string value resolved as the relevant Comment Variable that it is.",
-        "key": "JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE"
+        "key": "JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE"
       },
       "resolveConfigData": {
         "value": "Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.",
-        "key": "JSDOC#RETURNS#RESOLVECONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA"
+        "key": "JSDOC#RETURNS#RESOLVECONFIGDATA"
       },
       "makeResolvedConfigData": {
         "value": "An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.",
-        "key": "JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA"
+        "key": "JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA"
       },
       "freshImport": {
         "value": "Either an object with its `default` property sets to the default export of the module successfully loaded or `null` when an error arises. (Debugging is currently manual by looking at the error being caught in the child process.)",
-        "key": "JSDOC#RETURNS#FRESHIMPORT",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#FRESHIMPORT"
+        "key": "JSDOC#RETURNS#FRESHIMPORT"
       },
       "transformResolvedConfigData": {
         "value": "The transformed resolved config data with keys and placeholders readily accessible alongside values.",
-        "key": "JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA"
+        "key": "JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA"
       },
       "makeNormalizedKey": {
         "value": "The normalized key of a Comment Variable.",
-        "key": "JSDOC#RETURNS#MAKENORMALIZEDKEY",
-        "placeholder": "$COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY"
+        "key": "JSDOC#RETURNS#MAKENORMALIZEDKEY"
       }
     },
     "constants": {
       "configKeyRegex": {
         "value": "Ensures keys should only include lowercase letters (`Ll`), uppercase letters (`Lu`), other letters (`Lo`), dash punctuation (`Pd`), connector punctuation (`Pc`), numbers (`N`) and whitespaces (`s`).",
-        "key": "JSDOC#CONSTANTS#CONFIGKEYREGEX",
-        "placeholder": "$COMMENT#JSDOC#CONSTANTS#CONFIGKEYREGEX"
+        "key": "JSDOC#CONSTANTS#CONFIGKEYREGEX"
       },
       "flattenedConfigKeyRegex": {
         "value": "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), without whitespaces (`\\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together).",
-        "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX",
-        "placeholder": "$COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX"
+        "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX"
       },
       "flattenedConfigPlaceholderLocalRegex": {
         "value": "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces.",
-        "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX",
-        "placeholder": "$COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX"
+        "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX"
       },
       "flattenedConfigPlaceholderGlobalRegex": {
         "value": "Same as `flattenedConfigPlaceholderLocalRegex` but globally.",
-        "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX",
-        "placeholder": "$COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX"
+        "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX"
       },
       "extractRuleConfigData": {
         "value": "The core data needed to run the \"extract\" rule, fully-named `\"extract-object-string-literal-values\"`. (The name of the object could eventually be changed for being too function-sounding, since it could be confused for \"a function that extract rule config data\" instead of what it is, \"the data of the extract rule config\".)",
-        "key": "JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA",
-        "placeholder": "$COMMENT#JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA"
+        "key": "JSDOC#CONSTANTS#EXTRACTRULECONFIGDATA"
       }
     }
   },
   "forComposedVariables": {
     "pluginName": {
       "value": "plugin",
-      "key": "FORCOMPOSEDVARIABLES#PLUGINNAME",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME"
+      "key": "FORCOMPOSEDVARIABLES#PLUGINNAME"
     },
     "ruleName": {
       "value": "rule",
-      "key": "FORCOMPOSEDVARIABLES#RULENAME",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#RULENAME"
+      "key": "FORCOMPOSEDVARIABLES#RULENAME"
     },
     "theNameOf": {
       "value": "The name of the",
-      "key": "FORCOMPOSEDVARIABLES#THENAMEOF",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF"
+      "key": "FORCOMPOSEDVARIABLES#THENAMEOF"
     },
     "forFilteringPeriod": {
       "value": "being used for filtering.",
-      "key": "FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD"
+      "key": "FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD"
     },
     "flattenedConfigDataB": {
       "value": "The flattened config data",
-      "key": "FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB"
+      "key": "FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB"
     },
     "aliases_flattenedKeys": {
       "value": "The aliases-to-flattened-keys dictionary",
-      "key": "FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS"
+      "key": "FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS"
     },
     "configDataB": {
       "value": "The original config data",
-      "key": "FORCOMPOSEDVARIABLES#CONFIGDATAB",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB"
+      "key": "FORCOMPOSEDVARIABLES#CONFIGDATAB"
     },
     "obtainedResolveConfig": {
       "value": "obtained from resolveConfig.",
-      "key": "FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG"
+      "key": "FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG"
     },
     "recursivelyResolvesTo": {
       "value": "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an",
-      "key": "FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO"
+      "key": "FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO"
     },
     "createsThat": {
       "value": "Creates that",
-      "key": "FORCOMPOSEDVARIABLES#CREATESTHAT",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT"
+      "key": "FORCOMPOSEDVARIABLES#CREATESTHAT"
     },
     "objectConfigData": {
       "value": "object with the same keys and the same shape as the original config data now with all string values entirely resolved.",
-      "key": "FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA"
+      "key": "FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA"
     },
     "transformedObjectConfigData": {
       "value": "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
-      "key": "FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA",
-      "placeholder": "$COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA"
+      "key": "FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA"
     }
   }
 }

@@ -47,9 +47,9 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG
- * @param {string} configPath $COMMENT#JSDOC#PARAMS#CONFIGPATHA
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIG
+ * Verifies, validates and resolves the config path to retrieve the config's data and ignores.
+ * @param {string} configPath The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.
+ * @returns The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, the original config, and more. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension.
  */
 const resolveConfig = async (configPath) => {
   // Step 1a: Checks if config file exists.
@@ -630,11 +630,11 @@ const resolveConfig = async (configPath) => {
 /* makeResolvedConfigData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECOMPOSEDVARIABLE
- * @param {string} composedVariable $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLE
- * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
- * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECOMPOSEDVARIABLE
+ * Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
+ * @param {string} composedVariable The composed variable as is.
+ * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
+ * @returns The resolved composed variable as a single natural string.
  */
 const resolveComposedVariable = (
   composedVariable,
@@ -651,11 +651,11 @@ const resolveComposedVariable = (
 };
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATASTRINGVALUE
- * @param {string} stringValue $COMMENT#JSDOC#PARAMS#STRINGVALUE
- * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
- * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATASTRINGVALUE
+ * Resolves a string value from Comment Variables config data taking into account the possibility that it is first an alias variable, second (and on the alias route) a composed variable, third (also on the alias route) a comment variable.
+ * @param {string} stringValue The encountered string value to be resolved.
+ * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
+ * @returns The string value resolved as the relevant Comment Variable that it is.
  */
 const resolveConfigDataStringValue = (
   stringValue,
@@ -692,12 +692,12 @@ const resolveConfigDataStringValue = (
 };
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIGDATA
- * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAB
- * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
- * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
- * @param {(value: string) => string} callback $COMMENT#JSDOC#PARAMS#CALLBACK
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECONFIGDATA
+ * Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an object with the same keys and the same shape as the original config data now with all string values entirely resolved.
+ * @param {ConfigData} configData The original config data obtained from resolveConfig.
+ * @param {Record<string, string>} flattenedConfigData The flattened config data obtained from resolveConfig.
+ * @param {Record<string, string>} aliases_flattenedKeys The aliases-to-flattened-keys dictionary obtained from resolveConfig.
+ * @param {(value: string) => string} callback The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default.
+ * @returns Just the resolved config data if successful, or an object with `success: false` and errors if unsuccessful.
  */
 const resolveConfigData = (
   configData,
@@ -736,10 +736,10 @@ const resolveConfigData = (
 };
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA
- * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATA
- * @param {string[]} parentsKeys $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION
- * @returns $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA
+ * Transforms resolved config data with keys alongside values.
+ * @param {Record<string, unknown>} resolvedConfigData The resolved config data.
+ * @param {string[]} parentsKeys The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).
+ * @returns The transformed resolved config data with keys and placeholders readily accessible alongside values.
  */
 const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
   /** @type {Record<string, unknown>} */
@@ -768,9 +768,9 @@ const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
 };
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA
- * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE
- * @returns $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA
+ * Creates that object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.
+ * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue The successful results of a `resolveConfig` operation, already vetted and ready to be transformed.
+ * @returns An object with `success: true` and the resolved config data if successful, or with `success: false` and errors if unsuccessful.
  */
 const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
   const { config, aliases_flattenedKeys, flattenedConfigData } =
