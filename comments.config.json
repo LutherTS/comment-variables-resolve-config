@@ -238,11 +238,11 @@
         "key": "JSDOC#RETURNS#MAKENORMALIZEDKEY"
       },
       "makeJsonData": {
-        "value": "The JSON resolved config data to be written at an expected `.json` path. It can be consumed by any language that can parse JSON, which is virtually all modern languages, so that Comment Variables can act as the single source of truth for text variables beyond JavaScript and TypeScript.",
+        "value": "The JSON resolved config data to be written at an expected `.json` path. It can be consumed by any language that can parse JSON, which means virtually all modern languages, so that Comment Variables can act as a single source of truth for text variables beyond JavaScript and TypeScript.",
         "key": "JSDOC#RETURNS#MAKEJSONDATA"
       },
       "makeMjsData": {
-        "value": "The MJS resolved config data to be written at an expected `.mjs` path. Its format make it possible to be consumed with literal type safety in both JavaScript and TypeScript.",
+        "value": "The MJS resolved config data to be written at an expected `.mjs` path. Its format makes it possible to be consumed with literal type safety in both JavaScript and TypeScript.",
         "key": "JSDOC#RETURNS#MAKEMJSDATA"
       },
       "makeJsonPathLog": {

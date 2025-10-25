@@ -120,9 +120,9 @@ const data = {
       makeNormalizedKey:
         "The normalized key of a Comment Variable." /* $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
       makeJsonData:
-        "The JSON resolved config data to be written at an expected `.json` path. It can be consumed by any language that can parse JSON, which is virtually all modern languages, so that Comment Variables can act as the single source of truth for text variables beyond JavaScript and TypeScript." /* $COMMENT#JSDOC#RETURNS#MAKEJSONDATA */,
+        "The JSON resolved config data to be written at an expected `.json` path. It can be consumed by any language that can parse JSON, which means virtually all modern languages, so that Comment Variables can act as a single source of truth for text variables beyond JavaScript and TypeScript." /* $COMMENT#JSDOC#RETURNS#MAKEJSONDATA */,
       makeMjsData:
-        "The MJS resolved config data to be written at an expected `.mjs` path. Its format make it possible to be consumed with literal type safety in both JavaScript and TypeScript." /* $COMMENT#JSDOC#RETURNS#MAKEMJSDATA */,
+        "The MJS resolved config data to be written at an expected `.mjs` path. Its format makes it possible to be consumed with literal type safety in both JavaScript and TypeScript." /* $COMMENT#JSDOC#RETURNS#MAKEMJSDATA */,
       makeJsonPathLog:
         "The log that announces the writing of the JSON resolved config data has been completed." /* $COMMENT#JSDOC#RETURNS#MAKEJSONPATHLOG */,
       makeMjsPathLog:
