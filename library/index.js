@@ -737,7 +737,7 @@ const resolveConfigData = (
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA
- * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATA
+ * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAA
  * @param {string[]} parentsKeys $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION
  * @returns $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA
  */
@@ -802,6 +802,52 @@ const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
   };
 };
 
+/* makeJsonData */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEJSONDATA
+ * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEJSONDATA
+ */
+const makeJsonData = (resolvedConfigData) =>
+  JSON.stringify(resolvedConfigData, null, 2);
+
+/* makeMjsData */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEMJSDATA
+ * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEMJSDATA
+ */
+const makeMjsData = (resolvedConfigData) =>
+  `/** @typedef {${JSON.stringify(
+    resolvedConfigData
+  )}} ResolvedConfigData */\n\n/** @type {ResolvedConfigData} */\nexport const resolvedConfigData = ${JSON.stringify(
+    resolvedConfigData,
+    null,
+    2
+  )}`;
+
+/* makeJsonPathLog */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEJSONPATHLOG
+ * @param {string} jsonPath $COMMENT#JSDOC#PARAMS#JSONPATH
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEJSONPATHLOG
+ */
+const makeJsonPathLog = (jsonPath) =>
+  `JSON resolved config data written to: \n${jsonPath}`;
+
+/* makeMjsPathLog */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEMJSPATHLOG
+ * @param {string} mjsPath $COMMENT#JSDOC#PARAMS#MJSPATH
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEMJSPATHLOG
+ */
+const makeMjsPathLog = (mjsPath) =>
+  `MJS resolved config data written to: \n${mjsPath}`;
+
 export default resolveConfig;
 
 export {
@@ -817,6 +863,10 @@ export {
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
   makeResolvedConfigData,
+  makeJsonData,
+  makeMjsData,
+  makeJsonPathLog,
+  makeMjsPathLog,
 };
 
 export {

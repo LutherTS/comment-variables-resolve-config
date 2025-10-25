@@ -302,3 +302,35 @@ export const makeResolvedConfigData: (resolveConfigResultsSuccessTrue: {
       success: true;
       resolvedConfigData: Record<string, unknown>;
     };
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEJSONDATA
+ * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEJSONDATA
+ */
+export const makeJsonData: (
+  resolvedConfigData: Record<string, unknown>
+) => string;
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEMJSDATA
+ * @param {Record<string, unknown>} resolvedConfigData $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEMJSDATA
+ */
+export const makeMjsData: (
+  resolvedConfigData: Record<string, unknown>
+) => string;
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEJSONPATHLOG
+ * @param {string} jsonPath $COMMENT#JSDOC#PARAMS#JSONPATH
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEJSONPATHLOG
+ */
+export const makeJsonPathLog: (jsonPath: string) => string;
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEMJSPATHLOG
+ * @param {string} mjsPath $COMMENT#JSDOC#PARAMS#MJSPATH
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEMJSPATHLOG
+ */
+export const makeMjsPathLog: (mjsPath: string) => string;

@@ -56,6 +56,22 @@
       "makeNormalizedKey": {
         "value": "Normalizes and makes a Comment Variable key from the list of keys that trace to its value.",
         "key": "JSDOC#DEFINITIONS#MAKENORMALIZEDKEY"
+      },
+      "makeJsonData": {
+        "value": "Makes the JSON resolved config data to be written at an expected `.json` path.",
+        "key": "JSDOC#DEFINITIONS#MAKEJSONDATA"
+      },
+      "makeMjsData": {
+        "value": "Makes the MJS resolved config data to be written at an expected `.mjs` path.",
+        "key": "JSDOC#DEFINITIONS#MAKEMJSDATA"
+      },
+      "makeJsonPathLog": {
+        "value": "Makes the log that announces the writing of the JSON resolved config data.",
+        "key": "JSDOC#DEFINITIONS#MAKEJSONPATHLOG"
+      },
+      "makeMjsPathLog": {
+        "value": "Makes the log that announces the writing of the MJS resolved config data.",
+        "key": "JSDOC#DEFINITIONS#MAKEMJSPATHLOG"
       }
     },
     "params": {
@@ -139,9 +155,9 @@
         "value": "The absolute path of the module to import.",
         "key": "JSDOC#PARAMS#MODULEURL"
       },
-      "resolvedConfigData": {
+      "resolvedConfigDataA": {
         "value": "The resolved config data.",
-        "key": "JSDOC#PARAMS#RESOLVEDCONFIGDATA"
+        "key": "JSDOC#PARAMS#RESOLVEDCONFIGDATAA"
       },
       "parentKeys": {
         "value": "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).",
@@ -150,6 +166,18 @@
       "keys": {
         "value": "The list of keys at hand in order of traversal.",
         "key": "JSDOC#PARAMS#KEYS"
+      },
+      "resolvedConfigDataB": {
+        "value": "The resolved config data as obtained from `makeResolvedConfigData`.",
+        "key": "JSDOC#PARAMS#RESOLVEDCONFIGDATAB"
+      },
+      "jsonPath": {
+        "value": "The expected `.json` path where the JSON resolved config data is to be written.",
+        "key": "JSDOC#PARAMS#JSONPATH"
+      },
+      "mjsPath": {
+        "value": "The expected `.mjs` path where the MJS resolved config data is to be written.",
+        "key": "JSDOC#PARAMS#MJSPATH"
       }
     },
     "returns": {
@@ -208,6 +236,22 @@
       "makeNormalizedKey": {
         "value": "The normalized key of a Comment Variable.",
         "key": "JSDOC#RETURNS#MAKENORMALIZEDKEY"
+      },
+      "makeJsonData": {
+        "value": "The JSON resolved config data to be written at an expected `.json` path. It can be consumed by any language that can parse JSON, which is virtually all modern languages, so that Comment Variables can act as the single source of truth for text variables beyond JavaScript and TypeScript.",
+        "key": "JSDOC#RETURNS#MAKEJSONDATA"
+      },
+      "makeMjsData": {
+        "value": "The MJS resolved config data to be written at an expected `.mjs` path. Its format make it possible to be consumed with literal type safety in both JavaScript and TypeScript.",
+        "key": "JSDOC#RETURNS#MAKEMJSDATA"
+      },
+      "makeJsonPathLog": {
+        "value": "The log that announces the writing of the JSON resolved config data has been completed.",
+        "key": "JSDOC#RETURNS#MAKEJSONPATHLOG"
+      },
+      "makeMjsPathLog": {
+        "value": "The log that announces the writing of the MJS resolved config data has been completed.",
+        "key": "JSDOC#RETURNS#MAKEMJSPATHLOG"
       }
     },
     "constants": {
@@ -281,6 +325,42 @@
     "transformedObjectConfigData": {
       "value": "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
       "key": "FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA"
+    },
+    "makesThe": {
+      "value": "Makes the",
+      "key": "FORCOMPOSEDVARIABLES#MAKESTHE"
+    },
+    "resolvedAnExpected": {
+      "value": "resolved config data to be written at an expected",
+      "key": "FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED"
+    },
+    "pathPeriod": {
+      "value": " path.",
+      "key": "FORCOMPOSEDVARIABLES#PATHPERIOD"
+    },
+    "jsonCaps": {
+      "value": "JSON",
+      "key": "FORCOMPOSEDVARIABLES#JSONCAPS"
+    },
+    "dotJsonPath": {
+      "value": "`.json` path.",
+      "key": "FORCOMPOSEDVARIABLES#DOTJSONPATH"
+    },
+    "mjsCaps": {
+      "value": "MJS",
+      "key": "FORCOMPOSEDVARIABLES#MJSCAPS"
+    },
+    "dotMjsPath": {
+      "value": "`.mjs` path.",
+      "key": "FORCOMPOSEDVARIABLES#DOTMJSPATH"
+    },
+    "logWritingOfThe": {
+      "value": "log that announces the writing of the",
+      "key": "FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE"
+    },
+    "resolvedConfigDataPeriod": {
+      "value": "resolved config data.",
+      "key": "FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD"
     }
   }
 }

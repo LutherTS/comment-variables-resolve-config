@@ -29,6 +29,14 @@ const data = {
         "Transforms resolved config data with keys alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
       makeNormalizedKey:
         "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
+      makeJsonData:
+        "$COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATH" /* $COMMENT#JSDOC#DEFINITIONS#MAKEJSONDATA */,
+      makeMjsData:
+        "$COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATH" /* $COMMENT#JSDOC#DEFINITIONS#MAKEMJSDATA */,
+      makeJsonPathLog:
+        "$COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD" /* $COMMENT#JSDOC#DEFINITIONS#MAKEJSONPATHLOG */,
+      makeMjsPathLog:
+        "$COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD" /* $COMMENT#JSDOC#DEFINITIONS#MAKEMJSPATHLOG */,
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
@@ -70,11 +78,17 @@ const data = {
         "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed." /* $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE */,
       moduleUrl:
         "The absolute path of the module to import." /* $COMMENT#JSDOC#PARAMS#MODULEURL */,
-      resolvedConfigData:
-        "The resolved config data." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATA */,
+      resolvedConfigDataA:
+        "The resolved config data." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAA */,
       parentKeys:
         "JSDOC#PARAMS#PARENTKEYSOPTION" /* $COMMENT#JSDOC#PARAMS#PARENTKEYS */,
       keys: "The list of keys at hand in order of traversal." /* $COMMENT#JSDOC#PARAMS#KEYS */,
+      resolvedConfigDataB:
+        "The resolved config data as obtained from `makeResolvedConfigData`." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB */,
+      jsonPath:
+        "The expected `.json` path where the JSON resolved config data is to be written." /* $COMMENT#JSDOC#PARAMS#JSONPATH */,
+      mjsPath:
+        "The expected `.mjs` path where the MJS resolved config data is to be written." /* $COMMENT#JSDOC#PARAMS#MJSPATH */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -105,6 +119,14 @@ const data = {
         "The transformed resolved config data with keys and placeholders readily accessible alongside values." /* $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA */,
       makeNormalizedKey:
         "The normalized key of a Comment Variable." /* $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
+      makeJsonData:
+        "The JSON resolved config data to be written at an expected `.json` path. It can be consumed by any language that can parse JSON, which is virtually all modern languages, so that Comment Variables can act as the single source of truth for text variables beyond JavaScript and TypeScript." /* $COMMENT#JSDOC#RETURNS#MAKEJSONDATA */,
+      makeMjsData:
+        "The MJS resolved config data to be written at an expected `.mjs` path. Its format make it possible to be consumed with literal type safety in both JavaScript and TypeScript." /* $COMMENT#JSDOC#RETURNS#MAKEMJSDATA */,
+      makeJsonPathLog:
+        "The log that announces the writing of the JSON resolved config data has been completed." /* $COMMENT#JSDOC#RETURNS#MAKEJSONPATHLOG */,
+      makeMjsPathLog:
+        "The log that announces the writing of the MJS resolved config data has been completed." /* $COMMENT#JSDOC#RETURNS#MAKEMJSPATHLOG */,
     }),
     constants: Object.freeze({
       configKeyRegex:
@@ -140,6 +162,19 @@ const data = {
       "object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA */,
     transformedObjectConfigData:
       "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders." /* $COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA */,
+    makesThe: "Makes the" /* $COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE */,
+    resolvedAnExpected:
+      "resolved config data to be written at an expected" /* $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED */,
+    pathPeriod: " path." /* $COMMENT#FORCOMPOSEDVARIABLES#PATHPERIOD */,
+    jsonCaps: "JSON" /* $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS */,
+    dotJsonPath:
+      "`.json` path." /* $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATH */,
+    mjsCaps: "MJS" /* $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS */,
+    dotMjsPath: "`.mjs` path." /* $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATH */,
+    logWritingOfThe:
+      "log that announces the writing of the" /* $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE */,
+    resolvedConfigDataPeriod:
+      "resolved config data." /* $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD */,
   }),
 };
 
@@ -149,6 +184,13 @@ const ignores = [];
 const composedVariablesExclusives = [
   "FORCOMPOSEDVARIABLES#PLUGINNAME",
   "FORCOMPOSEDVARIABLES#RULENAME",
+  "FORCOMPOSEDVARIABLES#MAKESTHE",
+  "FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED",
+  "FORCOMPOSEDVARIABLES#PATHPERIOD",
+  "FORCOMPOSEDVARIABLES#JSONCAPS",
+  "FORCOMPOSEDVARIABLES#DOTJSON",
+  "FORCOMPOSEDVARIABLES#MJSCAPS",
+  "FORCOMPOSEDVARIABLES#DOTMJS",
 ];
 
 const config = {
