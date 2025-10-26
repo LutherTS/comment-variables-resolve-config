@@ -342,17 +342,17 @@
       "value": "JSON",
       "key": "FORCOMPOSEDVARIABLES#JSONCAPS"
     },
-    "dotJsonPath": {
+    "dotJsonPathPeriod": {
       "value": "`.json` path.",
-      "key": "FORCOMPOSEDVARIABLES#DOTJSONPATH"
+      "key": "FORCOMPOSEDVARIABLES#DOTJSONPATHPERIOD"
     },
     "mjsCaps": {
       "value": "MJS",
       "key": "FORCOMPOSEDVARIABLES#MJSCAPS"
     },
-    "dotMjsPath": {
+    "dotMjsPathPeriod": {
       "value": "`.mjs` path.",
-      "key": "FORCOMPOSEDVARIABLES#DOTMJSPATH"
+      "key": "FORCOMPOSEDVARIABLES#DOTMJSPATHPERIOD"
     },
     "logWritingOfThe": {
       "value": "log that announces the writing of the",
@@ -361,6 +361,42 @@
     "resolvedConfigDataPeriod": {
       "value": "resolved config data.",
       "key": "FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD"
+    },
+    "_The": {
+      "value": "The",
+      "key": "FORCOMPOSEDVARIABLES#_THE"
+    },
+    "expected": {
+      "value": "expected",
+      "key": "FORCOMPOSEDVARIABLES#EXPECTED"
+    },
+    "dotJsonPath": {
+      "value": "`.json` path",
+      "key": "FORCOMPOSEDVARIABLES#DOTJSONPATH"
+    },
+    "dotMjsPath": {
+      "value": "`.mjs` path",
+      "key": "FORCOMPOSEDVARIABLES#DOTMJSPATH"
+    },
+    "whereThe": {
+      "value": "where the",
+      "key": "FORCOMPOSEDVARIABLES#WHERETHE"
+    },
+    "resolvedToBeWritten": {
+      "value": "resolved config data is to be written.",
+      "key": "FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN"
+    },
+    "makeJsonDataReturns": {
+      "value": "It can be consumed by any language that can parse JSON, which means virtually all modern languages, so that Comment Variables can act as a single source of truth for text variables beyond JavaScript and TypeScript.",
+      "key": "FORCOMPOSEDVARIABLES#MAKEJSONDATARETURNS"
+    },
+    "makeMjsDataReturns": {
+      "value": "Its format makes it possible to be consumed with literal type safety in both JavaScript and TypeScript.",
+      "key": "FORCOMPOSEDVARIABLES#MAKEMJSDATARETURNS"
+    },
+    "resolvedConfigCompleted": {
+      "value": "resolved config data has been completed.",
+      "key": "FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED"
     }
   }
 }
