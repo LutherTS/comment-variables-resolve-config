@@ -88,33 +88,9 @@ const resolveConfig = async (configPath) => {
     );
   }
 
-  // validates config.data
-  const data = /** @type {unknown} */ (config.data);
-
-  // needed because of z.record()
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return makeSuccessFalseTypeError(
-      "ERROR. Invalid config.data format. The config.data should be an object."
-    );
-  }
-
-  const configDataResults = ConfigDataSchema.safeParse(data);
-
-  if (!configDataResults.success) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message: "ERROR. Config data could not pass validation from zod.",
-        },
-        ...configDataResults.error.errors.map((e) => ({
-          ...typeError,
-          message: e.message,
-        })),
-      ],
-    };
-  }
+  // NEW: data should be validated last because it will now depend on where the variants flag is true or not.
+  // - If the variants flag is true, we check and resolve each top-level key from data (fallback, en, fr, babadjou, etc.).
+  // - If the variants flag is not true, we check and resolve only the data key.
 
   // validates config.ignores
   const ignores = /** @type {unknown} */ (config.ignores);
@@ -180,7 +156,6 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  // NEW
   // validates config.composedVariablesExclusives
   const composedVariablesExclusives = /** @type {unknown} */ (
     config.composedVariablesExclusives
@@ -200,6 +175,79 @@ const resolveConfig = async (configPath) => {
             "ERROR. Config composedVariablesExclusives could not pass validation from zod.",
         },
         ...composedVariablesExclusivesSchemaResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  // IMPORTANT: MOVED EARLY IN THE PROCESS
+  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
+  // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
+
+  const findAllImportsResults = findAllImports(configPath);
+  if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
+  const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
+  // the paths must be relative for ESLint
+  const files = rawConfigAndImportPaths.map((e) =>
+    path.relative(process.cwd(), e)
+  );
+
+  const eslint = new ESLint({
+    errorOnUnmatchedPattern: false,
+    overrideConfigFile: true,
+    overrideConfig: [
+      {
+        files,
+        languageOptions: typeScriptAndJSXCompatible,
+        plugins: {
+          [commentVariablesPluginName]: {
+            rules: {
+              [extractRuleName]: extractObjectStringLiteralValues,
+            },
+          },
+        },
+        rules: {
+          [`${commentVariablesPluginName}/${extractRuleName}`]: "warn",
+        },
+      },
+    ],
+  });
+  const results = await eslint.lintFiles(files);
+
+  const extracts = results.flatMap((result) =>
+    extractValueLocationsFromLintMessages(
+      result.messages,
+      commentVariablesPluginName,
+      extractRuleName
+    )
+  );
+
+  // NEW: config.data validated last and expected to be validated within the upcoming resolveDataFlow.
+
+  // validates config.data
+  const data = /** @type {unknown} */ (config.data);
+
+  // --
+  // needed because of z.record()
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return makeSuccessFalseTypeError(
+      "ERROR. Invalid config.data format. The config.data should be an object."
+    );
+  }
+
+  const configDataResults = ConfigDataSchema.safeParse(data);
+
+  if (!configDataResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message: "ERROR. Config data could not pass validation from zod.",
+        },
+        ...configDataResults.error.errors.map((e) => ({
           ...typeError,
           message: e.message,
         })),
@@ -228,6 +276,7 @@ const resolveConfig = async (configPath) => {
   const originalFlattenedConfigData = Object.fromEntries(
     flattenedConfigDataMap
   );
+  // --
 
   // The integrity of the flattened config data needs to be established before working with it safely.
 
@@ -422,46 +471,47 @@ const resolveConfig = async (configPath) => {
   const reversedFlattenedConfigData =
     reverseFlattenedConfigData(flattenedConfigData);
 
-  // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
-  // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
+  // // IMPORTANT: MOVED EARLY IN THE PROCESS
+  // // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
+  // // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
-  const findAllImportsResults = findAllImports(configPath);
-  if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
-  const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
-  // the paths must be relative for ESLint
-  const files = rawConfigAndImportPaths.map((e) =>
-    path.relative(process.cwd(), e)
-  );
+  // const findAllImportsResults = findAllImports(configPath);
+  // if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
+  // const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
+  // // the paths must be relative for ESLint
+  // const files = rawConfigAndImportPaths.map((e) =>
+  //   path.relative(process.cwd(), e)
+  // );
 
-  const eslint = new ESLint({
-    errorOnUnmatchedPattern: false,
-    overrideConfigFile: true,
-    overrideConfig: [
-      {
-        files,
-        languageOptions: typeScriptAndJSXCompatible,
-        plugins: {
-          [commentVariablesPluginName]: {
-            rules: {
-              [extractRuleName]: extractObjectStringLiteralValues,
-            },
-          },
-        },
-        rules: {
-          [`${commentVariablesPluginName}/${extractRuleName}`]: "warn",
-        },
-      },
-    ],
-  });
-  const results = await eslint.lintFiles(files);
+  // const eslint = new ESLint({
+  //   errorOnUnmatchedPattern: false,
+  //   overrideConfigFile: true,
+  //   overrideConfig: [
+  //     {
+  //       files,
+  //       languageOptions: typeScriptAndJSXCompatible,
+  //       plugins: {
+  //         [commentVariablesPluginName]: {
+  //           rules: {
+  //             [extractRuleName]: extractObjectStringLiteralValues,
+  //           },
+  //         },
+  //       },
+  //       rules: {
+  //         [`${commentVariablesPluginName}/${extractRuleName}`]: "warn",
+  //       },
+  //     },
+  //   ],
+  // });
+  // const results = await eslint.lintFiles(files);
 
-  const extracts = results.flatMap((result) =>
-    extractValueLocationsFromLintMessages(
-      result.messages,
-      commentVariablesPluginName,
-      extractRuleName
-    )
-  );
+  // const extracts = results.flatMap((result) =>
+  //   extractValueLocationsFromLintMessages(
+  //     result.messages,
+  //     commentVariablesPluginName,
+  //     extractRuleName
+  //   )
+  // );
 
   /** @type {Map<string, ValueLocation>} */
   const values_valueLocations__map = new Map();
@@ -587,8 +637,8 @@ const resolveConfig = async (configPath) => {
     ...nonAliasesKeys_valueLocations,
     ...aliasesKeys_valueLocations,
   };
+  // --
 
-  // NEW
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
   const composedVariablesExclusivesSchemaResultsData =
     composedVariablesExclusivesSchemaResults.data ?? [];
@@ -609,6 +659,7 @@ const resolveConfig = async (configPath) => {
   return {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
+    // warnings,
     configPath, // finalized and absolute
     passedIgnores: configIgnoresSchemaResults.data,
     config,
@@ -622,7 +673,6 @@ const resolveConfig = async (configPath) => {
     aliasesKeys_valueLocations,
     lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
     myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
-    // NEW
     composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
   };
 };

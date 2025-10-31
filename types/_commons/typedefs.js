@@ -51,7 +51,7 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
  *
  * @typedef {{
  *   success: false;
- *   errors: Array<{ type: "error" | "warning"; message: string }>;
+ *   errors: Array<{ type: "error"; message: string }>;
  * } | {
  *   success: true;
  *   configDataMap: Map<string, {value: string; source: string}>;

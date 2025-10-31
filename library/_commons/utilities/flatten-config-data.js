@@ -7,6 +7,7 @@ import { makeSuccessFalseTypeError, makeNormalizedKey } from "./helpers.js";
  * @typedef {import("../../../types/_commons/typedefs.js").FlattenConfigDataResults} FlattenConfigDataResults
  */
 
+// JSDoc will need to adapt to not just config.data but any data from the upcoming variations system.
 /**
  * $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA
  * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATA
