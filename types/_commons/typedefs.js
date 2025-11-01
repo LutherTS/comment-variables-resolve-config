@@ -1,4 +1,7 @@
+import { z } from "zod";
+
 import { placeholderMessageId } from "../../library/_commons/constants/bases.js";
+import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
 
 /**
  * @typedef {import('eslint').Linter.LintMessage} LintMessage
@@ -90,6 +93,11 @@ import { placeholderMessageId } from "../../library/_commons/constants/bases.js"
 
 /**
  * @typedef {Set<"value" | "key">} ForbiddenKeyNamesSet
+ */
+
+// Currently unused though.
+/**
+ * @typedef {z.infer<typeof VariationsSchema>} Variations
  */
 
 export {}; // Makes the file a module.

@@ -118,7 +118,6 @@ export const ConfigMyIgnoresOnlySchema = z
   })
   .optional();
 
-// NEW
 export const ConfigComposedVariablesExclusivesSchema = z
   .array(
     z.string({
@@ -132,3 +131,42 @@ export const ConfigComposedVariablesExclusivesSchema = z
     message: `The config's "composedVariablesExclusives" key array should not contain duplicate values.`,
   })
   .optional();
+
+// NEW
+export const VariationsSchema = z
+  .object({
+    variants: z.record(
+      z.object({
+        label: z.string(),
+      })
+    ),
+    variant: z.string(),
+    fallbackData: ConfigDataSchema,
+  })
+  .superRefine((val, ctx) => {
+    // 1️⃣ Check that variant is one of the variants keys
+    if (!Object.keys(val.variants).includes(val.variant)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `The variations.variant key "${val.variant}" must be one of the keys in variations.variants.`,
+        path: ["variant"],
+      });
+    }
+
+    // 2️⃣ Check that labels are unique
+    const labels = Object.values(val.variants).map((v) => v.label);
+    const lowerLabels = labels.map((l) => l.toLowerCase()); // case-insensitive
+
+    if (lowerLabels.length !== new Set(lowerLabels).size) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `The variations.variants key's object values should not contain duplicate labels.`,
+        path: ["variants"],
+      });
+    }
+  })
+  .optional();
+
+/**
+ * @typedef {z.infer<typeof VariationsSchema>} Variations
+ */
