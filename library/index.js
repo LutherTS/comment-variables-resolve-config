@@ -262,69 +262,8 @@ const resolveConfig = async (configPath) => {
   // But that also means that we need to check variations first, at least before data, since data will need to be checked depending on variations.
   // So that means ...
 
-  const resolvedDataTrio = {
-    resolvedData: null,
-    resolvedFallbackData: null,
-    resolvedVariantData: null,
-  };
-
   // validates config.data
   const data = /** @type {unknown} */ (config.data);
-
-  // IMPORTANT: The reality is that both paths have await resolveData(data, extracts) in common, so that could be done on its own, combined with the check right after on composed variables exclusives.
-
-  // NEW: config.data validated last and within resolveData.
-
-  // const resolveDataResults = await resolveData(data, extracts);
-  // if (!resolveDataResults.success) return resolveDataResults;
-  // // Bound for obsolescence.
-  // const {
-  //   originalFlattenedConfigData,
-  //   aliases_flattenedKeys,
-  //   flattenedConfigData,
-  //   reversedFlattenedConfigData,
-  //   keys_valueLocations,
-  //   nonAliasesKeys_valueLocations,
-  //   aliasesKeys_valueLocations,
-  // } = resolveDataResults;
-  // // The data that will eventually be bound.
-  // resolvedDataTrio.resolvedData = resolveDataResults;
-
-  // // Now we can add to resolvedDataTrio resolvedFallbackData and resolvedVariantData as an additional step, or in fact, we can actually add them to what is returned without displacing the current return flow.
-  // // If (variationsSchemaResults.data), we return the new flow with the added keys, else, we return the old flow.
-  // // So that means we won't even need resolvedDataTrio.
-  // if (!variationsSchemaResults.data) {
-  //   // do the regular flow
-  //   // const variationsSchemaResultsData = variationsSchemaResults.data;
-
-  //   const resolveDataResults = await resolveData(data, extracts);
-  //   if (!resolveDataResults.success) return resolveDataResults;
-  //   // honestly I can literally pass it all with the success property which is not an issue
-  //   resolvedDataTrio.resolvedData = resolveDataResults;
-  // } else {
-  //   // do the variations flow
-  //   const variationsSchemaResultsData = variationsSchemaResults.data;
-
-  //   // resolvedData
-  //   const resolvedDataResults = await resolveData(data, extracts);
-  //   if (!resolvedDataResults.success) return resolvedDataResults;
-  //   resolvedDataTrio.resolvedData = resolvedDataResults;
-  //   // resolvedFallbackData
-  //   const resolvedFallbackDataResults = await resolveData(
-  //     variationsSchemaResultsData.fallbackData,
-  //     extracts
-  //   );
-  //   if (!resolvedFallbackDataResults.success)
-  //     return resolvedFallbackDataResults;
-  //   resolvedDataTrio.resolvedFallbackData = resolvedFallbackDataResults;
-  //   // resolvedVariantData
-  //   const resolvedVariantDataResults = await resolveData(
-  //     data[variationsSchemaResultsData.variant],
-  //     extracts
-  //   );
-  //   if (!resolvedVariantDataResults.success) return resolvedVariantDataResults;
-  //   resolvedDataTrio.resolvedVariantData = resolvedVariantDataResults;
-  // }
 
   // NEW: config.data validated last and within resolveData.
 
@@ -359,7 +298,7 @@ const resolveConfig = async (configPath) => {
       );
   }
 
-  // So the branching is going to happen right here.
+  // Branching for variations.
 
   if (!variationsSchemaResults.data) {
     return {
@@ -374,7 +313,6 @@ const resolveConfig = async (configPath) => {
       myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
       composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
       ...variationsFalse,
-      // all of these will need to be under a trio of keys: resolvedData, resolvedFallbackData, resolvedVariantData (actually no, there will be two different branches, one with variations true and this one with variations false
       originalFlattenedConfigData, // for jscomments placeholders
       aliases_flattenedKeys,
       flattenedConfigData,
@@ -430,7 +368,6 @@ const resolveConfig = async (configPath) => {
     };
 
     return {
-      // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
       ...successTrue,
       // warnings,
       configPath, // finalized and absolute
@@ -441,7 +378,6 @@ const resolveConfig = async (configPath) => {
       myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
       composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
       ...variationsTrue,
-      // all of these will need to be under a trio of keys: resolvedData, resolvedFallbackData, resolvedVariantData (actually no, there will be two different branches, one with variations true and this one with variations false
       originalFlattenedConfigData, // for jscomments placeholders
       aliases_flattenedKeys,
       flattenedConfigData,
