@@ -201,7 +201,7 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  // IMPORTANT: MOVED EARLY IN THE PROCESS
+  // IMPORTANT: MOVED EARLIER IN THE PROCESS
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
@@ -252,22 +252,12 @@ const resolveConfig = async (configPath) => {
     )
   );
 
-  // NEW: config data will be validated depending on variationsSchemaResults.data:
-  // - If variationsSchemaResults.data is undefined, we check and resolve only the data key.
-  // - Else, we check and resolve: the data key, the variations.fallback key, and the data[variations.variant] key.
-  // With zod, we can even statically verify:
-  // - that the data key has each of the strings from variations.variants as its top-level keys
-  // - that variations.fallback is strictly the same as one of the top-level keys in data
-  // Or perhaps that can be done step-by-step afterwards?
-  // But that also means that we need to check variations first, at least before data, since data will need to be checked depending on variations.
-  // So that means ...
-
   // validates config.data
   const data = /** @type {unknown} */ (config.data);
 
   // NEW: config.data validated last and within resolveData.
 
-  const resolveDataResults = await resolveData(data, extracts);
+  const resolveDataResults = await resolveData(data, extracts, true);
   if (!resolveDataResults.success) return resolveDataResults;
   const {
     originalFlattenedConfigData,
@@ -324,10 +314,47 @@ const resolveConfig = async (configPath) => {
   } else {
     const variationsSchemaResultsData = variationsSchemaResults.data;
 
+    // Checks
+
+    // Checking that the data key has each of the strings from variations.variants as its top-level keys.
+
+    const dataTopLevelKeys = Object.keys(configDataResultsData);
+    const dataTopLevelKeysSet = new Set(dataTopLevelKeys);
+    console.log("dataTopLevelKeysSet are:", dataTopLevelKeysSet);
+
+    const variantsKeys = Object.keys(variationsSchemaResultsData.variants);
+    const variantsKeysSet = new Set(variantsKeys);
+    console.log("variantsKeysSet are:", variantsKeysSet);
+
+    if (dataTopLevelKeysSet.size !== variantsKeysSet.size)
+      return makeSuccessFalseTypeError(
+        `ERROR. There isn't the same amount of top-level keys in the data key as there is of top-level keys in the variations.variants key.`
+      );
+    for (const key of dataTopLevelKeysSet) {
+      if (!variantsKeysSet.has(key))
+        return makeSuccessFalseTypeError(
+          `ERROR. The key "${key}" present among the top-level keys in the data key in not present among the top-level keys in the variations.variants key.`
+        );
+    }
+
+    // Checking that variations.fallback is strictly the same as one of the top-level keys in data.
+
+    if (
+      !variantsKeys.some(
+        (e) => config.data[e] === config.variations.fallbackData
+      )
+    )
+      return makeSuccessFalseTypeError(
+        `ERROR. config.variations.fallbackData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.fallbackData needs to be strictly the same as that of one of the variants's data.`
+      );
+
+    // Resolves
+
     // resolvedFallbackData
     const resolvedFallbackDataResults = await resolveData(
       variationsSchemaResultsData.fallbackData,
-      extracts
+      extracts,
+      false
     );
     if (!resolvedFallbackDataResults.success)
       return resolvedFallbackDataResults;
@@ -349,7 +376,8 @@ const resolveConfig = async (configPath) => {
     // resolvedVariantData
     const resolvedVariantDataResults = await resolveData(
       configDataResultsData[variationsSchemaResultsData.variant],
-      extracts
+      extracts,
+      false
     );
     if (!resolvedVariantDataResults.success) return resolvedVariantDataResults;
 
@@ -366,6 +394,10 @@ const resolveConfig = async (configPath) => {
       aliasesKeys_valueLocations:
         resolvedVariantDataResults.aliasesKeys_valueLocations,
     };
+
+    // Logging to see if the right data correctly transpires...
+    console.log("resolvedFallbackData is:", resolvedFallbackData);
+    console.log("resolvedVariantData is:", resolvedVariantData);
 
     return {
       ...successTrue,

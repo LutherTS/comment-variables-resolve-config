@@ -134,15 +134,30 @@ export const ConfigComposedVariablesExclusivesSchema = z
 
 // NEW
 export const VariationsSchema = z
-  .object({
-    variants: z.record(
-      z.object({
-        label: z.string(),
-      })
-    ),
-    variant: z.string(),
-    fallbackData: ConfigDataSchema,
-  })
+  .object(
+    {
+      variants: z.record(
+        z.object(
+          {
+            label: z.string({ message: `All variant labels must be strings.` }),
+          },
+          {
+            message: `The config's "variations.variants" key's value must be a record.`,
+          }
+        ),
+        {
+          message: `The config's "variations.variants" key's value must be a record.`,
+        }
+      ),
+      variant: z.string({
+        message: `The config's "variations.variant" key's value must be a string.`,
+      }),
+      fallbackData: ConfigDataSchema,
+    },
+    {
+      message: `The config's "variations" key's value must be an object (or undefined).`,
+    }
+  )
   .superRefine((val, ctx) => {
     // 1️⃣ Check that variant is one of the variants keys
     if (!Object.keys(val.variants).includes(val.variant)) {

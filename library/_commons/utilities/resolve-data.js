@@ -24,8 +24,9 @@ import { flattenConfigData } from "./flatten-config-data.js";
  *
  * @param {unknown} data
  * @param {ValueLocation[]} extracts
+ * @param {boolean} initialResolve
  */
-export const resolveData = async (data, extracts) => {
+export const resolveData = async (data, extracts, initialResolve) => {
   // needed because of z.record()
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     return makeSuccessFalseTypeError(
@@ -292,85 +293,89 @@ export const resolveData = async (data, extracts) => {
     } else values_valueLocations__duplicateValuesArray.push({ value: extract });
   }
 
-  // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`. (The full lists are actually valuable in that they can mention the numbers of errors that need to be fixed.)
+  // NEW: the checks based on extracts (which are all extracts from the full data) are reserved only for the initial resolve run.
 
-  // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
-  if (values_valueLocations__duplicateValuesArray.length !== 0) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message: `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction.`, // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
-        },
-        {
-          ...typeError,
-          message: `Look to the following value: ${
-            Object.keys(values_valueLocations__duplicateValuesArray)[0]
-          }`,
-        },
-      ],
-    };
-  }
+  if (initialResolve) {
+    // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`. (The full lists are actually valuable in that they can mention the numbers of errors that need to be fixed.)
 
-  /** @type {Set<string>} */
-  const unrecognizedValuesSet = new Set();
-
-  for (const value of flattenedKeys_originalsOnly__valuesArray) {
-    if (!values_valueLocations__map.has(value)) {
-      // valueLocations only include string literals, so even if the value perfectly resolves, it doesn't exist in values_valueLocationsMap
-      unrecognizedValuesSet.add(value);
+    // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
+    if (values_valueLocations__duplicateValuesArray.length !== 0) {
+      return {
+        ...successFalse,
+        errors: [
+          {
+            ...typeError,
+            message: `ERROR. (\`values_valueLocations__duplicateValuesArray\` should remain empty. Length: ${values_valueLocations__duplicateValuesArray.length}.) You have several string literals as values to keys that are exactly the same within your config file and its recursive import files. Please turn those that are not used via your comment-variables config data into template literals for distinction.`, // Next possibly, list all of the duplicates, by including the original found in values_valueLocationsMap along with the ones in values_valueLocations__duplicateValuesArray, using the keys which are the string literals values as references.
+          },
+          {
+            ...typeError,
+            message: `Look to the following value: ${
+              Object.keys(values_valueLocations__duplicateValuesArray)[0]
+            }`,
+          },
+        ],
+      };
     }
-  }
 
-  // I'd rather report on ALL the errors one time instead of reporting on them one at a time for now.
+    /** @type {Set<string>} */
+    const unrecognizedValuesSet = new Set();
 
-  // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
-  if (unrecognizedValuesSet.size !== 0) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message: `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not (valid) string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are (valid) string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level.`, // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
-        },
-        {
-          ...typeError,
-          message: `Look to the following (perhaps evaluated) value: ${
-            [...unrecognizedValuesSet][0]
-          }`,
-        },
-      ],
-    };
-  }
+    for (const value of flattenedKeys_originalsOnly__valuesArray) {
+      if (!values_valueLocations__map.has(value)) {
+        // valueLocations only include string literals, so even if the value perfectly resolves, it doesn't exist in values_valueLocationsMap
+        unrecognizedValuesSet.add(value);
+      }
+    }
 
-  // Now to catch actual duplicate keys that silently override.
+    // I'd rather report on ALL the errors one time instead of reporting on them one at a time for now.
 
-  const flattenedConfigData__ValuesSet = new Set(
-    flattenedConfigData__ValuesArray
-  );
-  /** @type {Array<string} */
-  const overriddenObjectStringValues = [];
+    // unrecognizedValuesSet should be empty, because there shouldn't be a single value in flattenedKeys_originalsOnly__valuesArray that couldn't be found in values_valueLocationsMap with its ValueLocation data, unless it isn't a string literal
+    if (unrecognizedValuesSet.size !== 0) {
+      return {
+        ...successFalse,
+        errors: [
+          {
+            ...typeError,
+            message: `ERROR. (\`unrecognizedValuesSet\` should remain empty. Size: ${unrecognizedValuesSet.size}.) One or some of the values of your comment-variables config data are not (valid) string literals. Meaning they do resolve but not as string literals. Please ensure that all values in your comment-variables config data are (valid) string literals, since Comment Variables favors composition through actual Comment Variables, not at the values level.`, // Next possibly, list all the unrecognized values in order to inform on what values should be changed to string literals.
+          },
+          {
+            ...typeError,
+            message: `Look to the following (perhaps evaluated) value: ${
+              [...unrecognizedValuesSet][0]
+            }`,
+          },
+        ],
+      };
+    }
 
-  for (const value of allObjectStringValues) {
-    if (!flattenedConfigData__ValuesSet.has(value))
-      overriddenObjectStringValues.push(value);
-  }
+    // Now to catch actual duplicate keys that silently override.
 
-  if (overriddenObjectStringValues.length !== 0) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data, or you may have unused object string values lingering within files related to the config, in which case you ought to turn them into template literals for distinction.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
-        },
-        {
-          ...typeError,
-          message: `Look to the following value: ${overriddenObjectStringValues[0]}`,
-        },
-      ],
-    };
+    const flattenedConfigData__ValuesSet = new Set(
+      flattenedConfigData__ValuesArray
+    );
+    /** @type {Array<string} */
+    const overriddenObjectStringValues = [];
+
+    for (const value of allObjectStringValues) {
+      if (!flattenedConfigData__ValuesSet.has(value))
+        overriddenObjectStringValues.push(value);
+    }
+
+    if (overriddenObjectStringValues.length !== 0) {
+      return {
+        ...successFalse,
+        errors: [
+          {
+            ...typeError,
+            message: `ERROR. (\`overriddenObjectStringValues\` should remain empty. Length: ${overriddenObjectStringValues.length}.) It appears some of the values from your original config are being overridden in the final flattened config data, or you may have unused object string values lingering within files related to the config, in which case you ought to turn them into template literals for distinction.`, // Next possibly, show the list of overridden values, captured in overriddenObjectStringValues.
+          },
+          {
+            ...typeError,
+            message: `Look to the following value: ${overriddenObjectStringValues[0]}`,
+          },
+        ],
+      };
+    }
   }
 
   // Concluding on value locations objects.
