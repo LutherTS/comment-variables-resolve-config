@@ -7,6 +7,8 @@ import { findAllImports } from "find-all-js-imports";
 import {
   successFalse,
   successTrue,
+  variationsFalse,
+  variationsTrue,
   typeError,
   typeWarning,
   typeScriptAndJSXCompatible,
@@ -204,7 +206,16 @@ const resolveConfig = async (configPath) => {
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
   const findAllImportsResults = findAllImports(configPath);
-  if (!findAllImportsResults.success) return findAllImportsResults; // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
+  if (!findAllImportsResults.success) {
+    // temporary workaround until I fix the error handling on findAllImports
+    // (do remember as I say below that errors from findAllImports are now blocking and enforce a return, hence the updated type "error")
+    const trueFindAllImportsResults = {
+      ...findAllImportsResults,
+      errors: findAllImportsResults.errors.map((e) => ({ ...e, ...typeError })),
+    };
+    // return findAllImportsResults
+    return trueFindAllImportsResults;
+  } // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
   const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
   // the paths must be relative for ESLint
   const files = rawConfigAndImportPaths.map((e) =>
@@ -327,6 +338,8 @@ const resolveConfig = async (configPath) => {
     keys_valueLocations,
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
+    // only from the run for config.data until more exploration
+    configDataResultsData,
   } = resolveDataResults;
 
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
@@ -348,27 +361,99 @@ const resolveConfig = async (configPath) => {
 
   // So the branching is going to happen right here.
 
-  return {
-    // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
-    ...successTrue,
-    // warnings,
-    configPath, // finalized and absolute
-    passedIgnores: configIgnoresSchemaResults.data,
-    config,
-    rawConfigAndImportPaths,
-    lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
-    myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
-    composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
-    // variations: false
-    // all of these will need to be under a trio of keys: resolvedData, resolvedFallbackData, resolvedVariantData (actually no, there will be two different branchese, one with variations true and this one with variations false
-    originalFlattenedConfigData, // for jscomments placeholders
-    aliases_flattenedKeys,
-    flattenedConfigData,
-    reversedFlattenedConfigData,
-    keys_valueLocations,
-    nonAliasesKeys_valueLocations,
-    aliasesKeys_valueLocations,
-  };
+  if (!variationsSchemaResults.data) {
+    return {
+      // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
+      ...successTrue,
+      // warnings,
+      configPath, // finalized and absolute
+      passedIgnores: configIgnoresSchemaResults.data,
+      config,
+      rawConfigAndImportPaths,
+      lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
+      myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
+      composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
+      ...variationsFalse,
+      // all of these will need to be under a trio of keys: resolvedData, resolvedFallbackData, resolvedVariantData (actually no, there will be two different branches, one with variations true and this one with variations false
+      originalFlattenedConfigData, // for jscomments placeholders
+      aliases_flattenedKeys,
+      flattenedConfigData,
+      reversedFlattenedConfigData,
+      keys_valueLocations,
+      nonAliasesKeys_valueLocations,
+      aliasesKeys_valueLocations,
+    };
+  } else {
+    const variationsSchemaResultsData = variationsSchemaResults.data;
+
+    // resolvedFallbackData
+    const resolvedFallbackDataResults = await resolveData(
+      variationsSchemaResultsData.fallbackData,
+      extracts
+    );
+    if (!resolvedFallbackDataResults.success)
+      return resolvedFallbackDataResults;
+
+    const resolvedFallbackData = {
+      originalFlattenedConfigData:
+        resolvedFallbackDataResults.originalFlattenedConfigData,
+      aliases_flattenedKeys: resolvedFallbackDataResults.aliases_flattenedKeys,
+      flattenedConfigData: resolvedFallbackDataResults.flattenedConfigData,
+      reversedFlattenedConfigData:
+        resolvedFallbackDataResults.reversedFlattenedConfigData,
+      keys_valueLocations: resolvedFallbackDataResults.keys_valueLocations,
+      nonAliasesKeys_valueLocations:
+        resolvedFallbackDataResults.nonAliasesKeys_valueLocations,
+      aliasesKeys_valueLocations:
+        resolvedFallbackDataResults.aliasesKeys_valueLocations,
+    };
+
+    // resolvedVariantData
+    const resolvedVariantDataResults = await resolveData(
+      configDataResultsData[variationsSchemaResultsData.variant],
+      extracts
+    );
+    if (!resolvedVariantDataResults.success) return resolvedVariantDataResults;
+
+    const resolvedVariantData = {
+      originalFlattenedConfigData:
+        resolvedVariantDataResults.originalFlattenedConfigData,
+      aliases_flattenedKeys: resolvedVariantDataResults.aliases_flattenedKeys,
+      flattenedConfigData: resolvedVariantDataResults.flattenedConfigData,
+      reversedFlattenedConfigData:
+        resolvedVariantDataResults.reversedFlattenedConfigData,
+      keys_valueLocations: resolvedVariantDataResults.keys_valueLocations,
+      nonAliasesKeys_valueLocations:
+        resolvedVariantDataResults.nonAliasesKeys_valueLocations,
+      aliasesKeys_valueLocations:
+        resolvedVariantDataResults.aliasesKeys_valueLocations,
+    };
+
+    return {
+      // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
+      ...successTrue,
+      // warnings,
+      configPath, // finalized and absolute
+      passedIgnores: configIgnoresSchemaResults.data,
+      config,
+      rawConfigAndImportPaths,
+      lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
+      myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
+      composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
+      ...variationsTrue,
+      // all of these will need to be under a trio of keys: resolvedData, resolvedFallbackData, resolvedVariantData (actually no, there will be two different branches, one with variations true and this one with variations false
+      originalFlattenedConfigData, // for jscomments placeholders
+      aliases_flattenedKeys,
+      flattenedConfigData,
+      reversedFlattenedConfigData,
+      keys_valueLocations,
+      nonAliasesKeys_valueLocations,
+      aliasesKeys_valueLocations,
+      // specific to variationsTrue
+      resolvedFallbackData,
+      resolvedVariantData,
+    };
+  }
 };
 
 /* makeResolvedConfigData */

@@ -405,5 +405,7 @@ export const resolveData = async (data, extracts) => {
     keys_valueLocations,
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
+    // exploratory name, to be used only from the resolveData run for config.data
+    configDataResultsData: configDataResults.data,
   };
 };

@@ -47,6 +47,14 @@ export const typeWarning = Object.freeze({
   type: "warning",
 });
 
+// variations objects
+export const variationsFalse = Object.freeze({
+  variations: false,
+});
+export const variationsTrue = Object.freeze({
+  variations: true,
+});
+
 // default ESLint config language options
 const jSXTrue = Object.freeze({ jsx: true });
 export const typeScriptAndJSXCompatible = {
