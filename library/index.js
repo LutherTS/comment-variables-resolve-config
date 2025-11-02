@@ -32,6 +32,7 @@ import {
 } from "./_commons/utilities/helpers.js";
 import { freshImport } from "./_commons/utilities/fresh-import-a.js";
 import { resolveData } from "./_commons/utilities/resolve-data.js";
+import { getComposedVariablesExclusivesFreeKeys } from "./_commons/utilities/flatten-config-data.js";
 
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
@@ -269,6 +270,8 @@ const resolveConfig = async (configPath) => {
     aliasesKeys_valueLocations,
     // only from the run for config.data until more exploration
     configDataResultsData,
+    // also
+    flattenedKeys_originalsOnly,
   } = resolveDataResults;
 
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
@@ -291,6 +294,18 @@ const resolveConfig = async (configPath) => {
   // Branching for variations.
 
   if (!variationsSchemaResults.data) {
+    // Trying getComposedVariablesExclusivesFreeKeys first here to see if it works.
+    // (It does.)
+    // const getComposedVariablesExclusivesFreeKeysResults =
+    //   getComposedVariablesExclusivesFreeKeys(
+    //     data,
+    //     composedVariablesExclusivesSchemaResultsData
+    //   );
+    // console.debug(
+    //   "getComposedVariablesExclusivesFreeKeysResults are:",
+    //   getComposedVariablesExclusivesFreeKeysResults
+    // );
+
     return {
       // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
       ...successTrue,
@@ -320,11 +335,9 @@ const resolveConfig = async (configPath) => {
 
     const dataTopLevelKeys = Object.keys(configDataResultsData);
     const dataTopLevelKeysSet = new Set(dataTopLevelKeys);
-    console.log("dataTopLevelKeysSet are:", dataTopLevelKeysSet);
 
     const variantsKeys = Object.keys(variationsSchemaResultsData.variants);
     const variantsKeysSet = new Set(variantsKeys);
-    console.log("variantsKeysSet are:", variantsKeysSet);
 
     if (dataTopLevelKeysSet.size !== variantsKeysSet.size)
       return makeSuccessFalseTypeError(
@@ -341,12 +354,51 @@ const resolveConfig = async (configPath) => {
 
     if (
       !variantsKeys.some(
+        // config.data, though lacking typing, is indispensible here to ensure that the right references are being compared
         (e) => config.data[e] === config.variations.fallbackData
       )
     )
       return makeSuccessFalseTypeError(
         `ERROR. config.variations.fallbackData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.fallbackData needs to be strictly the same as that of one of the variants's data.`
       );
+
+    // The work I'm going to do here is going to be duplicate at this time. I'm going to run makeOriginalFlattenedConfigData first on fallbackData so that I obtain the canonical array, which I then filter with composedVariablesExclusivesSchemaResultsData. Then I can do a some on all of the arrays, filter by filtering them too, and then by comparing them, filtered, with the canonical array. So that means I need to make a function makes an array and filter it.
+
+    // Checking that all variations data have the exact same keys and only so, excluding composed variables exclusives, as the canonical config.variations.fallbackData.
+
+    const fallbackDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
+      variationsSchemaResultsData.fallbackData,
+      composedVariablesExclusivesSchemaResultsData
+    );
+
+    if (!fallbackDataFreeKeysResults.success)
+      return fallbackDataFreeKeysResults;
+    const { composedVariablesExclusivesFreeKeys: fallbackDataFreeKeys } =
+      fallbackDataFreeKeysResults;
+    console.debug("fallbackDataFreeKeys are:", fallbackDataFreeKeys);
+    // const fallbackDataFreeKeysSet = new Set(fallbackDataFreeKeys);
+
+    for (const variantsKey of variantsKeys) {
+      const variationDataFreeKeysResults =
+        getComposedVariablesExclusivesFreeKeys(
+          configDataResultsData[variantsKey],
+          composedVariablesExclusivesSchemaResultsData
+        );
+
+      if (!variationDataFreeKeysResults.success)
+        return variationDataFreeKeysResults;
+      const { composedVariablesExclusivesFreeKeys: variationDataFreeKeys } =
+        variationDataFreeKeysResults;
+      console.debug("variationDataFreeKeys are:", variationDataFreeKeys);
+
+      // the actual checks
+      // (Ignoring the comparison of sizes and lengths because I prefer making an error message that specifically tracks which are the keys that are missing, or then outstanding, and how many of them there are.)
+      // (...In fact, if they're missing I could even create them automatically in-code with a "-> label" suffix, thanks to extracts, and return warnings, a first. Then only if they are outstanding I can return errors, so that the user can assess if they want to add them to the canonical data or remove them from where they're outstanding.)
+      // (But since the warning path specifically rewrites, that means its implementation falls to both the CLI and the extension, not to this core package. Here, we will only be issuing warnings. Basically, before the writing implementation, the keys that are missing are simply not gonna get neither resolved nor compressed by the CLI and won't be considered as Comment Variables by the extension. Writing also means that the new lines will need to be prefixed to the existing objects, since these can end with outstanding commas, especially via Prettier.)
+      // (I might also have to include in the warning format a code that can be digested to decide on the writing. If this warning with this code is obtained, that means this is about writing, and we can decide if we should write. Based on the config itself and some top-level `allowsWrites` boolean key.)
+      // But then we might not even need a warning. If the `allowsWrites` key is true, we rewrite, if it isn't, then it's an error.
+      // So the next step here is to include a key called `allowsWrites`, probably inside variations at this time, and then to behave accordingly.
+    }
 
     // Resolves
 
@@ -395,9 +447,10 @@ const resolveConfig = async (configPath) => {
         resolvedVariantDataResults.aliasesKeys_valueLocations,
     };
 
-    // Logging to see if the right data correctly transpires...
-    console.log("resolvedFallbackData is:", resolvedFallbackData);
-    console.log("resolvedVariantData is:", resolvedVariantData);
+    // Printing to see if the right data correctly transpires...
+    // (It does.)
+    // console.debug("resolvedFallbackData is:", resolvedFallbackData);
+    // console.debug("resolvedVariantData is:", resolvedVariantData);
 
     return {
       ...successTrue,

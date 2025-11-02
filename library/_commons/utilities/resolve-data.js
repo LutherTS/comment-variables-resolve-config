@@ -8,13 +8,12 @@ import {
   flattenedConfigKeyRegex,
   flattenedConfigPlaceholderLocalRegex,
 } from "../constants/regexes.js";
-import { ConfigDataSchema } from "../constants/schemas.js";
 
 import {
   makeSuccessFalseTypeError,
   reverseFlattenedConfigData,
 } from "./helpers.js";
-import { flattenConfigData } from "./flatten-config-data.js";
+import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
 
 /**
  * @typedef {import("../../../types/_commons/typedefs.js").ValueLocation} ValueLocation
@@ -27,55 +26,16 @@ import { flattenConfigData } from "./flatten-config-data.js";
  * @param {boolean} initialResolve
  */
 export const resolveData = async (data, extracts, initialResolve) => {
-  // needed because of z.record()
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return makeSuccessFalseTypeError(
-      // "ERROR. Invalid config.data format. The config.data should be an object."
-      "ERROR. Invalid data format. The data should be an object."
-    );
+  const makeOriginalFlattenedConfigDataResults =
+    makeOriginalFlattenedConfigData(data);
+
+  if (!makeOriginalFlattenedConfigDataResults.success) {
+    return makeOriginalFlattenedConfigDataResults;
   }
 
-  const configDataResults = ConfigDataSchema.safeParse(data);
-
-  if (!configDataResults.success) {
-    return {
-      ...successFalse,
-      errors: [
-        {
-          ...typeError,
-          message:
-            // "ERROR. Config data could not pass validation from zod."
-            "ERROR. Data could not pass validation from zod.",
-        },
-        ...configDataResults.error.errors.map((e) => ({
-          ...typeError,
-          message: e.message,
-        })),
-      ],
-    };
-  }
-
-  const flattenedConfigDataResults = flattenConfigData(configDataResults.data);
-
-  if (!flattenedConfigDataResults.success) {
-    return flattenedConfigDataResults;
-  }
-
-  const { configDataMap } = flattenedConfigDataResults;
-
-  // ALL flattenConfigData VERIFICATIONS ARE MADE HERE, OUTSIDE THE RECURSION.
-
-  // strips metadata
-  /**@type {Map<string, string>} */
-  const flattenedConfigDataMap = new Map();
-  configDataMap.forEach((value, key) => {
-    flattenedConfigDataMap.set(key, value.value);
-  });
-
-  // makes the original flattened config data object
-  const originalFlattenedConfigData = Object.fromEntries(
-    flattenedConfigDataMap
-  );
+  const { originalFlattenedConfigData, configDataResultsData } =
+    makeOriginalFlattenedConfigDataResults;
+  console.debug("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   // The integrity of the flattened config data needs to be established before working with it safely.
 
@@ -411,6 +371,8 @@ export const resolveData = async (data, extracts, initialResolve) => {
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
     // exploratory name, to be used only from the resolveData run for config.data
-    configDataResultsData: configDataResults.data,
+    configDataResultsData,
+    // also
+    flattenedKeys_originalsOnly,
   };
 };

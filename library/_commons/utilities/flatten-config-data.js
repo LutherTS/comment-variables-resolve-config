@@ -1,4 +1,5 @@
-import { successTrue } from "../constants/bases.js";
+import { successFalse, successTrue, typeError } from "../constants/bases.js";
+import { ConfigDataSchema } from "../constants/schemas.js";
 
 import { makeSuccessFalseTypeError, makeNormalizedKey } from "./helpers.js";
 
@@ -56,5 +57,103 @@ export const flattenConfigData = (
   return {
     ...successTrue,
     configDataMap,
+  };
+};
+
+/**
+ *
+ * @param {unknown} data
+ * @returns
+ */
+export const makeOriginalFlattenedConfigData = (data) => {
+  // needed because of z.record()
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return makeSuccessFalseTypeError(
+      // "Invalid config.data format."
+      "ERROR. Invalid data format. The data should be an object."
+    );
+  }
+
+  const configDataResults = ConfigDataSchema.safeParse(data);
+
+  if (!configDataResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            // "Config data could not pass validation from zod."
+            "ERROR. Data could not pass validation from zod.",
+        },
+        ...configDataResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  const flattenedConfigDataResults = flattenConfigData(configDataResults.data);
+
+  if (!flattenedConfigDataResults.success) {
+    return flattenedConfigDataResults;
+  }
+
+  const { configDataMap } = flattenedConfigDataResults;
+
+  // strips metadata
+  /**@type {Map<string, string>} */
+  const flattenedConfigDataMap = new Map();
+  configDataMap.forEach((value, key) => {
+    flattenedConfigDataMap.set(key, value.value);
+  });
+
+  // makes the original flattened config data object
+  const originalFlattenedConfigData = Object.fromEntries(
+    flattenedConfigDataMap
+  );
+
+  return {
+    ...successTrue,
+    originalFlattenedConfigData,
+    configDataResultsData: configDataResults.data,
+  };
+};
+
+/**
+ *
+ * @param {unknown} data
+ * @param {string[]} composedVariablesExclusives
+ * @returns
+ */
+export const getComposedVariablesExclusivesFreeKeys = (
+  data,
+  composedVariablesExclusives
+) => {
+  const makeOriginalFlattenedConfigDataResults =
+    makeOriginalFlattenedConfigData(data);
+
+  if (!makeOriginalFlattenedConfigDataResults.success) {
+    return makeOriginalFlattenedConfigDataResults;
+  }
+
+  const { originalFlattenedConfigData } =
+    makeOriginalFlattenedConfigDataResults;
+
+  const originalFlattenedConfigDataKeys = Object.keys(
+    originalFlattenedConfigData
+  );
+
+  const composedVariablesExclusivesSet = new Set(composedVariablesExclusives);
+
+  const composedVariablesExclusivesFreeKeys =
+    originalFlattenedConfigDataKeys.filter(
+      (e) => !composedVariablesExclusivesSet.has(e)
+    );
+
+  return {
+    ...successTrue,
+    composedVariablesExclusivesFreeKeys,
   };
 };
