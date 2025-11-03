@@ -273,6 +273,7 @@ const resolveConfig = async (configPath) => {
     // also
     flattenedKeys_originalsOnly,
   } = resolveDataResults;
+  console.debug("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
   const composedVariablesExclusivesSchemaResultsData =
@@ -294,18 +295,6 @@ const resolveConfig = async (configPath) => {
   // Branching for variations.
 
   if (!variationsSchemaResults.data) {
-    // Trying getComposedVariablesExclusivesFreeKeys first here to see if it works.
-    // (It does.)
-    // const getComposedVariablesExclusivesFreeKeysResults =
-    //   getComposedVariablesExclusivesFreeKeys(
-    //     data,
-    //     composedVariablesExclusivesSchemaResultsData
-    //   );
-    // console.debug(
-    //   "getComposedVariablesExclusivesFreeKeysResults are:",
-    //   getComposedVariablesExclusivesFreeKeysResults
-    // );
-
     return {
       // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
       ...successTrue,
@@ -376,8 +365,14 @@ const resolveConfig = async (configPath) => {
       return fallbackDataFreeKeysResults;
     const { composedVariablesExclusivesFreeKeys: fallbackDataFreeKeys } =
       fallbackDataFreeKeysResults;
-    console.debug("fallbackDataFreeKeys are:", fallbackDataFreeKeys);
-    // const fallbackDataFreeKeysSet = new Set(fallbackDataFreeKeys);
+
+    const fallbackDataFreeKeysSet = new Set(fallbackDataFreeKeys);
+
+    /**
+     * @type {Map<string, {array: Array<string>; set: Set<string>}>}
+     * (Reminder that all keys are already verified to be unique with `flattenConfigData` within `getComposedVariablesExclusivesFreeKeys`, so there is no need to check whether or not the `Set`s are erasing duplicates that do not exist.)
+     */
+    const variantKeys_variationsDataFreeKeys__map = new Map();
 
     for (const variantsKey of variantsKeys) {
       const variationDataFreeKeysResults =
@@ -391,8 +386,13 @@ const resolveConfig = async (configPath) => {
         return variationDataFreeKeysResults;
       const { composedVariablesExclusivesFreeKeys: variationDataFreeKeys } =
         variationDataFreeKeysResults;
-      console.debug("variationDataFreeKeys are:", variationDataFreeKeys);
 
+      variantKeys_variationsDataFreeKeys__map.set(variantsKey, {
+        array: variationDataFreeKeys,
+        set: new Set(variationDataFreeKeys),
+      });
+
+      // PREVIOUS THOUGHTS
       // the actual checks
       // (Ignoring the comparison of sizes and lengths because I prefer making an error message that specifically tracks which are the keys that are missing, or then outstanding, and how many of them there are.)
       // (...In fact, if they're missing I could even create them automatically in-code with a "-> label" suffix, thanks to extracts, and return warnings, a first. Then only if they are outstanding I can return errors, so that the user can assess if they want to add them to the canonical data or remove them from where they're outstanding.)
@@ -402,6 +402,38 @@ const resolveConfig = async (configPath) => {
       // So the next step here is to include a key called `allowWrites`, probably inside variations at this time, and then to behave accordingly.
       // `allowWrites` would default to true, but it is needed so that people who really want to make their variation by hand guided by the error messages are able to do so.
     }
+
+    console.debug("fallbackDataFreeKeysSet is:", fallbackDataFreeKeysSet);
+    console.debug(
+      "variantKeys_variationsDataFreeKeys__map is:",
+      variantKeys_variationsDataFreeKeys__map
+    );
+
+    // NEW THOUGHTS
+    // for the errors, I suggest that we do variation by variation so that the work can be done incrementally
+    // we do outstanding keys first, variation by variation, then we do missing keys, also variation by variation
+
+    // We're actually going to need three runs of `for (const variantsKey of variantsKeys) {` or equivalent:
+    // 1. to get all composed-variables-exclusive-free keys to the top (Done.)
+    // 2. to handle outstanding keys (This outstanding key is defined here: extracts.) (Total outstanding keys for variant: 10.)
+    // 3. to handle missing keys (This missing key is defined here: extracts.) (Total missing keys for variant: 10.)
+
+    /**
+     * Computes the difference between two collections of strings efficiently.
+     * @param {{ array: Array<string>, set: Set<string> }} a - The source collection (uses .array).
+     * @param {{ array: Array<string>, set: Set<string> }} b - The exclusion collection (uses .set).
+     * @returns {Set<string>} A new Set containing all elements in `a` that are not in `b`.
+     */
+    function getArraySetDifference(a, b) {
+      const result = new Set();
+      for (const value of a.array) {
+        if (!b.set.has(value)) {
+          result.add(value);
+        }
+      }
+      return result;
+    }
+    // And don't forget the normalized prefix when looking for valueLocations via extracts with the new `normalize` helper.
 
     // Resolves
 
@@ -413,6 +445,10 @@ const resolveConfig = async (configPath) => {
     );
     if (!resolvedFallbackDataResults.success)
       return resolvedFallbackDataResults;
+    console.debug(
+      "resolvedFallbackDataResults.originalFlattenedConfigData is:",
+      resolvedFallbackDataResults.originalFlattenedConfigData
+    );
 
     const resolvedFallbackData = {
       originalFlattenedConfigData:
@@ -435,6 +471,10 @@ const resolveConfig = async (configPath) => {
       false
     );
     if (!resolvedVariantDataResults.success) return resolvedVariantDataResults;
+    console.debug(
+      "resolvedVariantDataResults.originalFlattenedConfigData is:",
+      resolvedVariantDataResults.originalFlattenedConfigData
+    );
 
     const resolvedVariantData = {
       originalFlattenedConfigData:
@@ -449,11 +489,6 @@ const resolveConfig = async (configPath) => {
       aliasesKeys_valueLocations:
         resolvedVariantDataResults.aliasesKeys_valueLocations,
     };
-
-    // Printing to see if the right data correctly transpires...
-    // (It does.)
-    // console.debug("resolvedFallbackData is:", resolvedFallbackData);
-    // console.debug("resolvedVariantData is:", resolvedVariantData);
 
     return {
       ...successTrue,

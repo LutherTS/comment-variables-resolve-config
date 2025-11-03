@@ -35,7 +35,6 @@ export const resolveData = async (data, extracts, initialResolve) => {
 
   const { originalFlattenedConfigData, configDataResultsData } =
     makeOriginalFlattenedConfigDataResults;
-  console.debug("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   // The integrity of the flattened config data needs to be established before working with it safely.
 

@@ -239,14 +239,14 @@ export const extractValueLocationsFromLintMessages: (
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#ESCAPEREGEX
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRING
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGA
  * @returns $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
  */
 export const escapeRegex: (string: string) => string;
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRING
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGA
  * @returns $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX
  */
 export const makeIsolatedStringRegex: (string: string) => RegExp;

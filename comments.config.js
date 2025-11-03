@@ -27,6 +27,7 @@ const data = {
         "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility." /* $COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT */,
       transformResolvedConfigData:
         "Transforms resolved config data with keys alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
+      normalize: "Normalizes a Comment Variables key segment." /* $COMMENT#JSDOC#DEFINITIONS#NORMALIZE */,
       makeNormalizedKey:
         "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
       makeJsonData:
@@ -43,7 +44,7 @@ const data = {
         "Gets all Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables." /* $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
     }),
     params: Object.freeze({
-      string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
+      stringA: "The string." /* $COMMENT#JSDOC#PARAMS#STRINGA */,
       configDataA:
         "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAA */,
       configDataC:
@@ -88,6 +89,7 @@ const data = {
         "The resolved config data." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAA */,
       parentKeys:
         "JSDOC#PARAMS#PARENTKEYSOPTION" /* $COMMENT#JSDOC#PARAMS#PARENTKEYS */,
+      stringB: "The key segment to be normalized, notably for variants." /* $COMMENT#JSDOC#PARAMS#STRINGB */,
       keys: "The list of keys at hand in order of traversal." /* $COMMENT#JSDOC#PARAMS#KEYS */,
       resolvedConfigDataB:
         "The resolved config data as obtained from `makeResolvedConfigData`." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB */,
@@ -127,6 +129,8 @@ const data = {
         "Either an object with its `default` property sets to the default export of the module successfully loaded or `null` when an error arises. (Debugging is currently manual by looking at the error being caught in the child process.)" /* $COMMENT#JSDOC#RETURNS#FRESHIMPORT */,
       transformResolvedConfigData:
         "The transformed resolved config data with keys and placeholders readily accessible alongside values." /* $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA */,
+      normalize:
+        "The normalized key segment under a common algorith for the entire library." /* $COMMENT#JSDOC#RETURNS#NORMALIZE */,
       makeNormalizedKey:
         "The normalized key of a Comment Variable." /* $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
       makeJsonData:

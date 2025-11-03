@@ -9,7 +9,7 @@ import { successFalse, typeError } from "../constants/bases.js";
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#ESCAPEREGEX
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRING
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGA
  * @returns $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
  */
 export const escapeRegex = (string) =>
@@ -19,7 +19,7 @@ export const escapeRegex = (string) =>
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRING
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGA
  * @returns $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX
  */
 export const makeIsolatedStringRegex = (string) =>
@@ -74,6 +74,15 @@ export const reverseFlattenedConfigData = (flattenedConfigData) =>
     Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
   );
 
+/* normalize */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#NORMALIZE
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGB
+ * @returns $COMMENT#JSDOC#RETURNS#NORMALIZE
+ */
+export const normalize = (string) => string.toUpperCase().replace(/\s/g, "_");
+
 /* makeNormalizedKey */
 
 /**
@@ -82,4 +91,5 @@ export const reverseFlattenedConfigData = (flattenedConfigData) =>
  * @returns $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY
  */
 export const makeNormalizedKey = (keys) =>
-  keys.map((e) => e.toUpperCase().replace(/\s/g, "_")).join("#");
+  // keys.map((e) => e.toUpperCase().replace(/\s/g, "_")).join("#");
+  keys.map((e) => normalize(e)).join("#");

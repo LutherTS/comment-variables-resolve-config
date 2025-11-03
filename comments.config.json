@@ -53,6 +53,10 @@
         "value": "Transforms resolved config data with keys alongside values.",
         "key": "JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA"
       },
+      "normalize": {
+        "value": "Normalizes a Comment Variables key segment.",
+        "key": "JSDOC#DEFINITIONS#NORMALIZE"
+      },
       "makeNormalizedKey": {
         "value": "Normalizes and makes a Comment Variable key from the list of keys that trace to its value.",
         "key": "JSDOC#DEFINITIONS#MAKENORMALIZEDKEY"
@@ -83,9 +87,9 @@
       }
     },
     "params": {
-      "string": {
+      "stringA": {
         "value": "The string.",
-        "key": "JSDOC#PARAMS#STRING"
+        "key": "JSDOC#PARAMS#STRINGA"
       },
       "configDataA": {
         "value": "The config's data property, or any provided variation data. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)",
@@ -175,6 +179,10 @@
         "value": "The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`).",
         "key": "JSDOC#PARAMS#PARENTKEYS"
       },
+      "stringB": {
+        "value": "The key segment to be normalized, notably for variants.",
+        "key": "JSDOC#PARAMS#STRINGB"
+      },
       "keys": {
         "value": "The list of keys at hand in order of traversal.",
         "key": "JSDOC#PARAMS#KEYS"
@@ -252,6 +260,10 @@
       "transformResolvedConfigData": {
         "value": "The transformed resolved config data with keys and placeholders readily accessible alongside values.",
         "key": "JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA"
+      },
+      "normalize": {
+        "value": "The normalized key segment under a common algorith for the entire library.",
+        "key": "JSDOC#RETURNS#NORMALIZE"
       },
       "makeNormalizedKey": {
         "value": "The normalized key of a Comment Variable.",
