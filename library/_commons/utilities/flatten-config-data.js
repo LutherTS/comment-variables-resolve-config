@@ -8,10 +8,9 @@ import { makeSuccessFalseTypeError, makeNormalizedKey } from "./helpers.js";
  * @typedef {import("../../../types/_commons/typedefs.js").FlattenConfigDataResults} FlattenConfigDataResults
  */
 
-// JSDoc will need to adapt to not just config.data but any data from the upcoming variations system.
 /**
  * $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA
- * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATA
+ * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAA
  * @param {Object} [options] $COMMENT#JSDOC#PARAMS#OPTIONS
  * @param {Map<string, {value: string; source: string}>} [options.configDataMap] $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION
  * @param {string[]} [options.parentKeys] $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION
@@ -52,8 +51,6 @@ export const flattenConfigData = (
     }
   }
 
-  // At this point we're out of the recursion, and we can start working with the complete data. OUTSIDE OF THE RECURSION.
-
   return {
     ...successTrue,
     configDataMap,
@@ -61,9 +58,9 @@ export const flattenConfigData = (
 };
 
 /**
- *
- * @param {unknown} data
- * @returns
+ * $COMMENT#JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA
+ * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAC
+ * @returns $COMMENT#JSDOC#RETURNS#MAKEORIGINALFLATTENEDCONFIGDATA
  */
 export const makeOriginalFlattenedConfigData = (data) => {
   // needed because of z.record()
@@ -122,14 +119,16 @@ export const makeOriginalFlattenedConfigData = (data) => {
 };
 
 /**
- *
- * @param {unknown} data
- * @param {string[]} composedVariablesExclusives
- * @returns
+ * $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
+ * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAC
+ * @param {string[]} composedVariablesExclusives $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVES
+ * @param {boolean} isVariationData $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA
+ * @returns $COMMENT#JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
  */
 export const getComposedVariablesExclusivesFreeKeys = (
   data,
-  composedVariablesExclusives
+  composedVariablesExclusives,
+  isVariationData
 ) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
@@ -145,7 +144,16 @@ export const getComposedVariablesExclusivesFreeKeys = (
     originalFlattenedConfigData
   );
 
-  const composedVariablesExclusivesSet = new Set(composedVariablesExclusives);
+  const relevantComposedVariablesExclusives = isVariationData
+    ? // removes variant prefixes for variant data runs
+      composedVariablesExclusives.map((e) => e.replace(/^[^#]+#/, () => ""))
+    : // retains the original array for config data runs
+      composedVariablesExclusives;
+
+  // for variant data runs, negates all logical duplicates from other variations
+  const composedVariablesExclusivesSet = new Set(
+    relevantComposedVariablesExclusives
+  );
 
   const composedVariablesExclusivesFreeKeys =
     originalFlattenedConfigDataKeys.filter(

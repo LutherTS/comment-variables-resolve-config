@@ -10,7 +10,7 @@
         "key": "JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX"
       },
       "flattenConfigData": {
-        "value": "Flattens the config's data property into a one-dimensional object of `$COMMENT`-like keys and string values.",
+        "value": "Flattens the config's data property into a one-dimensional object of `COMMENT#COMMENT`-like keys and string values.",
         "key": "JSDOC#DEFINITIONS#FLATTENCONFIGDATA"
       },
       "resolveConfig": {
@@ -72,6 +72,14 @@
       "makeMjsPathLog": {
         "value": "Makes the log that announces the writing of the MJS resolved config data.",
         "key": "JSDOC#DEFINITIONS#MAKEMJSPATHLOG"
+      },
+      "makeOriginalFlattenedConfigData": {
+        "value": "Makes the original flattened config or variation data for a given config or variation provided.",
+        "key": "JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA"
+      },
+      "getComposedVariablesExclusivesFreeKeys": {
+        "value": "Gets all Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables.",
+        "key": "JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS"
       }
     },
     "params": {
@@ -79,16 +87,20 @@
         "value": "The string.",
         "key": "JSDOC#PARAMS#STRING"
       },
-      "configData": {
-        "value": "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)",
-        "key": "JSDOC#PARAMS#CONFIGDATA"
+      "configDataA": {
+        "value": "The config's data property, or any provided variation data. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)",
+        "key": "JSDOC#PARAMS#CONFIGDATAA"
+      },
+      "configDataC": {
+        "value": "The config's data property, or any provided variation data. (Config or variation data at this time is still unknown.)",
+        "key": "JSDOC#PARAMS#CONFIGDATAC"
       },
       "configDataMapOption": {
         "value": "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.",
         "key": "JSDOC#PARAMS#CONFIGDATAMAPOPTION"
       },
       "parentKeysOption": {
-        "value": "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).",
+        "value": "The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`).",
         "key": "JSDOC#PARAMS#PARENTKEYSOPTION"
       },
       "configPathA": {
@@ -160,7 +172,7 @@
         "key": "JSDOC#PARAMS#RESOLVEDCONFIGDATAA"
       },
       "parentKeys": {
-        "value": "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`).",
+        "value": "The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`).",
         "key": "JSDOC#PARAMS#PARENTKEYS"
       },
       "keys": {
@@ -178,6 +190,14 @@
       "mjsPath": {
         "value": "The expected `.mjs` path where the MJS resolved config data is to be written.",
         "key": "JSDOC#PARAMS#MJSPATH"
+      },
+      "composedVariablesExclusives": {
+        "value": "The top-level list of all Comment Variables keys that are composed variables exclusives. (It is critical to list all variables only used to make composed variables in this array across all variations, so that they are ignored when comparing variations data keys to be one-to-one equivalents to canonical fallback data keys.)",
+        "key": "JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVES"
+      },
+      "isVariationData": {
+        "value": "A boolean that decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (However, this function is only used for variation and fallback data at this time, so `isVariationData` is currently superfluous.)",
+        "key": "JSDOC#PARAMS#ISVARIATIONDATA"
       }
     },
     "returns": {
@@ -190,7 +210,7 @@
         "key": "JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX"
       },
       "flattenConfigData": {
-        "value": "The flattened config data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).",
+        "value": "The flattened config or variation data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).",
         "key": "JSDOC#RETURNS#FLATTENCONFIGDATA"
       },
       "resolveConfig": {
@@ -252,6 +272,14 @@
       "makeMjsPathLog": {
         "value": "The log that announces the writing of the MJS resolved config data has been completed.",
         "key": "JSDOC#RETURNS#MAKEMJSPATHLOG"
+      },
+      "makeOriginalFlattenedConfigData": {
+        "value": "The original flattened config or variation data at the key `originalFlattenedConfigData` along with the verified original config or variation data at the key `configDataResultsData`.",
+        "key": "JSDOC#RETURNS#MAKEORIGINALFLATTENEDCONFIGDATA"
+      },
+      "getComposedVariablesExclusivesFreeKeys": {
+        "value": "All Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables. This is to later ensure that all variations share the exact same keys for perfect versatility, or default to the fallback data suffixed by a mention of the name of their label.",
+        "key": "JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS"
       }
     },
     "constants": {
@@ -397,6 +425,18 @@
     "resolvedConfigCompleted": {
       "value": "resolved config data has been completed.",
       "key": "FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED"
+    },
+    "configData": {
+      "value": "The config's data property, or any provided variation data.",
+      "key": "FORCOMPOSEDVARIABLES#CONFIGDATA"
+    },
+    "configDataA": {
+      "value": "(Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)",
+      "key": "FORCOMPOSEDVARIABLES#CONFIGDATAA"
+    },
+    "configDataC": {
+      "value": "(Config or variation data at this time is still unknown.)",
+      "key": "FORCOMPOSEDVARIABLES#CONFIGDATAC"
     }
   }
 }

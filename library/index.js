@@ -368,7 +368,8 @@ const resolveConfig = async (configPath) => {
 
     const fallbackDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
       variationsSchemaResultsData.fallbackData,
-      composedVariablesExclusivesSchemaResultsData
+      composedVariablesExclusivesSchemaResultsData,
+      true
     );
 
     if (!fallbackDataFreeKeysResults.success)
@@ -382,7 +383,8 @@ const resolveConfig = async (configPath) => {
       const variationDataFreeKeysResults =
         getComposedVariablesExclusivesFreeKeys(
           configDataResultsData[variantsKey],
-          composedVariablesExclusivesSchemaResultsData
+          composedVariablesExclusivesSchemaResultsData,
+          true
         );
 
       if (!variationDataFreeKeysResults.success)
@@ -395,9 +397,10 @@ const resolveConfig = async (configPath) => {
       // (Ignoring the comparison of sizes and lengths because I prefer making an error message that specifically tracks which are the keys that are missing, or then outstanding, and how many of them there are.)
       // (...In fact, if they're missing I could even create them automatically in-code with a "-> label" suffix, thanks to extracts, and return warnings, a first. Then only if they are outstanding I can return errors, so that the user can assess if they want to add them to the canonical data or remove them from where they're outstanding.)
       // (But since the warning path specifically rewrites, that means its implementation falls to both the CLI and the extension, not to this core package. Here, we will only be issuing warnings. Basically, before the writing implementation, the keys that are missing are simply not gonna get neither resolved nor compressed by the CLI and won't be considered as Comment Variables by the extension. Writing also means that the new lines will need to be prefixed to the existing objects, since these can end with outstanding commas, especially via Prettier.)
-      // (I might also have to include in the warning format a code that can be digested to decide on the writing. If this warning with this code is obtained, that means this is about writing, and we can decide if we should write. Based on the config itself and some top-level `allowsWrites` boolean key.)
-      // But then we might not even need a warning. If the `allowsWrites` key is true, we rewrite, if it isn't, then it's an error.
-      // So the next step here is to include a key called `allowsWrites`, probably inside variations at this time, and then to behave accordingly.
+      // (I might also have to include in the warning format a code that can be digested to decide on the writing. If this warning with this code is obtained, that means this is about writing, and we can decide if we should write. Based on the config itself and some top-level `allowWrites` boolean key.)
+      // But then we might not even need a warning. If the `allowWrites` key is true, we rewrite, if it isn't, then it's an error.
+      // So the next step here is to include a key called `allowWrites`, probably inside variations at this time, and then to behave accordingly.
+      // `allowWrites` would default to true, but it is needed so that people who really want to make their variation by hand guided by the error messages are able to do so.
     }
 
     // Resolves

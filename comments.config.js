@@ -6,7 +6,7 @@ const data = {
       makeIsolatedStringRegex:
         "Makes a global regex for a given string that ensures it is surrounded by whitespace." /* $COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX */,
       flattenConfigData:
-        "Flattens the config's data property into a one-dimensional object of `$COMMENT`-like keys and string values." /* $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA */,
+        "Flattens the config's data property into a one-dimensional object of `COMMENT#COMMENT`-like keys and string values." /* $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA */,
       resolveConfig:
         "Verifies, validates and resolves the config path to retrieve the config's data and ignores." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG */,
       makeSuccessFalseTypeError:
@@ -37,15 +37,21 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD" /* $COMMENT#JSDOC#DEFINITIONS#MAKEJSONPATHLOG */,
       makeMjsPathLog:
         "$COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD" /* $COMMENT#JSDOC#DEFINITIONS#MAKEMJSPATHLOG */,
+      makeOriginalFlattenedConfigData:
+        "Makes the original flattened config or variation data for a given config or variation provided." /* $COMMENT#JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA */,
+      getComposedVariablesExclusivesFreeKeys:
+        "Gets all Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables." /* $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
     }),
     params: Object.freeze({
       string: "The string." /* $COMMENT#JSDOC#PARAMS#STRING */,
-      configData:
-        "The config's data property. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#JSDOC#PARAMS#CONFIGDATA */,
+      configDataA:
+        "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAA */,
+      configDataC:
+        "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAC */,
       configDataMapOption:
         "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`." /* $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION */,
       parentKeysOption:
-        "The list of keys that are parent to the key at hand given the recursive nature of the config's data's data structure, instantiated as an empty array of strings (`[]`)." /* $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION */,
+        "The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`)." /* $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION */,
       configPathA:
         'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATHA */ /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
       message:
@@ -89,6 +95,10 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#_THE $COMMENT#FORCOMPOSEDVARIABLES#EXPECTED $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATH $COMMENT#FORCOMPOSEDVARIABLES#WHERETHE $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN" /* $COMMENT#JSDOC#PARAMS#JSONPATH */,
       mjsPath:
         "$COMMENT#FORCOMPOSEDVARIABLES#_THE $COMMENT#FORCOMPOSEDVARIABLES#EXPECTED $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATH $COMMENT#FORCOMPOSEDVARIABLES#WHERETHE $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN" /* $COMMENT#JSDOC#PARAMS#MJSPATH */,
+      composedVariablesExclusives:
+        "The top-level list of all Comment Variables keys that are composed variables exclusives. (It is critical to list all variables only used to make composed variables in this array across all variations, so that they are ignored when comparing variations data keys to be one-to-one equivalents to canonical fallback data keys.)" /* $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVES */,
+      isVariationData:
+        "A boolean that decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (However, this function is only used for variation and fallback data at this time, so `isVariationData` is currently superfluous.)" /* $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -96,7 +106,7 @@ const data = {
       makeIsolatedStringRegex:
         "The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace." /* $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX */,
       flattenConfigData:
-        "The flattened config data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`)." /* $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA */,
+        "The flattened config or variation data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`)." /* $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA */,
       resolveConfig:
         "The flattened config data, the reverse flattened config data, the verified config path, the raw passed ignores, the original config, and more. Errors are returned during failures so they can be reused differently on the CLI and the VS Code extension." /* $COMMENT#JSDOC#RETURNS#RESOLVECONFIG */,
       makeSuccessFalseTypeError:
@@ -127,6 +137,10 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#_THE $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED" /* $COMMENT#JSDOC#RETURNS#MAKEJSONPATHLOG */,
       makeMjsPathLog:
         "$COMMENT#FORCOMPOSEDVARIABLES#_THE $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED" /* $COMMENT#JSDOC#RETURNS#MAKEMJSPATHLOG */,
+      makeOriginalFlattenedConfigData:
+        "The original flattened config or variation data at the key `originalFlattenedConfigData` along with the verified original config or variation data at the key `configDataResultsData`." /* $COMMENT#JSDOC#RETURNS#MAKEORIGINALFLATTENEDCONFIGDATA */,
+      getComposedVariablesExclusivesFreeKeys:
+        "All Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables. This is to later ensure that all variations share the exact same keys for perfect versatility, or default to the fallback data suffixed by a mention of the name of their label." /* $COMMENT#JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
     }),
     constants: Object.freeze({
       configKeyRegex:
@@ -189,6 +203,12 @@ const data = {
       "Its format makes it possible to be consumed with literal type safety in both JavaScript and TypeScript." /* $COMMENT#FORCOMPOSEDVARIABLES#MAKEMJSDATARETURNS */,
     resolvedConfigCompleted:
       "resolved config data has been completed." /* $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED */,
+    configData:
+      "The config's data property, or any provided variation data." /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA */,
+    configDataA:
+      "(Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA */,
+    configDataC:
+      "(Config or variation data at this time is still unknown.)" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC */,
   }),
 };
 
@@ -205,6 +225,12 @@ const composedVariablesExclusives = [
   "FORCOMPOSEDVARIABLES#DOTJSON",
   "FORCOMPOSEDVARIABLES#MJSCAPS",
   "FORCOMPOSEDVARIABLES#DOTMJS",
+  "FORCOMPOSEDVARIABLES#CONFIGDATA",
+  "FORCOMPOSEDVARIABLES#CONFIGDATAA",
+  "FORCOMPOSEDVARIABLES#CONFIGDATAC",
+  "FORCOMPOSEDVARIABLES#_THE",
+  "FORCOMPOSEDVARIABLES#WHERETHE",
+  "FORCOMPOSEDVARIABLES#EXPECTED",
 ];
 
 const config = {
