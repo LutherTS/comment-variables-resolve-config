@@ -84,6 +84,14 @@
       "getComposedVariablesExclusivesFreeKeys": {
         "value": "Gets all Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables.",
         "key": "JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS"
+      },
+      "removeVariantPrefixFromVariationKey": {
+        "value": "Removes the variant segment of a Comment Variable key.",
+        "key": "JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY"
+      },
+      "getArraySetDifference": {
+        "value": "Computes the difference between two collections of strings efficiently.",
+        "key": "JSDOC#DEFINITIONS#GETARRAYSETDIFFERENCE"
       }
     },
     "params": {
@@ -206,6 +214,18 @@
       "isVariationData": {
         "value": "A boolean that decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (However, this function is only used for variation and fallback data at this time, so `isVariationData` is currently superfluous.)",
         "key": "JSDOC#PARAMS#ISVARIATIONDATA"
+      },
+      "variationKey": {
+        "value": "The variation key that needs its variant segment prefix removed (such as going from `EN#COMMENT` to `COMMENT`).",
+        "key": "JSDOC#PARAMS#VARIATIONKEY"
+      },
+      "sourceA": {
+        "value": "The source collection (uses `.array`).",
+        "key": "JSDOC#PARAMS#SOURCEA"
+      },
+      "exclusionB": {
+        "value": "The exclusion collection (uses `.set`).",
+        "key": "JSDOC#PARAMS#EXCLUSIONB"
       }
     },
     "returns": {
@@ -292,6 +312,14 @@
       "getComposedVariablesExclusivesFreeKeys": {
         "value": "All Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables. This is to later ensure that all variations share the exact same keys for perfect versatility, or default to the fallback data suffixed by a mention of the name of their label.",
         "key": "JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS"
+      },
+      "removeVariantPrefixFromVariationKey": {
+        "value": "The variation key with its variant segment removed, akin to a Comment Variable key when `variations` are not in use.",
+        "key": "JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY"
+      },
+      "getArraySetDifference": {
+        "value": "A new `Set` containing all elements in `a` that are not in `b`.",
+        "key": "JSDOC#RETURNS#GETARRAYSETDIFFERENCE"
       }
     },
     "constants": {

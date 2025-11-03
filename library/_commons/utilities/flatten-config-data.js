@@ -1,7 +1,11 @@
 import { successFalse, successTrue, typeError } from "../constants/bases.js";
 import { ConfigDataSchema } from "../constants/schemas.js";
 
-import { makeSuccessFalseTypeError, makeNormalizedKey } from "./helpers.js";
+import {
+  makeSuccessFalseTypeError,
+  makeNormalizedKey,
+  removeVariantPrefixFromVariationKey,
+} from "./helpers.js";
 
 /**
  * @typedef {import("../../../types/_commons/typedefs.js").ConfigData} ConfigData
@@ -146,7 +150,9 @@ export const getComposedVariablesExclusivesFreeKeys = (
 
   const relevantComposedVariablesExclusives = isVariationData
     ? // removes variant prefixes for variant data runs
-      composedVariablesExclusives.map((e) => e.replace(/^[^#]+#/, () => ""))
+      composedVariablesExclusives.map((e) =>
+        removeVariantPrefixFromVariationKey(e)
+      )
     : // retains the original array for config data runs
       composedVariablesExclusives;
 

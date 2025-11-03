@@ -93,3 +93,33 @@ export const normalize = (string) => string.toUpperCase().replace(/\s/g, "_");
 export const makeNormalizedKey = (keys) =>
   // keys.map((e) => e.toUpperCase().replace(/\s/g, "_")).join("#");
   keys.map((e) => normalize(e)).join("#");
+
+/* removeVariantPrefixFromVariationKey */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY
+ * @param {string} variationKey $COMMENT#JSDOC#PARAMS#VARIATIONKEY
+ * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY
+ */
+export const removeVariantPrefixFromVariationKey = (variationKey) =>
+  variationKey.replace(/^[^#]+#/, () => "");
+
+/* getArraySetDifference */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#GETARRAYSETDIFFERENCE
+ * @param {{ array: Array<string>, set: Set<string> }} a - $COMMENT#JSDOC#PARAMS#SOURCEA
+ * @param {{ array: Array<string>, set: Set<string> }} b - $COMMENT#JSDOC#PARAMS#EXCLUSIONB
+ * @returns $COMMENT#JSDOC#RETURNS#GETARRAYSETDIFFERENCE
+ */
+export const getArraySetDifference = (a, b) => {
+  /** @type {Set<string>} */
+  const results = new Set();
+
+  for (const value of a.array) {
+    if (!b.set.has(value)) {
+      results.add(value);
+    }
+  }
+  return results;
+};

@@ -153,13 +153,16 @@ export const VariationsSchema = z
         message: `The config's "variations.variant" key's value must be a string.`,
       }),
       fallbackData: ConfigDataSchema,
+      fallbackVariant: z.string({
+        message: `The config's "variations.fallbackVariant" key's value must be a string.`,
+      }),
     },
     {
       message: `The config's "variations" key's value must be an object (or undefined).`,
     }
   )
   .superRefine((val, ctx) => {
-    // 1️⃣ Check that variant is one of the variants keys
+    // Check that variant is one of the variants keys
     if (!Object.keys(val.variants).includes(val.variant)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -167,8 +170,16 @@ export const VariationsSchema = z
         path: ["variant"],
       });
     }
+    // Check that fallbackVariant is one of the variants keys
+    if (!Object.keys(val.variants).includes(val.fallbackVariant)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `The variations.fallbackVariant key "${val.fallbackVariant}" must be one of the keys in variations.variants.`,
+        path: ["fallbackVariant"],
+      });
+    }
 
-    // 2️⃣ Check that labels are unique
+    // Check that labels are unique
     const labels = Object.values(val.variants).map((v) => v.label);
     const lowerLabels = labels.map((l) => l.toLowerCase()); // case-insensitive
 

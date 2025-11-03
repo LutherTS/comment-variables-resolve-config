@@ -27,7 +27,8 @@ const data = {
         "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility." /* $COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT */,
       transformResolvedConfigData:
         "Transforms resolved config data with keys alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
-      normalize: "Normalizes a Comment Variables key segment." /* $COMMENT#JSDOC#DEFINITIONS#NORMALIZE */,
+      normalize:
+        "Normalizes a Comment Variables key segment." /* $COMMENT#JSDOC#DEFINITIONS#NORMALIZE */,
       makeNormalizedKey:
         "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
       makeJsonData:
@@ -42,6 +43,10 @@ const data = {
         "Makes the original flattened config or variation data for a given config or variation provided." /* $COMMENT#JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA */,
       getComposedVariablesExclusivesFreeKeys:
         "Gets all Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables." /* $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
+      removeVariantPrefixFromVariationKey:
+        "Removes the variant segment of a Comment Variable key." /* $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
+      getArraySetDifference:
+        "Computes the difference between two collections of strings efficiently." /* $COMMENT#JSDOC#DEFINITIONS#GETARRAYSETDIFFERENCE */,
     }),
     params: Object.freeze({
       stringA: "The string." /* $COMMENT#JSDOC#PARAMS#STRINGA */,
@@ -89,7 +94,8 @@ const data = {
         "The resolved config data." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAA */,
       parentKeys:
         "JSDOC#PARAMS#PARENTKEYSOPTION" /* $COMMENT#JSDOC#PARAMS#PARENTKEYS */,
-      stringB: "The key segment to be normalized, notably for variants." /* $COMMENT#JSDOC#PARAMS#STRINGB */,
+      stringB:
+        "The key segment to be normalized, notably for variants." /* $COMMENT#JSDOC#PARAMS#STRINGB */,
       keys: "The list of keys at hand in order of traversal." /* $COMMENT#JSDOC#PARAMS#KEYS */,
       resolvedConfigDataB:
         "The resolved config data as obtained from `makeResolvedConfigData`." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB */,
@@ -101,6 +107,10 @@ const data = {
         "The top-level list of all Comment Variables keys that are composed variables exclusives. (It is critical to list all variables only used to make composed variables in this array across all variations, so that they are ignored when comparing variations data keys to be one-to-one equivalents to canonical fallback data keys.)" /* $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVES */,
       isVariationData:
         "A boolean that decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (However, this function is only used for variation and fallback data at this time, so `isVariationData` is currently superfluous.)" /* $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA */,
+      variationKey:
+        "The variation key that needs its variant segment prefix removed (such as going from `EN#COMMENT` to `COMMENT`)." /* $COMMENT#JSDOC#PARAMS#VARIATIONKEY */,
+      sourceA: "The source collection (uses `.array`)." /* $COMMENT#JSDOC#PARAMS#SOURCEA */,
+      exclusionB: "The exclusion collection (uses `.set`)." /* $COMMENT#JSDOC#PARAMS#EXCLUSIONB */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -145,6 +155,10 @@ const data = {
         "The original flattened config or variation data at the key `originalFlattenedConfigData` along with the verified original config or variation data at the key `configDataResultsData`." /* $COMMENT#JSDOC#RETURNS#MAKEORIGINALFLATTENEDCONFIGDATA */,
       getComposedVariablesExclusivesFreeKeys:
         "All Comment Variables keys from the data of a given config or variation that aren't marked to be exclusively used for composed variables. This is to later ensure that all variations share the exact same keys for perfect versatility, or default to the fallback data suffixed by a mention of the name of their label." /* $COMMENT#JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
+      removeVariantPrefixFromVariationKey:
+        "The variation key with its variant segment removed, akin to a Comment Variable key when `variations` are not in use." /* $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
+      getArraySetDifference:
+        "A new `Set` containing all elements in `a` that are not in `b`." /* $COMMENT#JSDOC#RETURNS#GETARRAYSETDIFFERENCE */,
     }),
     constants: Object.freeze({
       configKeyRegex:

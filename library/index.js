@@ -28,7 +28,10 @@ import {
 import {
   makeSuccessFalseTypeError,
   extractValueLocationsFromLintMessages,
+  normalize,
   makeNormalizedKey,
+  removeVariantPrefixFromVariationKey,
+  getArraySetDifference,
 } from "./_commons/utilities/helpers.js";
 import { freshImport } from "./_commons/utilities/fresh-import-a.js";
 import { resolveData } from "./_commons/utilities/resolve-data.js";
@@ -339,19 +342,15 @@ const resolveConfig = async (configPath) => {
         );
     }
 
-    // Checking that variations.fallback is strictly the same as one of the top-level keys in data.
+    // Checking that variations.fallback is strictly the same as one of the top-level keys in data. Specifically now as data from the fallbackVariant.
 
     if (
-      !variantsKeys.some(
-        // config.data, though lacking typing, is indispensible here to ensure that the right references are being compared
-        (e) => config.data[e] === config.variations.fallbackData
-      )
+      config.data[variationsSchemaResultsData.fallbackVariant] !==
+      config.variations.fallbackData
     )
       return makeSuccessFalseTypeError(
         `ERROR. config.variations.fallbackData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.fallbackData needs to be strictly the same as that of one of the variants's data.`
       );
-
-    // The work I'm going to do here is going to be duplicate at this time. I'm going to run makeOriginalFlattenedConfigData first on fallbackData so that I obtain the canonical array, which I then filter with composedVariablesExclusivesSchemaResultsData. Then I can do a some on all of the arrays, filter by filtering them too, and then by comparing them, filtered, with the canonical array. So that means I need to make a function makes an array and filter it.
 
     // Checking that all variations data have the exact same keys and only so, excluding composed variables exclusives, as the canonical config.variations.fallbackData.
 
@@ -367,17 +366,26 @@ const resolveConfig = async (configPath) => {
       fallbackDataFreeKeysResults;
 
     const fallbackDataFreeKeysSet = new Set(fallbackDataFreeKeys);
+    const fallbackDataFreeKeysAndSet = {
+      array: fallbackDataFreeKeys,
+      set: fallbackDataFreeKeysSet,
+    };
+    console.debug(
+      "fallbackDataFreeKeysAndSet are:",
+      fallbackDataFreeKeysAndSet
+    );
 
+    // #1: variantsKeys_variationsDataFreeKeys__map loop
     /**
      * @type {Map<string, {array: Array<string>; set: Set<string>}>}
      * (Reminder that all keys are already verified to be unique with `flattenConfigData` within `getComposedVariablesExclusivesFreeKeys`, so there is no need to check whether or not the `Set`s are erasing duplicates that do not exist.)
      */
-    const variantKeys_variationsDataFreeKeys__map = new Map();
+    const variantsKeys_variationsDataFreeKeys__map = new Map();
 
-    for (const variantsKey of variantsKeys) {
+    for (const variantKey of variantsKeys) {
       const variationDataFreeKeysResults =
         getComposedVariablesExclusivesFreeKeys(
-          configDataResultsData[variantsKey],
+          configDataResultsData[variantKey],
           composedVariablesExclusivesSchemaResultsData,
           true
         );
@@ -387,53 +395,109 @@ const resolveConfig = async (configPath) => {
       const { composedVariablesExclusivesFreeKeys: variationDataFreeKeys } =
         variationDataFreeKeysResults;
 
-      variantKeys_variationsDataFreeKeys__map.set(variantsKey, {
+      variantsKeys_variationsDataFreeKeys__map.set(variantKey, {
         array: variationDataFreeKeys,
         set: new Set(variationDataFreeKeys),
       });
-
-      // PREVIOUS THOUGHTS
-      // the actual checks
-      // (Ignoring the comparison of sizes and lengths because I prefer making an error message that specifically tracks which are the keys that are missing, or then outstanding, and how many of them there are.)
-      // (...In fact, if they're missing I could even create them automatically in-code with a "-> label" suffix, thanks to extracts, and return warnings, a first. Then only if they are outstanding I can return errors, so that the user can assess if they want to add them to the canonical data or remove them from where they're outstanding.)
-      // (But since the warning path specifically rewrites, that means its implementation falls to both the CLI and the extension, not to this core package. Here, we will only be issuing warnings. Basically, before the writing implementation, the keys that are missing are simply not gonna get neither resolved nor compressed by the CLI and won't be considered as Comment Variables by the extension. Writing also means that the new lines will need to be prefixed to the existing objects, since these can end with outstanding commas, especially via Prettier.)
-      // (I might also have to include in the warning format a code that can be digested to decide on the writing. If this warning with this code is obtained, that means this is about writing, and we can decide if we should write. Based on the config itself and some top-level `allowWrites` boolean key.)
-      // But then we might not even need a warning. If the `allowWrites` key is true, we rewrite, if it isn't, then it's an error.
-      // So the next step here is to include a key called `allowWrites`, probably inside variations at this time, and then to behave accordingly.
-      // `allowWrites` would default to true, but it is needed so that people who really want to make their variation by hand guided by the error messages are able to do so.
     }
-
-    console.debug("fallbackDataFreeKeysSet is:", fallbackDataFreeKeysSet);
     console.debug(
-      "variantKeys_variationsDataFreeKeys__map is:",
-      variantKeys_variationsDataFreeKeys__map
+      "variantsKeys_variationsDataFreeKeys__map is:",
+      variantsKeys_variationsDataFreeKeys__map
     );
 
-    // NEW THOUGHTS
-    // for the errors, I suggest that we do variation by variation so that the work can be done incrementally
-    // we do outstanding keys first, variation by variation, then we do missing keys, also variation by variation
+    // #2 outstanding keys loop
+    console.log("Checking for outstanding keys...");
 
-    // We're actually going to need three runs of `for (const variantsKey of variantsKeys) {` or equivalent:
-    // 1. to get all composed-variables-exclusive-free keys to the top (Done.)
-    // 2. to handle outstanding keys (This outstanding key is defined here: extracts.) (Total outstanding keys for variant: 10.)
-    // 3. to handle missing keys (This missing key is defined here: extracts.) (Total missing keys for variant: 10.)
+    for (const [
+      variantKey,
+      variationDataFreeKeysAndSet,
+    ] of variantsKeys_variationsDataFreeKeys__map) {
+      const outstandingKeysSet = getArraySetDifference(
+        variationDataFreeKeysAndSet,
+        fallbackDataFreeKeysAndSet
+      );
 
-    /**
-     * Computes the difference between two collections of strings efficiently.
-     * @param {{ array: Array<string>, set: Set<string> }} a - The source collection (uses .array).
-     * @param {{ array: Array<string>, set: Set<string> }} b - The exclusion collection (uses .set).
-     * @returns {Set<string>} A new Set containing all elements in `a` that are not in `b`.
-     */
-    function getArraySetDifference(a, b) {
-      const result = new Set();
-      for (const value of a.array) {
-        if (!b.set.has(value)) {
-          result.add(value);
-        }
+      if (outstandingKeysSet.size > 0) {
+        const outstandingKey =
+          normalize(variantKey) +
+          "#" +
+          outstandingKeysSet.values().next().value;
+        const outstandingKeyValueLocation = keys_valueLocations[outstandingKey];
+
+        return {
+          ...successFalse,
+          errors: [
+            {
+              ...typeError,
+              message: `ERROR. Outstanding key(s) found for variant "${variantKey}".`,
+            },
+            {
+              ...typeError,
+              message: `Key "${outstandingKey}" at relative file path "${path.relative(
+                process.cwd(),
+                outstandingKeyValueLocation.filePath
+              )}" is not found in fallbackData. (Line: ${
+                outstandingKeyValueLocation.loc.start.line
+              }. Column: ${outstandingKeyValueLocation.loc.start.column}.)`,
+            },
+            {
+              ...typeError,
+              message: `(Total amount of keys in "${variantKey}" variation not found in fallbackData: ${outstandingKeysSet.size}.)`,
+            },
+          ],
+        };
       }
-      return result;
     }
-    // And don't forget the normalized prefix when looking for valueLocations via extracts with the new `normalize` helper.
+
+    console.log("Success. No outstanding key found.");
+
+    // #3 missing keys loop
+    console.log("Checking for missing keys...");
+
+    for (const [
+      variantKey,
+      variationDataFreeKeysAndSet,
+    ] of variantsKeys_variationsDataFreeKeys__map) {
+      const missingKeysSet = getArraySetDifference(
+        fallbackDataFreeKeysAndSet,
+        variationDataFreeKeysAndSet
+      );
+
+      if (missingKeysSet.size > 0) {
+        const missingKey =
+          normalize(variationsSchemaResultsData.fallbackVariant) +
+          "#" +
+          missingKeysSet.values().next().value;
+        const missingKeyValueLocation = keys_valueLocations[missingKey];
+
+        return {
+          ...successFalse,
+          errors: [
+            {
+              ...typeError,
+              message: `ERROR. Missing key(s) found for variant "${variantKey}".`,
+            },
+            {
+              ...typeError,
+              message: `Key "${removeVariantPrefixFromVariationKey(
+                missingKey
+              )}" at relative file path "${path.relative(
+                process.cwd(),
+                missingKeyValueLocation.filePath
+              )}" is not found in "${variantKey}" variation. (Line: ${
+                missingKeyValueLocation.loc.start.line
+              }. Column: ${missingKeyValueLocation.loc.start.column}.)`,
+            },
+            {
+              ...typeError,
+              message: `(Total amount of keys in fallbackData not found in "${variantKey}" variation: ${missingKeysSet.size}.)`,
+            },
+          ],
+        };
+      }
+    }
+
+    console.log("Success. No missing key found.");
 
     // Resolves
 
@@ -489,6 +553,8 @@ const resolveConfig = async (configPath) => {
       aliasesKeys_valueLocations:
         resolvedVariantDataResults.aliasesKeys_valueLocations,
     };
+
+    // Now to passing or adapting the correct config data given the variant, either with a seamless reconnecting, or a remaking and streamlining of the return objects.
 
     return {
       ...successTrue,
