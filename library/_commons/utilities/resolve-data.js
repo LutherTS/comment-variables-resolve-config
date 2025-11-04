@@ -12,6 +12,7 @@ import {
 import {
   makeSuccessFalseTypeError,
   reverseFlattenedConfigData,
+  removeVariantPrefixFromVariationKey,
 } from "./helpers.js";
 import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
 
@@ -19,14 +20,22 @@ import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
  * @typedef {import("../../../types/_commons/typedefs.js").ValueLocation} ValueLocation
  */
 
+// coreOriginalFlattenedConfigData will probably need to be inside an object, in colocation with the current variant.
 /**
  * $COMMENT#JSDOC#DEFINITIONS#RESOLVEDATA
  * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAD
  * @param {ValueLocation[]} extracts $COMMENT#JSDOC#PARAMS#EXTRACTS
- * @param {boolean} isCoreResolve $COMMENT#JSDOC#PARAMS#ISCORERESOLVE
+ * @param {Record<string, string> | undefined} coreOriginalFlattenedConfigData
  * @returns $COMMENT#JSDOC#RETURNS#RESOLVEDATA
  */
-export const resolveData = async (data, extracts, isCoreResolve) => {
+export const resolveData = async (
+  data,
+  extracts,
+  coreOriginalFlattenedConfigData
+) => {
+  /** Identifies whether this run is for the core data if `true`, or not if `false`. */
+  const isCoreResolveData = !coreOriginalFlattenedConfigData;
+
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
 
@@ -34,8 +43,13 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
     return makeOriginalFlattenedConfigDataResults;
   }
 
-  const { originalFlattenedConfigData, configDataResultsData } =
+  let { originalFlattenedConfigData, configDataResultsData } =
     makeOriginalFlattenedConfigDataResults;
+
+  // NEW: To work with variations, we need to consider that by default, the originalFlattenedConfigData is that of the core resolved data.
+
+  if (!isCoreResolveData)
+    originalFlattenedConfigData = coreOriginalFlattenedConfigData;
 
   // The integrity of the flattened config data needs to be established before working with it safely.
 
@@ -46,7 +60,8 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
   const flattenedKeys_originalsOnly = {};
 
   const originalFlattenedConfigData__EntriesArray = Object.entries(
-    originalFlattenedConfigData
+    // originalFlattenedConfigData
+    makeOriginalFlattenedConfigDataResults.originalFlattenedConfigData
   );
 
   // instead of returning an error because an existing flattened key is in the values ...
@@ -54,7 +69,9 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
     // ... in aliases_flattenedKeys ...
     if (originalFlattenedConfigData[value]) {
       // ... the pair is now an alias ...
-      aliases_flattenedKeys[key] = value;
+      if (!isCoreResolveData)
+        aliases_flattenedKeys[key] = removeVariantPrefixFromVariationKey(value);
+      else aliases_flattenedKeys[key] = value;
 
       continue;
     } else {
@@ -89,6 +106,10 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
 
   const aliases_flattenedKeys__EntriesArray = Object.entries(
     aliases_flattenedKeys
+  );
+  console.debug(
+    "aliases_flattenedKeys__EntriesArray is:",
+    aliases_flattenedKeys__EntriesArray
   );
 
   for (const [key, value] of aliases_flattenedKeys__EntriesArray) {
@@ -240,7 +261,12 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
   for (const extract of extracts) {
     const value = extract.value;
 
-    if (originalFlattenedConfigData[value]) continue;
+    if (
+      // coreOriginalFlattenedConfigData
+      //   ? coreOriginalFlattenedConfigData[value] :
+      originalFlattenedConfigData[value]
+    )
+      continue;
     // that's an alias, since the value is a key in the original flattened config data
 
     // with aliases excluded we can now focus on originals only
@@ -255,7 +281,7 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
 
   // NEW: the checks based on extracts (which are all extracts from the full data) are reserved only for the core resolve run.
 
-  if (isCoreResolve) {
+  if (isCoreResolveData) {
     // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
     if (values_valueLocations__duplicateValuesArray.length !== 0) {
       return {
@@ -361,7 +387,8 @@ export const resolveData = async (data, extracts, isCoreResolve) => {
     // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
     ...successTrue,
     // warnings,
-    originalFlattenedConfigData, // for jscomments placeholders
+    originalFlattenedConfigData:
+      makeOriginalFlattenedConfigDataResults.originalFlattenedConfigData, // for jscomments placeholders // stay on the new one at least on the returned property
     aliases_flattenedKeys,
     flattenedConfigData,
     reversedFlattenedConfigData,

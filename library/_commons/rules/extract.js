@@ -305,6 +305,9 @@ const rule = {
                     }),
                   };
 
+                  // NEW!!!
+                  // So this is where I'll be implementing /* core $COMMENT#EN#HELLO - variation $COMMENT#HELLO */.
+
                   context.report({
                     node: propValueNode,
                     messageId: placeholderMessageId,

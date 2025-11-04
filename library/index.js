@@ -261,7 +261,7 @@ const resolveConfig = async (configPath) => {
 
   // NEW: config.data validated last and within resolveData.
 
-  const resolveDataResults = await resolveData(data, extracts, true);
+  const resolveDataResults = await resolveData(data, extracts);
   if (!resolveDataResults.success) return resolveDataResults;
   const {
     originalFlattenedConfigData,
@@ -520,7 +520,7 @@ const resolveConfig = async (configPath) => {
     const resolvedFallbackDataResults = await resolveData(
       variationsSchemaResultsData.fallbackData,
       extracts,
-      false
+      originalFlattenedConfigData
     );
     if (!resolvedFallbackDataResults.success)
       return resolvedFallbackDataResults;
@@ -547,7 +547,7 @@ const resolveConfig = async (configPath) => {
     const resolvedVariationDataResults = await resolveData(
       configDataResultsData[variationsSchemaResultsData.variant],
       extracts,
-      false
+      originalFlattenedConfigData
     );
     if (!resolvedVariationDataResults.success)
       return resolvedVariationDataResults;
