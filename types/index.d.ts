@@ -26,6 +26,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       configPath: string;
       passedIgnores: string[];
       config: object;
+      configDataResultsData: Record<string, unknown>;
       rawConfigAndImportPaths: string[];
       lintConfigImports: boolean;
       myIgnoresOnly: boolean;
@@ -68,6 +69,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       configPath: string;
       passedIgnores: string[];
       config: object;
+      configDataResultsData: Record<string, unknown>;
       rawConfigAndImportPaths: string[];
       lintConfigImports: boolean;
       myIgnoresOnly: boolean;
@@ -352,44 +354,16 @@ export const makeIsolatedStringRegex: (string: string) => RegExp;
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA
- * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE
+ * @param {Record<string, unknown>} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAB
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
+ * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
  * @returns $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA
  */
-export const makeResolvedConfigData: (resolveConfigResultsSuccessTrue: {
-  success: true;
-  configPath: string;
-  passedIgnores: string[];
-  config: object;
-  rawConfigAndImportPaths: string[];
-  flattenedConfigData: Record<string, string>;
-  aliases_flattenedKeys: Record<string, string>;
-  reversedFlattenedConfigData: {
-    [k: string]: string;
-  };
-  keys_valueLocations: {
-    [k: string]: {
-      value: string;
-      filePath: string;
-      loc: SourceLocation;
-    };
-  };
-  nonAliasesKeys_valueLocations: Record<
-    string,
-    {
-      value: string;
-      filePath: string;
-      loc: SourceLocation;
-    }
-  >;
-  aliasesKeys_valueLocations: Record<
-    string,
-    {
-      value: string;
-      filePath: string;
-      loc: SourceLocation;
-    }
-  >;
-}) =>
+export const makeResolvedConfigData: (
+  configData: Record<string, unknown>,
+  flattenedConfigData: Record<string, string>,
+  aliases_flattenedKeys: Record<string, string>
+) =>
   | {
       success: false;
       errors: Array<{

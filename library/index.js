@@ -315,6 +315,7 @@ const resolveConfig = async (configPath) => {
       configPath, // finalized and absolute
       passedIgnores: configIgnoresSchemaResults.data,
       config,
+      configDataResultsData,
       rawConfigAndImportPaths,
       lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
       myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
@@ -577,6 +578,7 @@ const resolveConfig = async (configPath) => {
       configPath, // finalized and absolute
       passedIgnores: configIgnoresSchemaResults.data,
       config,
+      configDataResultsData,
       rawConfigAndImportPaths,
       lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
       myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
@@ -739,15 +741,16 @@ const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA
- * @param {ResolveConfigResultsSuccessTrue} resolveConfigResultsSuccessTrue $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE
+ * @param {Record<string, unknown>} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAB
+ * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB
+ * @param {Record<string, string>} aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS
  * @returns $COMMENT#JSDOC#RETURNS#MAKERESOLVEDCONFIGDATA
  */
-const makeResolvedConfigData = (resolveConfigResultsSuccessTrue) => {
-  const { config, aliases_flattenedKeys, flattenedConfigData } =
-    resolveConfigResultsSuccessTrue;
-  /** @type {ConfigData} */
-  const configData = config.data;
-
+const makeResolvedConfigData = (
+  configData,
+  flattenedConfigData,
+  aliases_flattenedKeys
+) => {
   const resolveConfigDataResults = resolveConfigData(
     configData,
     flattenedConfigData,

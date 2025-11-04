@@ -205,7 +205,7 @@ const data = {
     objectConfigData:
       "object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA */,
     transformedObjectConfigData:
-      "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders." /* $COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA */,
+      "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys." /* $COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA */,
     makesThe: "Makes the" /* $COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE */,
     resolvedAnExpected:
       "resolved config data to be written at an expected" /* $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED */,

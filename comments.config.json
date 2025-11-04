@@ -42,7 +42,7 @@
         "key": "JSDOC#DEFINITIONS#RESOLVECONFIGDATA"
       },
       "makeResolvedConfigData": {
-        "value": "Creates that object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
+        "value": "Creates that object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys.",
         "key": "JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA"
       },
       "freshImport": {
@@ -411,7 +411,7 @@
       "key": "FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA"
     },
     "transformedObjectConfigData": {
-      "value": "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys and placeholders.",
+      "value": "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys.",
       "key": "FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA"
     },
     "makesThe": {
