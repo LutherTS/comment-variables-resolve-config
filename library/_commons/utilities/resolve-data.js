@@ -20,12 +20,13 @@ import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
  */
 
 /**
- *
- * @param {unknown} data
- * @param {ValueLocation[]} extracts
- * @param {boolean} initialResolve
+ * $COMMENT#JSDOC#DEFINITIONS#RESOLVEDATA
+ * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAD
+ * @param {ValueLocation[]} extracts $COMMENT#JSDOC#PARAMS#EXTRACTS
+ * @param {boolean} isCoreResolve $COMMENT#JSDOC#PARAMS#ISCORERESOLVE
+ * @returns $COMMENT#JSDOC#RETURNS#RESOLVEDATA
  */
-export const resolveData = async (data, extracts, initialResolve) => {
+export const resolveData = async (data, extracts, isCoreResolve) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
 
@@ -252,11 +253,9 @@ export const resolveData = async (data, extracts, initialResolve) => {
     } else values_valueLocations__duplicateValuesArray.push({ value: extract });
   }
 
-  // NEW: the checks based on extracts (which are all extracts from the full data) are reserved only for the initial resolve run.
+  // NEW: the checks based on extracts (which are all extracts from the full data) are reserved only for the core resolve run.
 
-  if (initialResolve) {
-    // I'm actually going to need to use the callback eventually for faster error handling, because even though the list is interesting... you can't list it all in a VS Code showErrorMessage. I'm going to have to list only one case, and that's where the callback shines. But for this first version, I'm going to use the full lists on both the `array` and the `set`. (The full lists are actually valuable in that they can mention the numbers of errors that need to be fixed.)
-
+  if (isCoreResolve) {
     // values_valueLocations__duplicateValuesArray should be empty, because all extracted values meant for use should be unique
     if (values_valueLocations__duplicateValuesArray.length !== 0) {
       return {

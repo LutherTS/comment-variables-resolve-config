@@ -338,7 +338,7 @@ const resolveConfig = async (configPath) => {
     for (const key of dataTopLevelKeysSet) {
       if (!variantsKeysSet.has(key))
         return makeSuccessFalseTypeError(
-          `ERROR. The key "${key}" present among the top-level keys in the data key in not present among the top-level keys in the variations.variants key.`
+          `ERROR. The key "${key}" present among the top-level keys in the data key is not present among the top-level keys in the variations.variants key.`
         );
     }
 
@@ -528,30 +528,31 @@ const resolveConfig = async (configPath) => {
         resolvedFallbackDataResults.aliasesKeys_valueLocations,
     };
 
-    // resolvedVariantData
-    const resolvedVariantDataResults = await resolveData(
+    // resolvedVariationData
+    const resolvedVariationDataResults = await resolveData(
       configDataResultsData[variationsSchemaResultsData.variant],
       extracts,
       false
     );
-    if (!resolvedVariantDataResults.success) return resolvedVariantDataResults;
+    if (!resolvedVariationDataResults.success)
+      return resolvedVariationDataResults;
     console.debug(
-      "resolvedVariantDataResults.originalFlattenedConfigData is:",
-      resolvedVariantDataResults.originalFlattenedConfigData
+      "resolvedVariationDataResults.originalFlattenedConfigData is:",
+      resolvedVariationDataResults.originalFlattenedConfigData
     );
 
-    const resolvedVariantData = {
+    const resolvedVariationData = {
       originalFlattenedConfigData:
-        resolvedVariantDataResults.originalFlattenedConfigData,
-      aliases_flattenedKeys: resolvedVariantDataResults.aliases_flattenedKeys,
-      flattenedConfigData: resolvedVariantDataResults.flattenedConfigData,
+        resolvedVariationDataResults.originalFlattenedConfigData,
+      aliases_flattenedKeys: resolvedVariationDataResults.aliases_flattenedKeys,
+      flattenedConfigData: resolvedVariationDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
-        resolvedVariantDataResults.reversedFlattenedConfigData,
-      keys_valueLocations: resolvedVariantDataResults.keys_valueLocations,
+        resolvedVariationDataResults.reversedFlattenedConfigData,
+      keys_valueLocations: resolvedVariationDataResults.keys_valueLocations,
       nonAliasesKeys_valueLocations:
-        resolvedVariantDataResults.nonAliasesKeys_valueLocations,
+        resolvedVariationDataResults.nonAliasesKeys_valueLocations,
       aliasesKeys_valueLocations:
-        resolvedVariantDataResults.aliasesKeys_valueLocations,
+        resolvedVariationDataResults.aliasesKeys_valueLocations,
     };
 
     // Now to passing or adapting the correct config data given the variant, either with a seamless reconnecting, or a remaking and streamlining of the return objects.
@@ -576,7 +577,7 @@ const resolveConfig = async (configPath) => {
       aliasesKeys_valueLocations,
       // specific to variationsTrue
       resolvedFallbackData,
-      resolvedVariantData,
+      resolvedVariationData,
     };
   }
 };

@@ -47,6 +47,8 @@ const data = {
         "Removes the variant segment of a Comment Variable key." /* $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
       getArraySetDifference:
         "Computes the difference between two collections of strings efficiently." /* $COMMENT#JSDOC#DEFINITIONS#GETARRAYSETDIFFERENCE */,
+      resolveData:
+        "Resolves the config's data or any provided variation data into information consumable by the Comment Variables ecosystem." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVEDATA */,
     }),
     params: Object.freeze({
       stringA: "The string." /* $COMMENT#JSDOC#PARAMS#STRINGA */,
@@ -54,6 +56,8 @@ const data = {
         "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAA */,
       configDataC:
         "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAC */,
+      configDataD:
+        "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAD" /* $COMMENT#JSDOC#PARAMS#CONFIGDATAD */,
       configDataMapOption:
         "The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`." /* $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION */,
       parentKeysOption:
@@ -109,8 +113,14 @@ const data = {
         "A boolean that decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (However, this function is only used for variation and fallback data at this time, so `isVariationData` is currently superfluous.)" /* $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA */,
       variationKey:
         "The variation key that needs its variant segment prefix removed (such as going from `EN#COMMENT` to `COMMENT`)." /* $COMMENT#JSDOC#PARAMS#VARIATIONKEY */,
-      sourceA: "The source collection (uses `.array`)." /* $COMMENT#JSDOC#PARAMS#SOURCEA */,
-      exclusionB: "The exclusion collection (uses `.set`)." /* $COMMENT#JSDOC#PARAMS#EXCLUSIONB */,
+      sourceA:
+        "The source collection (uses `.array`)." /* $COMMENT#JSDOC#PARAMS#SOURCEA */,
+      exclusionB:
+        "The exclusion collection (uses `.set`)." /* $COMMENT#JSDOC#PARAMS#EXCLUSIONB */,
+      extracts:
+        "The array that stores all the object string values related to the config, since those are to be exclusively used with the config's data. Includes their file paths and `SourceLocation` objects alongside their values." /* $COMMENT#JSDOC#PARAMS#EXTRACTS */,
+      isCoreResolve:
+        "A boolean that decides whether or not `valueLocation` checks should be run as they should only be run when resolving `config.data`." /* $COMMENT#JSDOC#PARAMS#ISCORERESOLVE */,
     }),
     returns: Object.freeze({
       escapeRegex:
@@ -159,6 +169,8 @@ const data = {
         "The variation key with its variant segment removed, akin to a Comment Variable key when `variations` are not in use." /* $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
       getArraySetDifference:
         "A new `Set` containing all elements in `a` that are not in `b`." /* $COMMENT#JSDOC#RETURNS#GETARRAYSETDIFFERENCE */,
+      resolveData:
+        "With a `{success: true}` object, all the information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly `originalFlattenedConfigData`, `aliases_flattenedKeys`, `flattenedConfigData`, `reversedFlattenedConfigData`, `keys_valueLocations`, `nonAliasesKeys_valueLocations`, `aliasesKeys_valueLocations`, `configDataResultsData`, `flattenedKeys_originalsOnly`, and probably more are the function evolves." /* $COMMENT#JSDOC#RETURNS#RESOLVEDATA */,
     }),
     constants: Object.freeze({
       configKeyRegex:
@@ -226,7 +238,9 @@ const data = {
     configDataA:
       "(Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA */,
     configDataC:
-      "(Config or variation data at this time is still unknown.)" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC */,
+      "(Config or variation data at this time is still `unknown`.)" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC */,
+    configDataD:
+      "(Config or variation data at this time may still be `unknown`.)" /* $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAD */,
   }),
 };
 
