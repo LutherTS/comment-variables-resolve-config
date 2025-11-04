@@ -27,40 +27,139 @@ declare const resolveConfig: (configPath: string) => Promise<
       passedIgnores: string[];
       config: object;
       rawConfigAndImportPaths: string[];
-      originalFlattenedConfigData: {
-        [k: string]: string;
-      };
-      flattenedConfigData: Record<string, string>;
-      aliases_flattenedKeys: Record<string, string>;
-      reversedFlattenedConfigData: {
-        [k: string]: string;
-      };
-      keys_valueLocations: {
-        [x: string]: {
-          value: string;
-          filePath: string;
-          loc: SourceLocation;
-        };
-      };
-      nonAliasesKeys_valueLocations: Record<
-        string,
-        {
-          value: string;
-          filePath: string;
-          loc: SourceLocation;
-        }
-      >;
-      aliasesKeys_valueLocations: Record<
-        string,
-        {
-          value: string;
-          filePath: string;
-          loc: SourceLocation;
-        }
-      >;
       lintConfigImports: boolean;
       myIgnoresOnly: boolean;
       composedVariablesExclusives: string[];
+      variations: false;
+      resolvedCoreData: {
+        originalFlattenedConfigData: Record<string, string>;
+        flattenedConfigData: Record<string, string>;
+        aliases_flattenedKeys: Record<string, string>;
+        reversedFlattenedConfigData: Record<string, string>;
+        keys_valueLocations: {
+          [x: string]: {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          };
+        };
+        nonAliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+        aliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+      };
+      resolvedFallbackData: null;
+      resolvedVariationData: null;
+    }
+  | {
+      success: true;
+      configPath: string;
+      passedIgnores: string[];
+      config: object;
+      rawConfigAndImportPaths: string[];
+      lintConfigImports: boolean;
+      myIgnoresOnly: boolean;
+      composedVariablesExclusives: string[];
+      variations: true;
+      resolvedCoreData: {
+        originalFlattenedConfigData: Record<string, string>;
+        flattenedConfigData: Record<string, string>;
+        aliases_flattenedKeys: Record<string, string>;
+        reversedFlattenedConfigData: Record<string, string>;
+        keys_valueLocations: {
+          [x: string]: {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          };
+        };
+        nonAliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+        aliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+      };
+      resolvedFallbackData: {
+        originalFlattenedConfigData: Record<string, string>;
+        flattenedConfigData: Record<string, string>;
+        aliases_flattenedKeys: Record<string, string>;
+        reversedFlattenedConfigData: Record<string, string>;
+        keys_valueLocations: {
+          [x: string]: {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          };
+        };
+        nonAliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+        aliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+      };
+      resolvedVariationData: {
+        originalFlattenedConfigData: Record<string, string>;
+        flattenedConfigData: Record<string, string>;
+        aliases_flattenedKeys: Record<string, string>;
+        reversedFlattenedConfigData: Record<string, string>;
+        keys_valueLocations: {
+          [x: string]: {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          };
+        };
+        nonAliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+        aliasesKeys_valueLocations: Record<
+          string,
+          {
+            value: string;
+            filePath: string;
+            loc: SourceLocation;
+          }
+        >;
+      };
     }
 >;
 

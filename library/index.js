@@ -297,6 +297,16 @@ const resolveConfig = async (configPath) => {
 
   // Branching for variations.
 
+  const resolvedCoreData = {
+    originalFlattenedConfigData, // for jscomments placeholders
+    aliases_flattenedKeys,
+    flattenedConfigData,
+    reversedFlattenedConfigData,
+    keys_valueLocations,
+    nonAliasesKeys_valueLocations,
+    aliasesKeys_valueLocations,
+  };
+
   if (!variationsSchemaResults.data) {
     return {
       // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
@@ -310,13 +320,17 @@ const resolveConfig = async (configPath) => {
       myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
       composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
       ...variationsFalse,
-      originalFlattenedConfigData, // for jscomments placeholders
-      aliases_flattenedKeys,
-      flattenedConfigData,
-      reversedFlattenedConfigData,
-      keys_valueLocations,
-      nonAliasesKeys_valueLocations,
-      aliasesKeys_valueLocations,
+      // originalFlattenedConfigData, // for jscomments placeholders
+      // aliases_flattenedKeys,
+      // flattenedConfigData,
+      // reversedFlattenedConfigData,
+      // keys_valueLocations,
+      // nonAliasesKeys_valueLocations,
+      // aliasesKeys_valueLocations,
+      resolvedCoreData,
+      // specific to variationsFalse
+      resolvedFallbackData: null,
+      resolvedVariationData: null,
     };
   } else {
     const variationsSchemaResultsData = variationsSchemaResults.data;
@@ -568,13 +582,14 @@ const resolveConfig = async (configPath) => {
       myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
       composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
       ...variationsTrue,
-      originalFlattenedConfigData, // for jscomments placeholders
-      aliases_flattenedKeys,
-      flattenedConfigData,
-      reversedFlattenedConfigData,
-      keys_valueLocations,
-      nonAliasesKeys_valueLocations,
-      aliasesKeys_valueLocations,
+      // originalFlattenedConfigData, // for jscomments placeholders
+      // aliases_flattenedKeys,
+      // flattenedConfigData,
+      // reversedFlattenedConfigData,
+      // keys_valueLocations,
+      // nonAliasesKeys_valueLocations,
+      // aliasesKeys_valueLocations,
+      resolvedCoreData,
       // specific to variationsTrue
       resolvedFallbackData,
       resolvedVariationData,
