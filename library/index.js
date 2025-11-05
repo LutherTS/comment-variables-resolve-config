@@ -34,7 +34,10 @@ import {
   getArraySetDifference,
 } from "./_commons/utilities/helpers.js";
 import { freshImport } from "./_commons/utilities/fresh-import-a.js";
-import { resolveData } from "./_commons/utilities/resolve-data.js";
+import {
+  resolveData,
+  resolveVariationData,
+} from "./_commons/utilities/resolve-data.js";
 import { getComposedVariablesExclusivesFreeKeys } from "./_commons/utilities/flatten-config-data.js";
 
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
@@ -517,9 +520,8 @@ const resolveConfig = async (configPath) => {
     // Resolves
 
     // resolvedFallbackData
-    const resolvedFallbackDataResults = await resolveData(
+    const resolvedFallbackDataResults = await resolveVariationData(
       variationsSchemaResultsData.fallbackData,
-      extracts,
       originalFlattenedConfigData
     );
     if (!resolvedFallbackDataResults.success)
@@ -536,17 +538,16 @@ const resolveConfig = async (configPath) => {
       flattenedConfigData: resolvedFallbackDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
         resolvedFallbackDataResults.reversedFlattenedConfigData,
-      keys_valueLocations: resolvedFallbackDataResults.keys_valueLocations,
-      nonAliasesKeys_valueLocations:
-        resolvedFallbackDataResults.nonAliasesKeys_valueLocations,
-      aliasesKeys_valueLocations:
-        resolvedFallbackDataResults.aliasesKeys_valueLocations,
+      // keys_valueLocations: resolvedFallbackDataResults.keys_valueLocations,
+      // nonAliasesKeys_valueLocations:
+      //   resolvedFallbackDataResults.nonAliasesKeys_valueLocations,
+      // aliasesKeys_valueLocations:
+      //   resolvedFallbackDataResults.aliasesKeys_valueLocations,
     };
 
     // resolvedVariationData
-    const resolvedVariationDataResults = await resolveData(
+    const resolvedVariationDataResults = await resolveVariationData(
       configDataResultsData[variationsSchemaResultsData.variant],
-      extracts,
       originalFlattenedConfigData
     );
     if (!resolvedVariationDataResults.success)
@@ -563,11 +564,11 @@ const resolveConfig = async (configPath) => {
       flattenedConfigData: resolvedVariationDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
         resolvedVariationDataResults.reversedFlattenedConfigData,
-      keys_valueLocations: resolvedVariationDataResults.keys_valueLocations,
-      nonAliasesKeys_valueLocations:
-        resolvedVariationDataResults.nonAliasesKeys_valueLocations,
-      aliasesKeys_valueLocations:
-        resolvedVariationDataResults.aliasesKeys_valueLocations,
+      // keys_valueLocations: resolvedVariationDataResults.keys_valueLocations,
+      // nonAliasesKeys_valueLocations:
+      //   resolvedVariationDataResults.nonAliasesKeys_valueLocations,
+      // aliasesKeys_valueLocations:
+      //   resolvedVariationDataResults.aliasesKeys_valueLocations,
     };
 
     // Now to passing or adapting the correct config data given the variant, either with a seamless reconnecting, or a remaking and streamlining of the return objects.

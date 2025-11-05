@@ -306,7 +306,18 @@ const rule = {
                   };
 
                   // NEW!!!
-                  // So this is where I'll be implementing /* core $COMMENT#EN#HELLO - variation $COMMENT#HELLO */.
+                  // So this is where I'll be implementing: /* variation $COMMENT#HELLO - core $COMMENT#EN#HELLO */.
+                  // So for sure now case 3 will also need to take a boolean.
+                  // (Funny how this by default generates aliases.)
+                  // (Its purpose could be going to be to replace the next comment with this new one.)
+                  // My argument so far is, I'm fine with `placeholders` only generating placeholders for the variant I'm currently using. In fact, it forces users to generate on demand for other variations, and reduces mistakes of copy-pasting the wrong variable if from the get-go it hasn't been generated.
+                  // The thing about aliases is because "FR#HELLO" doesn't exist on the variation data, it automatically treats it like a real variable.
+                  // (Which then begs the question of what happens if I have several aliases for the same variable... This:)
+
+                  // helloAlias: "FR#HELLO" /* $COMMENT#HELLOALIAS2 */ /* $COMMENT#HELLOALIAS */,
+                  // helloAlias2: "FR#HELLO" /* $COMMENT#HELLOALIAS2 */,
+
+                  // (Oh but don't forget I haven't tried composed variables yet and composed variables exclusives.) Which I think is what need to test out first. Composed variables exclusives checked.
 
                   context.report({
                     node: propValueNode,

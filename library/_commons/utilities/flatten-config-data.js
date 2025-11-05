@@ -12,6 +12,10 @@ import {
  * @typedef {import("../../../types/_commons/typedefs.js").FlattenConfigDataResults} FlattenConfigDataResults
  */
 
+/* Core */
+
+/* flattenConfigData */
+
 /**
  * $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA
  * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAA
@@ -60,6 +64,10 @@ export const flattenConfigData = (
     configDataMap,
   };
 };
+
+/* Derivatives */
+
+/* makeOriginalFlattenedConfigData */
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA
@@ -121,6 +129,8 @@ export const makeOriginalFlattenedConfigData = (data) => {
     configDataResultsData: configDataResults.data,
   };
 };
+
+/* getComposedVariablesExclusivesFreeKeys */
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
