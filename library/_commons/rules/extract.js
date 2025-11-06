@@ -6,7 +6,11 @@ import {
   $COMMENT,
 } from "../constants/bases.js";
 
-import { makeIsolatedStringRegex } from "../utilities/helpers.js";
+import {
+  makeIsolatedStringRegex,
+  removeVariantPrefixFromVariationPlaceholder,
+  surroundStringByOneSpace,
+} from "../utilities/helpers.js";
 
 /**
  * @typedef {import("../../../types/_commons/typedefs.js").ExtractRule} ExtractRule
@@ -46,12 +50,16 @@ const rule = {
                 type: "object",
                 additionalProperties: { type: "string" },
               },
+              variations: {
+                type: "boolean",
+              },
             },
             required: [
               "composedValues_originalKeys",
               "aliasValues_originalKeys",
               "regularValuesOnly_originalKeys",
               "aliases_flattenedKeys",
+              "variations",
             ],
             additionalProperties: false,
           },
@@ -228,6 +236,7 @@ const rule = {
         aliasValues_originalKeys,
         regularValuesOnly_originalKeys,
         aliases_flattenedKeys,
+        variations,
       } = makePlaceholders;
 
       const flattenedKeysWithAliases = new Set(
@@ -266,14 +275,32 @@ const rule = {
 
               if (originalKey) {
                 const placeholder = `${$COMMENT}#${originalKey}`;
+                // variations
+                const variationsPlaceholder =
+                  removeVariantPrefixFromVariationPlaceholder(placeholder);
 
                 const sourceCode = context.sourceCode;
                 const commentsAfter =
                   sourceCode.getCommentsAfter(propValueNode);
 
-                let hasExistingPlaceholder = commentsAfter.some((comment) =>
-                  comment.value.includes(placeholder)
-                );
+                let hasExistingPlaceholder = variations
+                  ? commentsAfter.some(
+                      (comment) =>
+                        // core
+                        comment.value.includes(
+                          surroundStringByOneSpace(placeholder)
+                        ) &&
+                        // variations
+                        comment.value.includes(
+                          surroundStringByOneSpace(variationsPlaceholder)
+                        )
+                    )
+                  : commentsAfter.some((comment) =>
+                      // core only
+                      comment.value.includes(
+                        surroundStringByOneSpace(placeholder)
+                      )
+                    );
 
                 // now so aliases are recognized and not prefixed
                 let hasExistingAliasPlaceholder = false;
@@ -286,12 +313,32 @@ const rule = {
                   if (aliasPlaceholdersSet) {
                     const aliasPlaceholdersArray = [...aliasPlaceholdersSet];
 
-                    hasExistingAliasPlaceholder = commentsAfter.some(
-                      (comment) =>
-                        aliasPlaceholdersArray.some((aliasPlaceholder) =>
-                          comment.value.includes(aliasPlaceholder)
+                    hasExistingAliasPlaceholder = variations
+                      ? commentsAfter.some((comment) =>
+                          aliasPlaceholdersArray.some(
+                            (aliasPlaceholder) =>
+                              // core
+                              comment.value.includes(
+                                surroundStringByOneSpace(aliasPlaceholder)
+                              ) &&
+                              // variations
+                              comment.value.includes(
+                                surroundStringByOneSpace(
+                                  removeVariantPrefixFromVariationPlaceholder(
+                                    aliasPlaceholder
+                                  )
+                                )
+                              )
+                          )
                         )
-                    );
+                      : commentsAfter.some((comment) =>
+                          aliasPlaceholdersArray.some((aliasPlaceholder) =>
+                            // core only
+                            comment.value.includes(
+                              surroundStringByOneSpace(aliasPlaceholder)
+                            )
+                          )
+                        );
                   }
                 }
 
@@ -305,20 +352,6 @@ const rule = {
                     }),
                   };
 
-                  // NEW!!!
-                  // So this is where I'll be implementing: /* variation $COMMENT#HELLO - core $COMMENT#EN#HELLO */.
-                  // So for sure now case 3 will also need to take a boolean.
-                  // (Funny how this by default generates aliases.)
-                  // (Its purpose could be going to be to replace the next comment with this new one.)
-                  // My argument so far is, I'm fine with `placeholders` only generating placeholders for the variant I'm currently using. In fact, it forces users to generate on demand for other variations, and reduces mistakes of copy-pasting the wrong variable if from the get-go it hasn't been generated.
-                  // The thing about aliases is because "FR#HELLO" doesn't exist on the variation data, it automatically treats it like a real variable.
-                  // (Which then begs the question of what happens if I have several aliases for the same variable... This:)
-
-                  // helloAlias: "FR#HELLO" /* $COMMENT#HELLOALIAS2 */ /* $COMMENT#HELLOALIAS */,
-                  // helloAlias2: "FR#HELLO" /* $COMMENT#HELLOALIAS2 */,
-
-                  // (Oh but don't forget I haven't tried composed variables yet and composed variables exclusives.) Which I think is what need to test out first. Composed variables exclusives checked.
-
                   context.report({
                     node: propValueNode,
                     messageId: placeholderMessageId,
@@ -326,7 +359,9 @@ const rule = {
                     fix: (fixer) =>
                       fixer.insertTextAfter(
                         propValueNode,
-                        ` /* ${placeholder} */`
+                        variations
+                          ? ` /* variations: ${variationsPlaceholder} / core: ${placeholder} */`
+                          : ` /* ${placeholder} */`
                       ),
                   });
                 }

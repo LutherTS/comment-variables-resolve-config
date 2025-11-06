@@ -91,7 +91,6 @@ export const normalize = (string) => string.toUpperCase().replace(/\s/g, "_");
  * @returns $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY
  */
 export const makeNormalizedKey = (keys) =>
-  // keys.map((e) => e.toUpperCase().replace(/\s/g, "_")).join("#");
   keys.map((e) => normalize(e)).join("#");
 
 /* removeVariantPrefixFromVariationKey */
@@ -103,6 +102,26 @@ export const makeNormalizedKey = (keys) =>
  */
 export const removeVariantPrefixFromVariationKey = (variationKey) =>
   variationKey.replace(/^[^#]+#/, () => "");
+
+/* removeVariantPrefixFromVariationPlaceholder */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
+ * @param {string} variationPlaceholder $COMMENT#JSDOC#PARAMS#VARIATIONPLACEHOLDER
+ * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
+ */
+export const removeVariantPrefixFromVariationPlaceholder = (
+  variationPlaceholder
+) => variationPlaceholder.replace(/#[^#]+#/, () => "#");
+
+/* surroundStringByOneSpace */
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#SURROUNDSTRINGBYONESPACE
+ * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGC
+ * @returns $COMMENT#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE
+ */
+export const surroundStringByOneSpace = (string) => " " + string + " ";
 
 /* getArraySetDifference */
 

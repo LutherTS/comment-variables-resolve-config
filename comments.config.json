@@ -54,7 +54,7 @@
         "key": "JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA"
       },
       "normalize": {
-        "value": "Normalizes a Comment Variables key segment.",
+        "value": "Normalizes a Comment Variables key part.",
         "key": "JSDOC#DEFINITIONS#NORMALIZE"
       },
       "makeNormalizedKey": {
@@ -86,8 +86,16 @@
         "key": "JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS"
       },
       "removeVariantPrefixFromVariationKey": {
-        "value": "Removes the variant segment of a Comment Variable key.",
+        "value": "Removes the variant prefix of a Comment Variable key.",
         "key": "JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY"
+      },
+      "removeVariantPrefixFromVariationPlaceholder": {
+        "value": "Removes the variant prefix of a Comment Variable placeholder.",
+        "key": "JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER"
+      },
+      "surroundStringByOneSpace": {
+        "value": "Surrounds a given string by one space right before and one space right after (`\" \"`).",
+        "key": "JSDOC#DEFINITIONS#SURROUNDSTRINGBYONESPACE"
       },
       "getArraySetDifference": {
         "value": "Computes the difference between two collections of strings efficiently.",
@@ -208,7 +216,7 @@
         "key": "JSDOC#PARAMS#PARENTKEYS"
       },
       "stringB": {
-        "value": "The key segment to be normalized, notably for variants.",
+        "value": "The key part to be normalized, notably for variants.",
         "key": "JSDOC#PARAMS#STRINGB"
       },
       "keys": {
@@ -232,12 +240,20 @@
         "key": "JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVESA"
       },
       "isVariationData": {
-        "value": "A boolean that, when `false` or `undefined`, decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (Originally known as `isVariationData`, the argument remains since its logic is already implemented, even though a use case for core data as yet to be found.)",
+        "value": "A boolean that, when `false` or `undefined`, decides to crop out the initial variant parts of composed variables exclusives keys when addressing variation data. (Originally known as `isVariationData`, the argument remains since its logic is already implemented, even though a use case for core data as yet to be found.)",
         "key": "JSDOC#PARAMS#ISVARIATIONDATA"
       },
       "variationKey": {
-        "value": "The variation key that needs its variant segment prefix removed (such as going from `EN#COMMENT` to `COMMENT`).",
+        "value": "The variation key that needs its variant prefix removed (such as going from `EN#COMMENT` to `COMMENT`).",
         "key": "JSDOC#PARAMS#VARIATIONKEY"
+      },
+      "variationPlaceholder": {
+        "value": "The variation placeholder that needs its variant prefix removed.",
+        "key": "JSDOC#PARAMS#VARIATIONPLACEHOLDER"
+      },
+      "stringC": {
+        "value": "The given string to be surrounded.",
+        "key": "JSDOC#PARAMS#STRINGC"
       },
       "sourceA": {
         "value": "The source collection (uses `.array`).",
@@ -322,7 +338,7 @@
         "key": "JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA"
       },
       "normalize": {
-        "value": "The normalized key segment under a common algorith for the entire library.",
+        "value": "The normalized key part under a common algorith for the entire library.",
         "key": "JSDOC#RETURNS#NORMALIZE"
       },
       "makeNormalizedKey": {
@@ -354,8 +370,16 @@
         "key": "JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS"
       },
       "removeVariantPrefixFromVariationKey": {
-        "value": "The variation key with its variant segment removed, akin to a Comment Variable key when `variations` are not in use.",
+        "value": "The variation key with its variant prefix removed, akin to a Comment Variable key when `variations` are not in use.",
         "key": "JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY"
+      },
+      "removeVariantPrefixFromVariationPlaceholder": {
+        "value": "The variation placeholder with its variant prefix removed, akin to a Comment Variable placeholder when `variations` are not in use.",
+        "key": "JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER"
+      },
+      "surroundStringByOneSpace": {
+        "value": "The given string surrounded by one space.",
+        "key": "JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE"
       },
       "getArraySetDifference": {
         "value": "A new `Set` containing all elements in `a` that are not in `b`.",

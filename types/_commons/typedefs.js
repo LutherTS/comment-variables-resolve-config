@@ -35,6 +35,7 @@ import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
  *     aliasValues_originalKeys: Record<string, string>;
  *     regularValuesOnly_originalKeys: Record<string, string>;
  *     aliases_flattenedKeys: Record<string, string>;
+ *     variations: boolean
  *   };
  *   findInstancesInConfig?: never;
  * } | {

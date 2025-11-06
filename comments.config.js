@@ -28,7 +28,7 @@ const data = {
       transformResolvedConfigData:
         "Transforms resolved config data with keys alongside values." /* $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
       normalize:
-        "Normalizes a Comment Variables key segment." /* $COMMENT#JSDOC#DEFINITIONS#NORMALIZE */,
+        "Normalizes a Comment Variables key part." /* $COMMENT#JSDOC#DEFINITIONS#NORMALIZE */,
       makeNormalizedKey:
         "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
       makeJsonData:
@@ -44,7 +44,11 @@ const data = {
       getComposedVariablesExclusivesFreeKeys:
         "Gets all Comment Variables keys from the data of a given variation (or config) that aren't marked to be exclusively used for composed variables." /* $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
       removeVariantPrefixFromVariationKey:
-        "Removes the variant segment of a Comment Variable key." /* $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
+        "Removes the variant prefix of a Comment Variable key." /* $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
+      removeVariantPrefixFromVariationPlaceholder:
+        "Removes the variant prefix of a Comment Variable placeholder." /* $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER */,
+      surroundStringByOneSpace:
+        'Surrounds a given string by one space right before and one space right after (`" "`).' /* $COMMENT#JSDOC#DEFINITIONS#SURROUNDSTRINGBYONESPACE */,
       getArraySetDifference:
         "Computes the difference between two collections of strings efficiently." /* $COMMENT#JSDOC#DEFINITIONS#GETARRAYSETDIFFERENCE */,
       resolveCoreData:
@@ -105,7 +109,7 @@ const data = {
       parentKeys:
         "JSDOC#PARAMS#PARENTKEYSOPTION" /* $COMMENT#JSDOC#PARAMS#PARENTKEYS */,
       stringB:
-        "The key segment to be normalized, notably for variants." /* $COMMENT#JSDOC#PARAMS#STRINGB */,
+        "The key part to be normalized, notably for variants." /* $COMMENT#JSDOC#PARAMS#STRINGB */,
       keys: "The list of keys at hand in order of traversal." /* $COMMENT#JSDOC#PARAMS#KEYS */,
       resolvedConfigDataB:
         "The resolved config data as obtained from `makeResolvedConfigData`." /* $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB */,
@@ -116,9 +120,13 @@ const data = {
       composedVariablesExclusivesA:
         "The top-level list of all Comment Variables keys that are composed variables exclusives. (It is critical to list all variables only used to make composed variables in this array across all variations, so that they are ignored when comparing variations data keys to be one-to-one equivalents to canonical fallback data keys.)" /* $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVESA */,
       isVariationData:
-        "A boolean that, when `false` or `undefined`, decides to crop out the initial variant segments of composed variables exclusives keys when addressing variation data. (Originally known as `isVariationData`, the argument remains since its logic is already implemented, even though a use case for core data as yet to be found.)" /* $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA */,
+        "A boolean that, when `false` or `undefined`, decides to crop out the initial variant parts of composed variables exclusives keys when addressing variation data. (Originally known as `isVariationData`, the argument remains since its logic is already implemented, even though a use case for core data as yet to be found.)" /* $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA */,
       variationKey:
-        "The variation key that needs its variant segment prefix removed (such as going from `EN#COMMENT` to `COMMENT`)." /* $COMMENT#JSDOC#PARAMS#VARIATIONKEY */,
+        "The variation key that needs its variant prefix removed (such as going from `EN#COMMENT` to `COMMENT`)." /* $COMMENT#JSDOC#PARAMS#VARIATIONKEY */,
+      variationPlaceholder:
+        "The variation placeholder that needs its variant prefix removed." /* $COMMENT#JSDOC#PARAMS#VARIATIONPLACEHOLDER */,
+      stringC:
+        "The given string to be surrounded." /* $COMMENT#JSDOC#PARAMS#STRINGC */,
       sourceA:
         "The source collection (uses `.array`)." /* $COMMENT#JSDOC#PARAMS#SOURCEA */,
       exclusionB:
@@ -162,7 +170,7 @@ const data = {
       transformResolvedConfigData:
         "The transformed resolved config data with keys and placeholders readily accessible alongside values." /* $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA */,
       normalize:
-        "The normalized key segment under a common algorith for the entire library." /* $COMMENT#JSDOC#RETURNS#NORMALIZE */,
+        "The normalized key part under a common algorith for the entire library." /* $COMMENT#JSDOC#RETURNS#NORMALIZE */,
       makeNormalizedKey:
         "The normalized key of a Comment Variable." /* $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
       makeJsonData:
@@ -178,7 +186,11 @@ const data = {
       getComposedVariablesExclusivesFreeKeys:
         "All Comment Variables keys from the data of a given variation (or config) that aren't marked to be exclusively used for composed variables. This is to later ensure that all variations share the exact same utilized keys for perfect versatility." /* $COMMENT#JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS */,
       removeVariantPrefixFromVariationKey:
-        "The variation key with its variant segment removed, akin to a Comment Variable key when `variations` are not in use." /* $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
+        "The variation key with its variant prefix removed, akin to a Comment Variable key when `variations` are not in use." /* $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
+      removeVariantPrefixFromVariationPlaceholder:
+        "The variation placeholder with its variant prefix removed, akin to a Comment Variable placeholder when `variations` are not in use." /* $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER */,
+      surroundStringByOneSpace:
+        "The given string surrounded by one space." /* $COMMENT#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE */,
       getArraySetDifference:
         "A new `Set` containing all elements in `a` that are not in `b`." /* $COMMENT#JSDOC#RETURNS#GETARRAYSETDIFFERENCE */,
       resolveCoreData:
