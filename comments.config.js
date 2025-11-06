@@ -8,7 +8,7 @@ const data = {
       flattenConfigData:
         "Flattens the config's data property into a one-dimensional object of `COMMENT#COMMENT`-like keys and string values. (This function is now also used to flatten variation data.)" /* $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA */,
       resolveConfig:
-        "Verifies, validates and resolves the config path to retrieve the config's data and ignores." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG */,
+        "Verifies, validates and resolves the config path to retrieve the config's data, ignores, and more." /* $COMMENT#JSDOC#DEFINITIONS#RESOLVECONFIG */,
       makeSuccessFalseTypeError:
         'Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.' /* $COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR */,
       extractValueLocationsFromLintMessages:
@@ -69,7 +69,7 @@ const data = {
       parentKeysOption:
         "The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`)." /* $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION */,
       configPathA:
-        'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": true` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATHA */ /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
+        'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": "my.config.js"` in `.vscode/settings.json` for the VS Code extension.' /* $COMMENT#JSDOC#PARAMS#CONFIGPATHA */ /* $COMMENT#JSDOC#PARAMS#CONFIGPATH */,
       message:
         "The human-readable message of the error." /* $COMMENT#JSDOC#PARAMS#MESSAGE */,
       lintMessages:
@@ -184,7 +184,7 @@ const data = {
       resolveCoreData:
         "With a `{success: true}` object, all the information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly `originalFlattenedConfigData`, `aliases_flattenedKeys`, `flattenedConfigData`, `reversedFlattenedConfigData`, `keys_valueLocations`, `nonAliasesKeys_valueLocations`, `aliasesKeys_valueLocations`, `configDataResultsData`, and probably more as the function evolves." /* $COMMENT#JSDOC#RETURNS#RESOLVECOREDATA */,
       resolveVariationData:
-        "With a `{success: true}` object, the given variation's own information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly its own `originalFlattenedConfigData`, its own `aliases_flattenedKeys`, its own `flattenedConfigData`, its own `reversedFlattenedConfigData`, and its own `configDataResultsData`." /* $COMMENT#JSDOC#RETURNS#RESOLVEVARIATIONDATA */,
+        "With a `{success: true}` object, the given variation's own information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly its own `originalFlattenedConfigData`, its own `aliases_flattenedKeys`, its own `flattenedConfigData`, its own `reversedFlattenedConfigData`, and accessorily its own `configDataResultsData`." /* $COMMENT#JSDOC#RETURNS#RESOLVEVARIATIONDATA */,
     }),
     constants: Object.freeze({
       configKeyRegex:

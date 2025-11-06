@@ -109,58 +109,12 @@ declare const resolveConfig: (configPath: string) => Promise<
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
         reversedFlattenedConfigData: Record<string, string>;
-        keys_valueLocations: {
-          [x: string]: {
-            value: string;
-            filePath: string;
-            loc: SourceLocation;
-          };
-        };
-        nonAliasesKeys_valueLocations: Record<
-          string,
-          {
-            value: string;
-            filePath: string;
-            loc: SourceLocation;
-          }
-        >;
-        aliasesKeys_valueLocations: Record<
-          string,
-          {
-            value: string;
-            filePath: string;
-            loc: SourceLocation;
-          }
-        >;
       };
       resolvedVariationData: {
         originalFlattenedConfigData: Record<string, string>;
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
         reversedFlattenedConfigData: Record<string, string>;
-        keys_valueLocations: {
-          [x: string]: {
-            value: string;
-            filePath: string;
-            loc: SourceLocation;
-          };
-        };
-        nonAliasesKeys_valueLocations: Record<
-          string,
-          {
-            value: string;
-            filePath: string;
-            loc: SourceLocation;
-          }
-        >;
-        aliasesKeys_valueLocations: Record<
-          string,
-          {
-            value: string;
-            filePath: string;
-            loc: SourceLocation;
-          }
-        >;
       };
     }
 >;

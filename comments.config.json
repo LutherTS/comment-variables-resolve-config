@@ -14,7 +14,7 @@
         "key": "JSDOC#DEFINITIONS#FLATTENCONFIGDATA"
       },
       "resolveConfig": {
-        "value": "Verifies, validates and resolves the config path to retrieve the config's data and ignores.",
+        "value": "Verifies, validates and resolves the config path to retrieve the config's data, ignores, and more.",
         "key": "JSDOC#DEFINITIONS#RESOLVECONFIG"
       },
       "makeSuccessFalseTypeError": {
@@ -136,7 +136,7 @@
         "key": "JSDOC#PARAMS#PARENTKEYSOPTION"
       },
       "configPathA": {
-        "value": "The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `\"commentVariables.config\": true` in `.vscode/settings.json` for the VS Code extension.",
+        "value": "The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `\"commentVariables.config\": \"my.config.js\"` in `.vscode/settings.json` for the VS Code extension.",
         "key": "JSDOC#PARAMS#CONFIGPATHA"
       },
       "message": {
@@ -366,7 +366,7 @@
         "key": "JSDOC#RETURNS#RESOLVECOREDATA"
       },
       "resolveVariationData": {
-        "value": "With a `{success: true}` object, the given variation's own information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly its own `originalFlattenedConfigData`, its own `aliases_flattenedKeys`, its own `flattenedConfigData`, its own `reversedFlattenedConfigData`, and its own `configDataResultsData`.",
+        "value": "With a `{success: true}` object, the given variation's own information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly its own `originalFlattenedConfigData`, its own `aliases_flattenedKeys`, its own `flattenedConfigData`, its own `reversedFlattenedConfigData`, and accessorily its own `configDataResultsData`.",
         "key": "JSDOC#RETURNS#RESOLVEVARIATIONDATA"
       }
     },

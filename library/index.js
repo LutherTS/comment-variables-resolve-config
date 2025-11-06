@@ -115,6 +115,8 @@ const resolveConfig = async (configPath) => {
     };
   }
 
+  const configIgnoresSchemaResultsData = configIgnoresSchemaResults.data;
+
   // validates config.lintConfigImports
   const lintConfigImports = /** @type {unknown} */ (config.lintConfigImports);
   const configLintConfigImportsSchemaResults =
@@ -137,6 +139,9 @@ const resolveConfig = async (configPath) => {
     };
   }
 
+  const configLintConfigImportsSchemaResultsData =
+    configLintConfigImportsSchemaResults.data ?? false;
+
   // validates config.myIgnoresOnly
   const myIgnoresOnly = /** @type {unknown} */ (config.myIgnoresOnly);
   const configMyIgnoresOnlySchemaResults =
@@ -158,6 +163,9 @@ const resolveConfig = async (configPath) => {
       ],
     };
   }
+
+  const configMyIgnoresOnlySchemaResultsData =
+    configMyIgnoresOnlySchemaResults.data ?? false;
 
   // validates config.composedVariablesExclusives
   const composedVariablesExclusives = /** @type {unknown} */ (
@@ -184,6 +192,9 @@ const resolveConfig = async (configPath) => {
       ],
     };
   }
+
+  const composedVariablesExclusivesSchemaResultsData =
+    composedVariablesExclusivesSchemaResults.data ?? [];
 
   // NEW!! Checking the variations key.
 
@@ -264,9 +275,6 @@ const resolveConfig = async (configPath) => {
 
   // NEW: config.data validated last and within resolveData.
 
-  const composedVariablesExclusivesSchemaResultsData =
-    composedVariablesExclusivesSchemaResults.data ?? [];
-
   const resolveCoreDataResults = await resolveCoreData(
     data,
     extracts,
@@ -281,10 +289,9 @@ const resolveConfig = async (configPath) => {
     keys_valueLocations,
     nonAliasesKeys_valueLocations,
     aliasesKeys_valueLocations,
-    // only from the run for config.data until more exploration
+    // only retrieved from the run for config.data for now
     configDataResultsData,
   } = resolveCoreDataResults;
-  console.debug("originalFlattenedConfigData is:", originalFlattenedConfigData);
 
   // Branching for variations.
 
@@ -304,21 +311,14 @@ const resolveConfig = async (configPath) => {
       ...successTrue,
       // warnings,
       configPath, // finalized and absolute
-      passedIgnores: configIgnoresSchemaResults.data,
+      passedIgnores: configIgnoresSchemaResultsData,
       config,
       configDataResultsData,
       rawConfigAndImportPaths,
-      lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
-      myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
+      lintConfigImports: configLintConfigImportsSchemaResultsData,
+      myIgnoresOnly: configMyIgnoresOnlySchemaResultsData,
       composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
       ...variationsFalse,
-      // originalFlattenedConfigData, // for jscomments placeholders
-      // aliases_flattenedKeys,
-      // flattenedConfigData,
-      // reversedFlattenedConfigData,
-      // keys_valueLocations,
-      // nonAliasesKeys_valueLocations,
-      // aliasesKeys_valueLocations,
       resolvedCoreData,
       // specific to variationsFalse
       resolvedFallbackData: null,
@@ -375,10 +375,6 @@ const resolveConfig = async (configPath) => {
       array: fallbackDataFreeKeys,
       set: fallbackDataFreeKeysSet,
     };
-    console.debug(
-      "fallbackDataFreeKeysAndSet are:",
-      fallbackDataFreeKeysAndSet
-    );
 
     // #1: variantsKeys_variationsDataFreeKeys__map loop
     /**
@@ -404,10 +400,6 @@ const resolveConfig = async (configPath) => {
         set: new Set(variationDataFreeKeys),
       });
     }
-    console.debug(
-      "variantsKeys_variationsDataFreeKeys__map is:",
-      variantsKeys_variationsDataFreeKeys__map
-    );
 
     // #2 outstanding keys loop
     console.log("Checking for outstanding keys...");
@@ -421,7 +413,7 @@ const resolveConfig = async (configPath) => {
         fallbackDataFreeKeysAndSet
       );
 
-      if (outstandingKeysSet.size > 0) {
+      if (outstandingKeysSet.size !== 0) {
         const outstandingKey =
           normalize(variantKey) +
           "#" +
@@ -467,7 +459,7 @@ const resolveConfig = async (configPath) => {
         variationDataFreeKeysAndSet
       );
 
-      if (missingKeysSet.size > 0) {
+      if (missingKeysSet.size !== 0) {
         const missingKey =
           normalize(variationsSchemaResultsData.fallbackVariant) +
           "#" +
@@ -514,10 +506,6 @@ const resolveConfig = async (configPath) => {
     );
     if (!resolvedFallbackDataResults.success)
       return resolvedFallbackDataResults;
-    console.debug(
-      "resolvedFallbackDataResults.originalFlattenedConfigData is:",
-      resolvedFallbackDataResults.originalFlattenedConfigData
-    );
 
     const resolvedFallbackData = {
       originalFlattenedConfigData:
@@ -526,11 +514,6 @@ const resolveConfig = async (configPath) => {
       flattenedConfigData: resolvedFallbackDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
         resolvedFallbackDataResults.reversedFlattenedConfigData,
-      // keys_valueLocations: resolvedFallbackDataResults.keys_valueLocations,
-      // nonAliasesKeys_valueLocations:
-      //   resolvedFallbackDataResults.nonAliasesKeys_valueLocations,
-      // aliasesKeys_valueLocations:
-      //   resolvedFallbackDataResults.aliasesKeys_valueLocations,
     };
 
     // resolvedVariationData
@@ -542,10 +525,6 @@ const resolveConfig = async (configPath) => {
     );
     if (!resolvedVariationDataResults.success)
       return resolvedVariationDataResults;
-    console.debug(
-      "resolvedVariationDataResults.originalFlattenedConfigData is:",
-      resolvedVariationDataResults.originalFlattenedConfigData
-    );
 
     const resolvedVariationData = {
       originalFlattenedConfigData:
@@ -554,34 +533,20 @@ const resolveConfig = async (configPath) => {
       flattenedConfigData: resolvedVariationDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
         resolvedVariationDataResults.reversedFlattenedConfigData,
-      // keys_valueLocations: resolvedVariationDataResults.keys_valueLocations,
-      // nonAliasesKeys_valueLocations:
-      //   resolvedVariationDataResults.nonAliasesKeys_valueLocations,
-      // aliasesKeys_valueLocations:
-      //   resolvedVariationDataResults.aliasesKeys_valueLocations,
     };
-
-    // Now to passing or adapting the correct config data given the variant, either with a seamless reconnecting, or a remaking and streamlining of the return objects.
 
     return {
       ...successTrue,
       // warnings,
       configPath, // finalized and absolute
-      passedIgnores: configIgnoresSchemaResults.data,
+      passedIgnores: configIgnoresSchemaResultsData,
       config,
       configDataResultsData,
       rawConfigAndImportPaths,
-      lintConfigImports: configLintConfigImportsSchemaResults.data ?? false,
-      myIgnoresOnly: configMyIgnoresOnlySchemaResults.data ?? false,
+      lintConfigImports: configLintConfigImportsSchemaResultsData,
+      myIgnoresOnly: configMyIgnoresOnlySchemaResultsData,
       composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
       ...variationsTrue,
-      // originalFlattenedConfigData, // for jscomments placeholders
-      // aliases_flattenedKeys,
-      // flattenedConfigData,
-      // reversedFlattenedConfigData,
-      // keys_valueLocations,
-      // nonAliasesKeys_valueLocations,
-      // aliasesKeys_valueLocations,
       resolvedCoreData,
       // specific to variationsTrue
       resolvedFallbackData,
