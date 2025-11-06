@@ -37,13 +37,14 @@ declare const resolveConfig: (configPath: string) => Promise<
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
         reversedFlattenedConfigData: Record<string, string>;
-        keys_valueLocations: {
-          [x: string]: {
+        keys_valueLocations: Record<
+          string,
+          {
             value: string;
             filePath: string;
             loc: SourceLocation;
-          };
-        };
+          }
+        >;
         nonAliasesKeys_valueLocations: Record<
           string,
           {
@@ -80,13 +81,14 @@ declare const resolveConfig: (configPath: string) => Promise<
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
         reversedFlattenedConfigData: Record<string, string>;
-        keys_valueLocations: {
-          [x: string]: {
+        keys_valueLocations: Record<
+          string,
+          {
             value: string;
             filePath: string;
             loc: SourceLocation;
-          };
-        };
+          }
+        >;
         nonAliasesKeys_valueLocations: Record<
           string,
           {
