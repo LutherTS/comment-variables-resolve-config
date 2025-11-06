@@ -321,7 +321,7 @@ const resolveConfig = async (configPath) => {
       ...variationsFalse,
       resolvedCoreData,
       // specific to variationsFalse
-      resolvedFallbackData: null,
+      resolvedreferenceData: null,
       resolvedVariationData: null,
     };
   } else {
@@ -348,32 +348,32 @@ const resolveConfig = async (configPath) => {
         );
     }
 
-    // Checking that variations.fallback is strictly the same as one of the top-level keys in data. Specifically now as data from the fallbackVariant.
+    // Checking that variations.reference is strictly the same as one of the top-level keys in data. Specifically now as data from the referenceVariant.
 
     if (
-      config.data[variationsSchemaResultsData.fallbackVariant] !==
-      config.variations.fallbackData
+      config.data[variationsSchemaResultsData.referenceVariant] !==
+      config.variations.referenceData
     )
       return makeSuccessFalseTypeError(
-        `ERROR. config.variations.fallbackData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.fallbackData needs to be strictly the same as that of one of the variants's data.`
+        `ERROR. config.variations.referenceData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.referenceData needs to be strictly the same as that of one of the variants's data.`
       );
 
-    // Checking that all variations data have the exact same keys and only so, excluding composed variables exclusives, as the canonical config.variations.fallbackData.
+    // Checking that all variations data have the exact same keys and only so, excluding composed variables exclusives, as the canonical config.variations.referenceData.
 
-    const fallbackDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
-      variationsSchemaResultsData.fallbackData,
+    const referenceDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
+      variationsSchemaResultsData.referenceData,
       composedVariablesExclusivesSchemaResultsData
     );
 
-    if (!fallbackDataFreeKeysResults.success)
-      return fallbackDataFreeKeysResults;
-    const { composedVariablesExclusivesFreeKeys: fallbackDataFreeKeys } =
-      fallbackDataFreeKeysResults;
+    if (!referenceDataFreeKeysResults.success)
+      return referenceDataFreeKeysResults;
+    const { composedVariablesExclusivesFreeKeys: referenceDataFreeKeys } =
+      referenceDataFreeKeysResults;
 
-    const fallbackDataFreeKeysSet = new Set(fallbackDataFreeKeys);
-    const fallbackDataFreeKeysAndSet = {
-      array: fallbackDataFreeKeys,
-      set: fallbackDataFreeKeysSet,
+    const referenceDataFreeKeysSet = new Set(referenceDataFreeKeys);
+    const referenceDataFreeKeysAndSet = {
+      array: referenceDataFreeKeys,
+      set: referenceDataFreeKeysSet,
     };
 
     // #1: variantsKeys_variationsDataFreeKeys__map loop
@@ -410,7 +410,7 @@ const resolveConfig = async (configPath) => {
     ] of variantsKeys_variationsDataFreeKeys__map) {
       const outstandingKeysSet = getArraySetDifference(
         variationDataFreeKeysAndSet,
-        fallbackDataFreeKeysAndSet
+        referenceDataFreeKeysAndSet
       );
 
       if (outstandingKeysSet.size !== 0) {
@@ -432,13 +432,13 @@ const resolveConfig = async (configPath) => {
               message: `Key "${outstandingKey}" at relative file path "${path.relative(
                 process.cwd(),
                 outstandingKeyValueLocation.filePath
-              )}" is not found in fallbackData. (Line: ${
+              )}" is not found in referenceData. (Line: ${
                 outstandingKeyValueLocation.loc.start.line
               }. Column: ${outstandingKeyValueLocation.loc.start.column}.)`,
             },
             {
               ...typeError,
-              message: `(Total amount of keys in "${variantKey}" variation not found in fallbackData: ${outstandingKeysSet.size}.)`,
+              message: `(Total amount of keys in "${variantKey}" variation not found in referenceData: ${outstandingKeysSet.size}.)`,
             },
           ],
         };
@@ -455,13 +455,13 @@ const resolveConfig = async (configPath) => {
       variationDataFreeKeysAndSet,
     ] of variantsKeys_variationsDataFreeKeys__map) {
       const missingKeysSet = getArraySetDifference(
-        fallbackDataFreeKeysAndSet,
+        referenceDataFreeKeysAndSet,
         variationDataFreeKeysAndSet
       );
 
       if (missingKeysSet.size !== 0) {
         const missingKey =
-          normalize(variationsSchemaResultsData.fallbackVariant) +
+          normalize(variationsSchemaResultsData.referenceVariant) +
           "#" +
           missingKeysSet.values().next().value;
         const missingKeyValueLocation = keys_valueLocations[missingKey];
@@ -486,7 +486,7 @@ const resolveConfig = async (configPath) => {
             },
             {
               ...typeError,
-              message: `(Total amount of keys in fallbackData not found in "${variantKey}" variation: ${missingKeysSet.size}.)`,
+              message: `(Total amount of keys in referenceData not found in "${variantKey}" variation: ${missingKeysSet.size}.)`,
             },
           ],
         };
@@ -497,23 +497,23 @@ const resolveConfig = async (configPath) => {
 
     // Resolves
 
-    // resolvedFallbackData
-    const resolvedFallbackDataResults = await resolveVariationData(
-      variationsSchemaResultsData.fallbackData,
+    // resolvedReferenceData
+    const resolvedReferenceDataResults = await resolveVariationData(
+      variationsSchemaResultsData.referenceData,
       originalFlattenedConfigData,
       aliases_flattenedKeys,
       flattenedConfigData
     );
-    if (!resolvedFallbackDataResults.success)
-      return resolvedFallbackDataResults;
+    if (!resolvedReferenceDataResults.success)
+      return resolvedReferenceDataResults;
 
-    const resolvedFallbackData = {
+    const resolvedReferenceData = {
       originalFlattenedConfigData:
-        resolvedFallbackDataResults.originalFlattenedConfigData,
-      aliases_flattenedKeys: resolvedFallbackDataResults.aliases_flattenedKeys,
-      flattenedConfigData: resolvedFallbackDataResults.flattenedConfigData,
+        resolvedReferenceDataResults.originalFlattenedConfigData,
+      aliases_flattenedKeys: resolvedReferenceDataResults.aliases_flattenedKeys,
+      flattenedConfigData: resolvedReferenceDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
-        resolvedFallbackDataResults.reversedFlattenedConfigData,
+        resolvedReferenceDataResults.reversedFlattenedConfigData,
     };
 
     // resolvedVariationData
@@ -549,7 +549,7 @@ const resolveConfig = async (configPath) => {
       ...variationsTrue,
       resolvedCoreData,
       // specific to variationsTrue
-      resolvedFallbackData,
+      resolvedReferenceData,
       resolvedVariationData,
     };
   }

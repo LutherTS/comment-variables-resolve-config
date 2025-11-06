@@ -152,9 +152,9 @@ export const VariationsSchema = z
       variant: z.string({
         message: `The config's "variations.variant" key's value must be a string.`,
       }),
-      fallbackData: ConfigDataSchema,
-      fallbackVariant: z.string({
-        message: `The config's "variations.fallbackVariant" key's value must be a string.`,
+      referenceData: ConfigDataSchema,
+      referenceVariant: z.string({
+        message: `The config's "variations.referenceVariant" key's value must be a string.`,
       }),
     },
     {
@@ -170,12 +170,12 @@ export const VariationsSchema = z
         path: ["variant"],
       });
     }
-    // Check that fallbackVariant is one of the variants keys
-    if (!Object.keys(val.variants).includes(val.fallbackVariant)) {
+    // Check that referenceVariant is one of the variants keys
+    if (!Object.keys(val.variants).includes(val.referenceVariant)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `The variations.fallbackVariant key "${val.fallbackVariant}" must be one of the keys in variations.variants.`,
-        path: ["fallbackVariant"],
+        message: `The variations.referenceVariant key "${val.referenceVariant}" must be one of the keys in variations.variants.`,
+        path: ["referenceVariant"],
       });
     }
 

@@ -61,7 +61,7 @@ declare const resolveConfig: (configPath: string) => Promise<
           }
         >;
       };
-      resolvedFallbackData: null;
+      resolvedReferenceData: null;
       resolvedVariationData: null;
     }
   | {
@@ -104,7 +104,7 @@ declare const resolveConfig: (configPath: string) => Promise<
           }
         >;
       };
-      resolvedFallbackData: {
+      resolvedReferenceData: {
         originalFlattenedConfigData: Record<string, string>;
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
