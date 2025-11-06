@@ -35,7 +35,7 @@ import {
 } from "./_commons/utilities/helpers.js";
 import { freshImport } from "./_commons/utilities/fresh-import-a.js";
 import {
-  resolveData,
+  resolveCoreData,
   resolveVariationData,
 } from "./_commons/utilities/resolve-data.js";
 import { getComposedVariablesExclusivesFreeKeys } from "./_commons/utilities/flatten-config-data.js";
@@ -264,8 +264,15 @@ const resolveConfig = async (configPath) => {
 
   // NEW: config.data validated last and within resolveData.
 
-  const resolveDataResults = await resolveData(data, extracts);
-  if (!resolveDataResults.success) return resolveDataResults;
+  const composedVariablesExclusivesSchemaResultsData =
+    composedVariablesExclusivesSchemaResults.data ?? [];
+
+  const resolveCoreDataResults = await resolveCoreData(
+    data,
+    extracts,
+    composedVariablesExclusivesSchemaResultsData
+  );
+  if (!resolveCoreDataResults.success) return resolveCoreDataResults;
   const {
     originalFlattenedConfigData,
     aliases_flattenedKeys,
@@ -276,27 +283,8 @@ const resolveConfig = async (configPath) => {
     aliasesKeys_valueLocations,
     // only from the run for config.data until more exploration
     configDataResultsData,
-    // also
-    flattenedKeys_originalsOnly,
-  } = resolveDataResults;
+  } = resolveCoreDataResults;
   console.debug("originalFlattenedConfigData is:", originalFlattenedConfigData);
-
-  // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
-  const composedVariablesExclusivesSchemaResultsData =
-    composedVariablesExclusivesSchemaResults.data ?? [];
-  for (const e of composedVariablesExclusivesSchemaResultsData) {
-    const isAlias = !!aliases_flattenedKeys[e];
-    const isComposed = flattenedKeys_originalsOnly[e]?.includes(`${$COMMENT}#`);
-
-    if (isAlias)
-      return makeSuccessFalseTypeError(
-        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents an alias variable. Refer to its original instead.`
-      );
-    if (isComposed)
-      return makeSuccessFalseTypeError(
-        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
-      );
-  }
 
   // Branching for variations.
 
@@ -374,8 +362,7 @@ const resolveConfig = async (configPath) => {
 
     const fallbackDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
       variationsSchemaResultsData.fallbackData,
-      composedVariablesExclusivesSchemaResultsData,
-      true
+      composedVariablesExclusivesSchemaResultsData
     );
 
     if (!fallbackDataFreeKeysResults.success)
@@ -404,8 +391,7 @@ const resolveConfig = async (configPath) => {
       const variationDataFreeKeysResults =
         getComposedVariablesExclusivesFreeKeys(
           configDataResultsData[variantKey],
-          composedVariablesExclusivesSchemaResultsData,
-          true
+          composedVariablesExclusivesSchemaResultsData
         );
 
       if (!variationDataFreeKeysResults.success)
@@ -522,7 +508,9 @@ const resolveConfig = async (configPath) => {
     // resolvedFallbackData
     const resolvedFallbackDataResults = await resolveVariationData(
       variationsSchemaResultsData.fallbackData,
-      originalFlattenedConfigData
+      originalFlattenedConfigData,
+      aliases_flattenedKeys,
+      flattenedConfigData
     );
     if (!resolvedFallbackDataResults.success)
       return resolvedFallbackDataResults;
@@ -548,7 +536,9 @@ const resolveConfig = async (configPath) => {
     // resolvedVariationData
     const resolvedVariationDataResults = await resolveVariationData(
       configDataResultsData[variationsSchemaResultsData.variant],
-      originalFlattenedConfigData
+      originalFlattenedConfigData,
+      aliases_flattenedKeys,
+      flattenedConfigData
     );
     if (!resolvedVariationDataResults.success)
       return resolvedVariationDataResults;

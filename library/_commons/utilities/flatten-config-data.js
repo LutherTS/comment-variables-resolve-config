@@ -71,7 +71,7 @@ export const flattenConfigData = (
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA
- * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAC
+ * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAE
  * @returns $COMMENT#JSDOC#RETURNS#MAKEORIGINALFLATTENEDCONFIGDATA
  */
 export const makeOriginalFlattenedConfigData = (data) => {
@@ -135,14 +135,14 @@ export const makeOriginalFlattenedConfigData = (data) => {
 /**
  * $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
  * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAC
- * @param {string[]} composedVariablesExclusives $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVES
- * @param {boolean} isVariationData $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA
+ * @param {string[]} composedVariablesExclusives $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVESA
+ * @param {boolean | undefined} isCoreData $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA
  * @returns $COMMENT#JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
  */
 export const getComposedVariablesExclusivesFreeKeys = (
   data,
   composedVariablesExclusives,
-  isVariationData
+  isCoreData
 ) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
@@ -158,7 +158,7 @@ export const getComposedVariablesExclusivesFreeKeys = (
     originalFlattenedConfigData
   );
 
-  const relevantComposedVariablesExclusives = isVariationData
+  const relevantComposedVariablesExclusives = !isCoreData
     ? // removes variant prefixes for variant data runs
       composedVariablesExclusives.map((e) =>
         removeVariantPrefixFromVariationKey(e)
