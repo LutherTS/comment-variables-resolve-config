@@ -193,7 +193,7 @@ const resolveConfig = async (configPath) => {
     };
   }
 
-  const composedVariablesExclusivesSchemaResultsData =
+  let composedVariablesExclusivesSchemaResultsData =
     composedVariablesExclusivesSchemaResults.data ?? [];
 
   // NEW!! Checking the variations key.
@@ -217,6 +217,22 @@ const resolveConfig = async (configPath) => {
         })),
       ],
     };
+  }
+
+  const variationsSchemaResultsData = variationsSchemaResults.data;
+
+  // specifies the comment variables exclusives of variations are enabled
+
+  if (variationsSchemaResultsData) {
+    const variantComposedVariablesExclusivesSet = new Set(
+      composedVariablesExclusivesSchemaResultsData.map((e) =>
+        removeVariantPrefixFromVariationKey(e)
+      )
+    );
+    composedVariablesExclusivesSchemaResultsData = [
+      ...composedVariablesExclusivesSchemaResultsData,
+      ...variantComposedVariablesExclusivesSet,
+    ];
   }
 
   // IMPORTANT: MOVED EARLIER IN THE PROCESS
@@ -346,6 +362,27 @@ const resolveConfig = async (configPath) => {
         return makeSuccessFalseTypeError(
           `ERROR. The key "${key}" present among the top-level keys in the data key is not present among the top-level keys in the variations.variants key.`
         );
+    }
+
+    // Checking that none of the top-level keys of each variations, through normalization, is a variant, to prevent collisions like EN#FR#HELLO/FR#HELLO vs. FR#HELLO/HELLO, where there should be no EN#FR#HELLO
+
+    const variantsKeysNormalized = variantsKeys.map((e) => normalize(e));
+    const variantsKeysNormalizedSet = new Set(variantsKeysNormalized);
+
+    for (const variantKey of variantsKeys) {
+      /** @type {Record<string, unknown>} (Addressing `unknown`.) */
+      const variation = configDataResultsData[variantKey];
+      const variationTopLevelKeys = Object.keys(variation);
+      const variationTopLevelKeysNormalized = variationTopLevelKeys.map((e) =>
+        normalize(e)
+      );
+
+      for (const normalizedKey of variationTopLevelKeysNormalized) {
+        if (variantsKeysNormalizedSet.has(normalizedKey))
+          return makeSuccessFalseTypeError(
+            `ERROR. The normalized top-level key "${normalizedKey}" from the "${variantKey}" variation collides with an existing variant's name either as is or when normalized ("${normalizedKey}").`
+          );
+      }
     }
 
     // Checking that variations.reference is strictly the same as one of the top-level keys in data. Specifically now as data from the referenceVariant.
@@ -514,6 +551,10 @@ const resolveConfig = async (configPath) => {
       flattenedConfigData: resolvedReferenceDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
         resolvedReferenceDataResults.reversedFlattenedConfigData,
+      variant: variationsSchemaResultsData.referenceVariant,
+      normalizedVariant: normalize(
+        variationsSchemaResultsData.referenceVariant
+      ),
     };
 
     // resolvedVariationData
@@ -533,6 +574,8 @@ const resolveConfig = async (configPath) => {
       flattenedConfigData: resolvedVariationDataResults.flattenedConfigData,
       reversedFlattenedConfigData:
         resolvedVariationDataResults.reversedFlattenedConfigData,
+      variant: variationsSchemaResultsData.variant,
+      normalizedVariant: normalize(variationsSchemaResultsData.variant),
     };
 
     return {
@@ -822,6 +865,7 @@ export {
 export {
   escapeRegex,
   makeIsolatedStringRegex,
+  removeVariantPrefixFromVariationPlaceholder,
 } from "./_commons/utilities/helpers.js";
 
 export { extractRuleConfigData } from "./_commons/rules/extract.js";

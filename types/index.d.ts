@@ -111,12 +111,16 @@ declare const resolveConfig: (configPath: string) => Promise<
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
         reversedFlattenedConfigData: Record<string, string>;
+        variant: string;
+        normalizedVariant: string;
       };
       resolvedVariationData: {
         originalFlattenedConfigData: Record<string, string>;
         flattenedConfigData: Record<string, string>;
         aliases_flattenedKeys: Record<string, string>;
         reversedFlattenedConfigData: Record<string, string>;
+        variant: string;
+        normalizedVariant: string;
       };
     }
 >;
@@ -307,6 +311,15 @@ export const escapeRegex: (string: string) => string;
  * @returns $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX
  */
 export const makeIsolatedStringRegex: (string: string) => RegExp;
+
+/**
+ * $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
+ * @param {string} variationPlaceholder $COMMENT#JSDOC#PARAMS#VARIATIONPLACEHOLDER
+ * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
+ */
+export const removeVariantPrefixFromVariationPlaceholder: (
+  variationPlaceholder: string
+) => string;
 
 /**
  * $COMMENT#JSDOC#DEFINITIONS#MAKERESOLVEDCONFIGDATA
