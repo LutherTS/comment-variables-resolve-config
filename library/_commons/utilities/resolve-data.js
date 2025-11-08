@@ -384,6 +384,12 @@ export const resolveCoreData = async (
       return makeSuccessFalseTypeError(
         `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
       );
+
+    // since only regular comment variables remain, check that this is indeed actually a configured Comment Variable
+    if (!flattenedConfigData[e])
+      return makeSuccessFalseTypeError(
+        `ERROR. "${e}" in the "composedVariablesExclusives" key array is not a configured comment variable. (If you're using variations, check that you do include the full key with its normalized variant prefix.)`
+      );
   }
 
   return {
