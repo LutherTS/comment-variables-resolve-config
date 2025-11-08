@@ -221,20 +221,6 @@ const resolveConfig = async (configPath) => {
 
   const variationsSchemaResultsData = variationsSchemaResults.data;
 
-  // specifies the comment variables exclusives of variations are enabled
-
-  if (variationsSchemaResultsData) {
-    const variantComposedVariablesExclusivesSet = new Set(
-      composedVariablesExclusivesSchemaResultsData.map((e) =>
-        removeVariantPrefixFromVariationKey(e)
-      )
-    );
-    composedVariablesExclusivesSchemaResultsData = [
-      ...composedVariablesExclusivesSchemaResultsData,
-      ...variantComposedVariablesExclusivesSet,
-    ];
-  }
-
   // IMPORTANT: MOVED EARLIER IN THE PROCESS
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
@@ -321,7 +307,7 @@ const resolveConfig = async (configPath) => {
     aliasesKeys_valueLocations,
   };
 
-  if (!variationsSchemaResults.data) {
+  if (!variationsSchemaResultsData) {
     return {
       // NOTE: THINK ABOUT RETURNING ERRORS ONLY IN SUCCESSFALSE, AND WARNINGS ONLY IN SUCCESSTRUE.
       ...successTrue,
@@ -341,7 +327,17 @@ const resolveConfig = async (configPath) => {
       resolvedVariationData: null,
     };
   } else {
-    const variationsSchemaResultsData = variationsSchemaResults.data;
+    // specifies the comment variables exclusives when variations are enabled
+    // (but after resolveCoreData as to not disturb the ones provided by the user)
+    const variantComposedVariablesExclusivesSet = new Set(
+      composedVariablesExclusivesSchemaResultsData.map((e) =>
+        removeVariantPrefixFromVariationKey(e)
+      )
+    );
+    composedVariablesExclusivesSchemaResultsData = [
+      ...composedVariablesExclusivesSchemaResultsData,
+      ...variantComposedVariablesExclusivesSet,
+    ];
 
     // Checks
 
