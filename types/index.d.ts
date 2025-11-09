@@ -193,6 +193,7 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
           aliasValues_originalKeys: Record<string, string>;
           regularValuesOnly_originalKeys: Record<string, string>;
           aliases_flattenedKeys: Record<string, string>;
+          variations: boolean;
         };
         findInstancesInConfig?: never;
       }
@@ -237,6 +238,7 @@ export const extractRuleConfigData: Readonly<{
             aliasValues_originalKeys: Record<string, string>;
             regularValuesOnly_originalKeys: Record<string, string>;
             aliases_flattenedKeys: Record<string, string>;
+            variations: boolean;
           };
           findInstancesInConfig?: never;
         }

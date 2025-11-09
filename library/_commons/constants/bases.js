@@ -85,5 +85,5 @@ export const placeholderDataId = "placeholderDataId";
 export const MODULE_TO_LOAD = "MODULE_TO_LOAD";
 
 // forbidden names for config data keys
-/** @type {ForbiddenKeyNamesSet>} */
+/** @type {ForbiddenKeyNamesSet} */
 export const forbiddenKeyNamesSet = new Set(["value", "key"]);

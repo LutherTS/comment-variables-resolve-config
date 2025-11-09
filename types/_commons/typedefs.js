@@ -35,7 +35,7 @@ import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
  *     aliasValues_originalKeys: Record<string, string>;
  *     regularValuesOnly_originalKeys: Record<string, string>;
  *     aliases_flattenedKeys: Record<string, string>;
- *     variations: boolean
+ *     variations: boolean;
  *   };
  *   findInstancesInConfig?: never;
  * } | {
@@ -96,9 +96,9 @@ import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
  * @typedef {Set<"value" | "key">} ForbiddenKeyNamesSet
  */
 
-// Currently unused though.
 /**
- * @typedef {z.infer<typeof VariationsSchema>} Variations
+ * Currently unused though, but useful as guidance.
+ * @typedef {NonNullable<z.infer<typeof VariationsSchema>>} Variations
  */
 
 export {}; // Makes the file a module.

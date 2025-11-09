@@ -360,7 +360,7 @@ const resolveConfig = async (configPath) => {
         );
     }
 
-    // Checking that none of the top-level keys of each variations, through normalization, is a variant, to prevent collisions like EN#FR#HELLO/FR#HELLO vs. FR#HELLO/HELLO, where there should be no EN#FR#HELLO
+    // Checking that none of the top-level keys of each variations, through normalization, is a variant, to prevent collisions like EN#FR#HELLO/FR#HELLO vs. FR#HELLO/HELLO, where there should be no EN#FR#HELLO.
 
     const variantsKeysNormalized = variantsKeys.map((e) => normalize(e));
     const variantsKeysNormalizedSet = new Set(variantsKeysNormalized);

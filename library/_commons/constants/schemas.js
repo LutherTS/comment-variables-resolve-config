@@ -192,7 +192,3 @@ export const VariationsSchema = z
     }
   })
   .optional();
-
-/**
- * @typedef {z.infer<typeof VariationsSchema>} Variations
- */
