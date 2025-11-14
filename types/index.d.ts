@@ -113,6 +113,7 @@ declare const resolveConfig: (configPath: string) => Promise<
         reversedFlattenedConfigData: Record<string, string>;
         variant: string;
         normalizedVariant: string;
+        variantLabel: string;
       };
       resolvedVariationData: {
         originalFlattenedConfigData: Record<string, string>;
@@ -121,6 +122,8 @@ declare const resolveConfig: (configPath: string) => Promise<
         reversedFlattenedConfigData: Record<string, string>;
         variant: string;
         normalizedVariant: string;
+        variantLabel: string;
+        variantsKeys_missingKeys: Record<string, string[]>;
       };
     }
 >;

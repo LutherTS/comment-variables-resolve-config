@@ -480,8 +480,15 @@ const resolveConfig = async (configPath) => {
 
     console.log("Success. No outstanding key found.");
 
+    const allowIncompleteVariations =
+      variationsSchemaResultsData.allowIncompleteVariations;
+
+    // addressing allowIncompleteVariations for allowing fallback data
     // #3 missing keys loop
-    console.log("Checking for missing keys...");
+    allowIncompleteVariations || console.log("Checking for missing keys...");
+
+    /** @type {Record<string, string[]>} */
+    const variantsKeys_missingKeys = {};
 
     for (const [
       variantKey,
@@ -492,7 +499,7 @@ const resolveConfig = async (configPath) => {
         variationDataFreeKeysAndSet
       );
 
-      if (missingKeysSet.size !== 0) {
+      if (!allowIncompleteVariations && missingKeysSet.size !== 0) {
         const missingKey =
           normalize(variationsSchemaResultsData.referenceVariant) +
           "#" +
@@ -524,9 +531,12 @@ const resolveConfig = async (configPath) => {
           ],
         };
       }
+
+      // back to an array to favor serialization
+      variantsKeys_missingKeys[variantKey] = [...missingKeysSet];
     }
 
-    console.log("Success. No missing key found.");
+    allowIncompleteVariations || console.log("Success. No missing key found.");
 
     // Resolves
 
@@ -551,6 +561,10 @@ const resolveConfig = async (configPath) => {
       normalizedVariant: normalize(
         variationsSchemaResultsData.referenceVariant
       ),
+      variantLabel:
+        variationsSchemaResultsData.variants[
+          variationsSchemaResultsData.referenceVariant
+        ].label,
     };
 
     // resolvedVariationData
@@ -558,7 +572,8 @@ const resolveConfig = async (configPath) => {
       configDataResultsData[variationsSchemaResultsData.variant],
       originalFlattenedConfigData,
       aliases_flattenedKeys,
-      flattenedConfigData
+      flattenedConfigData,
+      resolvedReferenceData.flattenedConfigData
     );
     if (!resolvedVariationDataResults.success)
       return resolvedVariationDataResults;
@@ -572,6 +587,11 @@ const resolveConfig = async (configPath) => {
         resolvedVariationDataResults.reversedFlattenedConfigData,
       variant: variationsSchemaResultsData.variant,
       normalizedVariant: normalize(variationsSchemaResultsData.variant),
+      variantLabel:
+        variationsSchemaResultsData.variants[
+          variationsSchemaResultsData.variant
+        ].label,
+      variantsKeys_missingKeys,
     };
 
     return {

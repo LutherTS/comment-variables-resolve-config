@@ -418,13 +418,15 @@ export const resolveCoreData = async (
  * @param {Record<string, string>} core__originalFlattenedConfigData $COMMENT#JSDOC#PARAMS#CORE__ORIGINALFLATTENEDCONFIGDATA
  * @param {Record<string, string>} core__aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#CORE__ALIASES_FLATTENEDKEYS
  * @param {Record<string, string>} core__flattenedConfigData $COMMENT#JSDOC#PARAMS#CORE__FLATTENEDCONFIGDATA
+ * @param {Record<string, string>} [reference__flattenedConfigData] $COMMENT#JSDOC#PARAMS#REFERENCE__FLATTENEDCONFIGDATA
  * @returns $COMMENT#JSDOC#RETURNS#RESOLVEVARIATIONDATA
  */
 export const resolveVariationData = async (
   data,
   core__originalFlattenedConfigData,
   core__aliases_flattenedKeys,
-  core__flattenedConfigData
+  core__flattenedConfigData,
+  reference__flattenedConfigData = {}
 ) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
@@ -460,8 +462,9 @@ export const resolveVariationData = async (
     }
   }
 
-  /** @type {Record<string, string>} */
-  const flattenedConfigData = {};
+  // /** @type {Record<string, string>} */
+  // const flattenedConfigData = {};
+  const flattenedConfigData = reference__flattenedConfigData;
 
   const flattenedKeys_originalsOnly__EntriesArray = Object.entries(
     flattenedKeys_originalsOnly

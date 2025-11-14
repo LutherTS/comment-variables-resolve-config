@@ -141,6 +141,8 @@ const data = {
         "The `originalFlattenedConfigData` obtained from the previous `aliases_flattenedKeys` run, used to correctly resolve the composed variables segments aliases from the core config data." /* $COMMENT#JSDOC#PARAMS#CORE__ALIASES_FLATTENEDKEYS */,
       core__flattenedConfigData:
         "The `flattenedConfigData` obtained from the previous `resolveCoreData` run, used to correctly resolve the composed variables segments from the core config data." /* $COMMENT#JSDOC#PARAMS#CORE__FLATTENEDCONFIGDATA */,
+      reference__flattenedConfigData:
+        "The flattenedConfigData obtained from the previous resolveVariationData run, used when `allowIncompleteVariations` is set to `true` so that missing variation data can fallback to the reference data." /* $COMMENT#JSDOC#PARAMS#REFERENCE__FLATTENEDCONFIGDATA */,
     }),
     returns: Object.freeze({
       escapeRegex:

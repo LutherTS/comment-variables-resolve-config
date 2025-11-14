@@ -156,6 +156,9 @@ export const VariationsSchema = z
       referenceVariant: z.string({
         message: `The config's "variations.referenceVariant" key's value must be a string.`,
       }),
+      allowIncompleteVariations: z.boolean({
+        message: `The config's "variations.allowIncompleteVariations" key's value must be a boolean.`,
+      }),
     },
     {
       message: `The config's "variations" key's value must be an object (or undefined).`,
