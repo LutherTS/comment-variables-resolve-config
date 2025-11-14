@@ -25,11 +25,11 @@ import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
 /* resolveCoreData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVECOREDATA
- * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAD
- * @param {ValueLocation[]} extracts $COMMENT#JSDOC#PARAMS#EXTRACTS
- * @param {string[]} composedVariablesExclusives $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVESB
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVECOREDATA
+ * Resolves the config's data into information consumable by the Comment Variables ecosystem.
+ * @param {unknown} data The config's data property. (Config data at this time may still be `unknown`.)
+ * @param {ValueLocation[]} extracts The array that holds all the object string values related to the config, since those are to be exclusively used with the config's data. Includes their file paths and `SourceLocation` objects alongside their values.
+ * @param {string[]} composedVariablesExclusives The list of composed variable exclusives, which are Comment Variables keys, in order to ascertain their checks within `resolveCoreData`.
+ * @returns With a `{success: true}` object, all the information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly `originalFlattenedConfigData`, `aliases_flattenedKeys`, `flattenedConfigData`, `reversedFlattenedConfigData`, `keys_valueLocations`, `nonAliasesKeys_valueLocations`, `aliasesKeys_valueLocations`, `configDataResultsData`, and probably more as the function evolves.
  */
 export const resolveCoreData = async (
   data,
@@ -413,13 +413,13 @@ export const resolveCoreData = async (
 /* resolveVariationData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#RESOLVEVARIATIONDATA
- * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAF
- * @param {Record<string, string>} core__originalFlattenedConfigData $COMMENT#JSDOC#PARAMS#CORE__ORIGINALFLATTENEDCONFIGDATA
- * @param {Record<string, string>} core__aliases_flattenedKeys $COMMENT#JSDOC#PARAMS#CORE__ALIASES_FLATTENEDKEYS
- * @param {Record<string, string>} core__flattenedConfigData $COMMENT#JSDOC#PARAMS#CORE__FLATTENEDCONFIGDATA
- * @param {Record<string, string>} [reference__flattenedConfigData] $COMMENT#JSDOC#PARAMS#REFERENCE__FLATTENEDCONFIGDATA
- * @returns $COMMENT#JSDOC#RETURNS#RESOLVEVARIATIONDATA
+ * Resolves any provided variation data into information consumable by the Comment Variables ecosystem. Along with some tailored wiring, it follows the path of `resolveCoreData` while ignoring all of its checks, since they have already been passed in `resolveCoreData`.
+ * @param {unknown} data Any provided variation data. (Variation data at this time may still be `unknown`.)
+ * @param {Record<string, string>} core__originalFlattenedConfigData The `originalFlattenedConfigData` obtained from the previous `resolveCoreData` run, used to correctly branch the aliases from the core config data.
+ * @param {Record<string, string>} core__aliases_flattenedKeys The `originalFlattenedConfigData` obtained from the previous `aliases_flattenedKeys` run, used to correctly resolve the composed variables segments aliases from the core config data.
+ * @param {Record<string, string>} core__flattenedConfigData The `flattenedConfigData` obtained from the previous `resolveCoreData` run, used to correctly resolve the composed variables segments from the core config data.
+ * @param {Record<string, string>} [reference__flattenedConfigData] The flattenedConfigData obtained from the previous resolveVariationData run, used when `allowIncompleteVariations` is set to `true` so that missing variation data can fallback to the reference data.
+ * @returns With a `{success: true}` object, the given variation's own information to be consumed by the Comment Variables CLI and the Comment Variables VS Code extension, namingly its own `originalFlattenedConfigData`, its own `aliases_flattenedKeys`, its own `flattenedConfigData`, its own `reversedFlattenedConfigData`, and accessorily its own `configDataResultsData`.
  */
 export const resolveVariationData = async (
   data,
