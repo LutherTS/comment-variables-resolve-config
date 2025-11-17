@@ -226,16 +226,8 @@ const resolveConfig = async (configPath) => {
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
 
   const findAllImportsResults = findAllImports(configPath);
-  if (!findAllImportsResults.success) {
-    // temporary workaround until I fix the error handling on findAllImports
-    // (do remember as I say below that errors from findAllImports are now blocking and enforce a return, hence the updated type "error")
-    const trueFindAllImportsResults = {
-      ...findAllImportsResults,
-      errors: findAllImportsResults.errors.map((e) => ({ ...e, ...typeError })),
-    };
-    // return findAllImportsResults
-    return trueFindAllImportsResults;
-  } // It's a return because now that findAllImports is integrated within resolveConfig, working with its results is no longer optional.
+  if (!findAllImportsResults.success) return findAllImportsResults;
+
   const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
   // the paths must be relative for ESLint
   const files = rawConfigAndImportPaths.map((e) =>
