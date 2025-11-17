@@ -17,12 +17,12 @@ import {
 /* flattenConfigData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#FLATTENCONFIGDATA
- * @param {ConfigData} configData $COMMENT#JSDOC#PARAMS#CONFIGDATAA
- * @param {Object} [options] $COMMENT#JSDOC#PARAMS#OPTIONS
- * @param {Map<string, {value: string; source: string}>} [options.configDataMap] $COMMENT#JSDOC#PARAMS#CONFIGDATAMAPOPTION
- * @param {string[]} [options.parentKeys] $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION
- * @returns $COMMENT#JSDOC#RETURNS#FLATTENCONFIGDATA
+ * Flattens the config's data property into a one-dimensional object of `COMMENT#COMMENT`-like keys and string values. (This function is now also used to flatten variation data.)
+ * @param {ConfigData} configData The config's data property or any provided variation data. (Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)
+ * @param {Object} [options] The additional options as follows:
+ * @param {Map<string, {value: string; source: string}>} [options.configDataMap] The map housing the flattened keys with their values and sources through recursion, instantiated as a `new Map()`.
+ * @param {string[]} [options.parentKeys] The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`).
+ * @returns The flattened config or variation data in a success object (`success: true`). (The strict reversibility of the `resolve` and `compress` commands is handled afterwards.) Errors are bubbled up during failures so they can be reused differently on the CLI and the VS Code extension in a failure object (`success: false`).
  */
 export const flattenConfigData = (
   configData,
@@ -70,9 +70,9 @@ export const flattenConfigData = (
 /* makeOriginalFlattenedConfigData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#MAKEORIGINALFLATTENEDCONFIGDATA
- * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAE
- * @returns $COMMENT#JSDOC#RETURNS#MAKEORIGINALFLATTENEDCONFIGDATA
+ * Makes the original flattened config or variation data for a given config or variation provided.
+ * @param {unknown} data The config's data property or any provided variation data. (Config or variation data at this time is still `unknown`.)
+ * @returns The original flattened config or variation data at the key `originalFlattenedConfigData` along with the verified original config or variation data at the key `configDataResultsData`.
  */
 export const makeOriginalFlattenedConfigData = (data) => {
   // needed because of z.record()
@@ -133,11 +133,11 @@ export const makeOriginalFlattenedConfigData = (data) => {
 /* getComposedVariablesExclusivesFreeKeys */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
- * @param {unknown} data $COMMENT#JSDOC#PARAMS#CONFIGDATAC
- * @param {string[]} composedVariablesExclusives $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLESEXCLUSIVESA
- * @param {boolean | undefined} isCoreData $COMMENT#JSDOC#PARAMS#ISVARIATIONDATA
- * @returns $COMMENT#JSDOC#RETURNS#GETCOMPOSEDVARIABLESEXCLUSIVESFREEKEYS
+ * Gets all Comment Variables keys from the data of a given variation (or config) that aren't marked to be exclusively used for composed variables.
+ * @param {unknown} data Any provided variation data or the config's data property. (Variation or config data at this time is still `unknown`.)
+ * @param {string[]} composedVariablesExclusives The top-level list of all Comment Variables keys that are composed variables exclusives. (It is critical to list all variables only used to make composed variables in this array across all variations, so that they are ignored when comparing variations data keys to be one-to-one equivalents to canonical fallback data keys.)
+ * @param {boolean | undefined} isCoreData A boolean that, when `false` or `undefined`, decides to crop out the initial variant parts of composed variables exclusives keys when addressing variation data. (Originally known as `isVariationData`, the argument remains since its logic is already implemented, even though a use case for core data as yet to be found.)
+ * @returns All Comment Variables keys from the data of a given variation (or config) that aren't marked to be exclusively used for composed variables. This is to later ensure that all variations share the exact same utilized keys for perfect versatility.
  */
 export const getComposedVariablesExclusivesFreeKeys = (
   data,
