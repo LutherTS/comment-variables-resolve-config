@@ -374,16 +374,17 @@ export const resolveCoreData = async (
   // checks that all composed variables exclusives are comment variables (so neither alias variables nor composed variables)
   for (const e of composedVariablesExclusives) {
     const isAlias = !!aliases_flattenedKeys[e];
-    const isComposed = flattenedKeys_originalsOnly[e]?.includes(`${$COMMENT}#`);
+    // NEW: now allowing composed, like "DIRECTIVE21#USE_AGNOSTIC_STRATEGIES#MODULESIMPLE"
+    // if (isComposed)
+    // const isComposed = flattenedKeys_originalsOnly[e]?.includes(`${$COMMENT}#`);
 
     if (isAlias)
       return makeSuccessFalseTypeError(
         `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents an alias variable. Refer to its original instead.`
       );
-    if (isComposed)
-      return makeSuccessFalseTypeError(
-        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
-      );
+    //   return makeSuccessFalseTypeError(
+    //     `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
+    //   );
 
     // since only regular comment variables remain, check that this is indeed actually a configured Comment Variable
     if (!flattenedConfigData[e])
