@@ -8,9 +8,9 @@ import { successFalse, typeError } from "../constants/bases.js";
 /* escapeRegex */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#ESCAPEREGEX
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGA
- * @returns $COMMENT#JSDOC#RETURNS#ESCAPEREGEX
+ * Escapes all regex characters with a `"\"` in a string to prepare it for use in a regex.
+ * @param {string} string The string.
+ * @returns The string with regex characters escaped.
  */
 export const escapeRegex = (string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -18,9 +18,9 @@ export const escapeRegex = (string) =>
 /* makeIsolatedStringRegex */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#MAKEISOLATEDSTRINGREGEX
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGA
- * @returns $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX
+ * Makes a global regex for a given string that ensures it is surrounded by whitespace.
+ * @param {string} string The string.
+ * @returns The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace.
  */
 export const makeIsolatedStringRegex = (string) =>
   new RegExp(`(?<=\\s|^)${escapeRegex(string)}(?=\\s|$)`, "g");
@@ -28,9 +28,9 @@ export const makeIsolatedStringRegex = (string) =>
 /* makeSuccessFalseTypeError */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#MAKESUCCESSFALSETYPEERROR
- * @param {string} message $COMMENT#JSDOC#PARAMS#MESSAGE
- * @returns $COMMENT#JSDOC#RETURNS#MAKESUCCESSFALSETYPEERROR
+ * Makes a `{success: false}` object with a single error in its errors array of `{type: "error"}` based on the message it is meant to display.
+ * @param {string} message The human-readable message of the error.
+ * @returns A `{success: false}` object with a single error in its error array of `{type: "error"}`.
  */
 export const makeSuccessFalseTypeError = (message) => ({
   ...successFalse,
@@ -45,11 +45,11 @@ export const makeSuccessFalseTypeError = (message) => ({
 /* extractValueLocationsFromLintMessages */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
- * @param {LintMessage[]} lintMessages $COMMENT#JSDOC#PARAMS#LINTMESSAGES
- * @param {string} pluginName $COMMENT#JSDOC#PARAMS#PLUGINNAME
- * @param {string} ruleName $COMMENT#JSDOC#PARAMS#RULENAME
- * @returns $COMMENT#JSDOC#RETURNS#EXTRACTVALUELOCATIONSFROMLINTMESSAGES
+ * Extracts and format the output JSON from an ESLint rule's `context.report` to turn it into Value Locations.
+ * @param {LintMessage[]} lintMessages The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running.
+ * @param {string} pluginName The name of the plugin being used for filtering.
+ * @param {string} ruleName The name of the rule being used for filtering.
+ * @returns An array of Value Locations with the value, the file path and the SourceLocation (LOC) included for each.
  */
 export const extractValueLocationsFromLintMessages = (
   lintMessages,
@@ -65,9 +65,9 @@ export const extractValueLocationsFromLintMessages = (
 /* reverseFlattenedConfigData */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#REVERSEFLATTENEDCONFIGDATA
- * @param {Record<string, string>} flattenedConfigData $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAA
- * @returns $COMMENT#JSDOC#RETURNS#REVERSEFLATTENEDCONFIGDATA
+ * Reverses the keys and the values of a flattened config data object.
+ * @param {Record<string, string>} flattenedConfigData The provided flattened config data to be reversed.
+ * @returns The reversed version of the provided config data.
  */
 export const reverseFlattenedConfigData = (flattenedConfigData) =>
   Object.fromEntries(
@@ -77,18 +77,18 @@ export const reverseFlattenedConfigData = (flattenedConfigData) =>
 /* normalize */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#NORMALIZE
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGB
- * @returns $COMMENT#JSDOC#RETURNS#NORMALIZE
+ * Normalizes a Comment Variables key part.
+ * @param {string} string The key part to be normalized, notably for variants.
+ * @returns The normalized key part under a common algorith for the entire library.
  */
 export const normalize = (string) => string.toUpperCase().replace(/\s/g, "_");
 
 /* makeNormalizedKey */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY
- * @param {string[]} keys $COMMENT#JSDOC#PARAMS#KEYS
- * @returns $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY
+ * Normalizes and makes a Comment Variable key from the list of keys that trace to its value.
+ * @param {string[]} keys The list of keys at hand in order of traversal.
+ * @returns The normalized key of a Comment Variable.
  */
 export const makeNormalizedKey = (keys) =>
   keys.map((e) => normalize(e)).join("#");
@@ -96,9 +96,9 @@ export const makeNormalizedKey = (keys) =>
 /* removeVariantPrefixFromVariationKey */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONKEY
- * @param {string} variationKey $COMMENT#JSDOC#PARAMS#VARIATIONKEY
- * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY
+ * Removes the variant prefix of a Comment Variable key.
+ * @param {string} variationKey The variation key that needs its variant prefix removed (such as going from `EN#COMMENT` to `COMMENT`).
+ * @returns The variation key with its variant prefix removed, akin to a Comment Variable key when `variations` are not in use.
  */
 export const removeVariantPrefixFromVariationKey = (variationKey) =>
   variationKey.replace(/^[^#]+#/, () => "");
@@ -106,9 +106,9 @@ export const removeVariantPrefixFromVariationKey = (variationKey) =>
 /* removeVariantPrefixFromVariationPlaceholder */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
- * @param {string} variationPlaceholder $COMMENT#JSDOC#PARAMS#VARIATIONPLACEHOLDER
- * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
+ * Removes the variant prefix of a Comment Variable placeholder.
+ * @param {string} variationPlaceholder The variation placeholder that needs its variant prefix removed.
+ * @returns The variation placeholder with its variant prefix removed, akin to a Comment Variable placeholder when `variations` are not in use.
  */
 export const removeVariantPrefixFromVariationPlaceholder = (
   variationPlaceholder
@@ -117,19 +117,19 @@ export const removeVariantPrefixFromVariationPlaceholder = (
 /* surroundStringByOneSpace */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#SURROUNDSTRINGBYONESPACE
- * @param {string} string $COMMENT#JSDOC#PARAMS#STRINGC
- * @returns $COMMENT#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE
+ * Surrounds a given string by one space right before and one space right after (`" "`).
+ * @param {string} string The given string to be surrounded.
+ * @returns The given string surrounded by one space.
  */
 export const surroundStringByOneSpace = (string) => " " + string + " ";
 
 /* getArraySetDifference */
 
 /**
- * $COMMENT#JSDOC#DEFINITIONS#GETARRAYSETDIFFERENCE
- * @param {{ array: Array<string>, set: Set<string> }} a - $COMMENT#JSDOC#PARAMS#SOURCEA
- * @param {{ array: Array<string>, set: Set<string> }} b - $COMMENT#JSDOC#PARAMS#EXCLUSIONB
- * @returns $COMMENT#JSDOC#RETURNS#GETARRAYSETDIFFERENCE
+ * Computes the difference between two collections of strings efficiently.
+ * @param {{ array: Array<string>, set: Set<string> }} a - The source collection (uses `.array`).
+ * @param {{ array: Array<string>, set: Set<string> }} b - The exclusion collection (uses `.set`).
+ * @returns A new `Set` containing all elements in `a` that are not in `b`.
  */
 export const getArraySetDifference = (a, b) => {
   /** @type {Set<string>} */
