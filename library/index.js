@@ -256,7 +256,8 @@ const resolveConfig = async (configPath) => {
   });
   const results = await eslint.lintFiles(files);
 
-  const extracts = results.flatMap((result) =>
+  // ? I thought the flatMap was from ESLint but a map actually suffices?
+  const extracts = results.map((result) =>
     extractValueLocationsFromLintMessages(
       result.messages,
       commentVariablesPluginName,
