@@ -241,6 +241,9 @@ const resolveConfig = async (configPath) => {
       {
         files,
         languageOptions: typeScriptAndJSXCompatible,
+        linterOptions: {
+          noInlineConfig: true,
+        },
         plugins: {
           [commentVariablesPluginName]: {
             rules: {
