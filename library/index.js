@@ -256,7 +256,8 @@ const resolveConfig = async (configPath) => {
   });
   const results = await eslint.lintFiles(files);
 
-  const extracts = results.map((result) =>
+  // DON'T. TOUCH. FLATMAP.
+  const extracts = results.flatMap((result) =>
     extractValueLocationsFromLintMessages(
       result.messages,
       commentVariablesPluginName,
