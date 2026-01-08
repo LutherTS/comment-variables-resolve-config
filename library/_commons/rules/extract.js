@@ -153,6 +153,9 @@ const rule = {
     fixable: "code",
   },
   create: (context) => {
+    const sourceCode = context.sourceCode;
+    if (!sourceCode) return; // these two lines should ALWAYS be paired
+
     const options = context.options[0] || {};
     const composedVariablesOnly = options.composedVariablesOnly ?? false;
     const makePlaceholders = options.makePlaceholders;
@@ -279,7 +282,7 @@ const rule = {
                 const variationsPlaceholder =
                   removeVariantPrefixFromVariationPlaceholder(placeholder);
 
-                const sourceCode = context.sourceCode;
+                // const sourceCode = context.sourceCode;
                 const commentsAfter =
                   sourceCode.getCommentsAfter(propValueNode);
 
