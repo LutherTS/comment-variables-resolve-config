@@ -151,7 +151,7 @@ export const knownIgnores: [
   ".next",
   ".react-router",
   ".parcel-cache",
-  ".react-router-parcel"
+  ".react-router-parcel",
 ];
 
 export const successFalse: Readonly<{
@@ -212,7 +212,7 @@ export const extractObjectStringLiteralValues: TSESLint.RuleModule<
             loc: SourceLocation;
           };
         };
-      }
+      },
   ],
   unknown
 >;
@@ -257,7 +257,7 @@ export const extractRuleConfigData: Readonly<{
               loc: SourceLocation;
             };
           };
-        }
+        },
     ],
     unknown,
     TSESLint.RuleListener
@@ -296,7 +296,7 @@ export const makeSuccessFalseTypeError: (message: string) => {
 export const extractValueLocationsFromLintMessages: (
   lintMessages: Linter.LintMessage[],
   pluginName: string,
-  ruleName: string
+  ruleName: string,
 ) => {
   value: string;
   filePath: string;
@@ -323,7 +323,7 @@ export const makeIsolatedStringRegex: (string: string) => RegExp;
  * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
  */
 export const removeVariantPrefixFromVariationPlaceholder: (
-  variationPlaceholder: string
+  variationPlaceholder: string,
 ) => string;
 
 /**
@@ -336,7 +336,7 @@ export const removeVariantPrefixFromVariationPlaceholder: (
 export const makeResolvedConfigData: (
   configData: Record<string, unknown>,
   flattenedConfigData: Record<string, string>,
-  aliases_flattenedKeys: Record<string, string>
+  aliases_flattenedKeys: Record<string, string>,
 ) =>
   | {
       success: false;
@@ -356,7 +356,7 @@ export const makeResolvedConfigData: (
  * @returns $COMMENT#JSDOC#RETURNS#MAKEJSONDATA
  */
 export const makeJsonData: (
-  resolvedConfigData: Record<string, unknown>
+  resolvedConfigData: Record<string, unknown>,
 ) => string;
 
 /**
@@ -365,7 +365,7 @@ export const makeJsonData: (
  * @returns $COMMENT#JSDOC#RETURNS#MAKEMJSDATA
  */
 export const makeMjsData: (
-  resolvedConfigData: Record<string, unknown>
+  resolvedConfigData: Record<string, unknown>,
 ) => string;
 
 /**

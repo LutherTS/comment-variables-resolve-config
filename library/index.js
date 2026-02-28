@@ -61,7 +61,7 @@ const resolveConfig = async (configPath) => {
 
   if (!fs.existsSync(configPath)) {
     return makeSuccessFalseTypeError(
-      "ERROR. No config file found for Comment Variables." // This effectively never happens when using the CLI tool. The CLI tool intercepts the configPath and create a template path if no config path is found.
+      "ERROR. No config file found for Comment Variables.", // This effectively never happens when using the CLI tool. The CLI tool intercepts the configPath and create a template path if no config path is found.
     );
   }
 
@@ -70,7 +70,7 @@ const resolveConfig = async (configPath) => {
   const configExtension = path.extname(configPath);
   if (configExtension !== ".js") {
     return makeSuccessFalseTypeError(
-      "ERROR. Config file passed is not strictly JavaScript (.js)."
+      "ERROR. Config file passed is not strictly JavaScript (.js).",
     );
   }
 
@@ -79,7 +79,7 @@ const resolveConfig = async (configPath) => {
   const configModule = await freshImport(configPath);
   if (configModule === null)
     return makeSuccessFalseTypeError(
-      "ERROR. Config module could not get resolved."
+      "ERROR. Config module could not get resolved.",
     );
 
   const config = configModule.default;
@@ -89,7 +89,7 @@ const resolveConfig = async (configPath) => {
   // validates config
   if (!config || typeof config !== "object" || Array.isArray(config)) {
     return makeSuccessFalseTypeError(
-      "ERROR. Invalid config format. The config should be an object."
+      "ERROR. Invalid config format. The config should be an object.",
     );
   }
 
@@ -173,7 +173,7 @@ const resolveConfig = async (configPath) => {
   );
   const composedVariablesExclusivesSchemaResults =
     ConfigComposedVariablesExclusivesSchema.safeParse(
-      composedVariablesExclusives
+      composedVariablesExclusives,
     );
 
   if (!composedVariablesExclusivesSchemaResults.success) {
@@ -196,7 +196,7 @@ const resolveConfig = async (configPath) => {
   let composedVariablesExclusivesSchemaResultsData =
     composedVariablesExclusivesSchemaResults.data ?? [];
 
-  // NEW!! Checking the variations key.
+  // v2: Checking the variations key.
 
   // validates config.variants
   const variations = /** @type {unknown} */ (config.variations);
@@ -231,7 +231,7 @@ const resolveConfig = async (configPath) => {
   const rawConfigAndImportPaths = [...findAllImportsResults.visitedSet];
   // the paths must be relative for ESLint
   const files = rawConfigAndImportPaths.map((e) =>
-    path.relative(process.cwd(), e)
+    path.relative(process.cwd(), e),
   );
 
   const eslint = new ESLint({
@@ -264,8 +264,8 @@ const resolveConfig = async (configPath) => {
     extractValueLocationsFromLintMessages(
       result.messages,
       commentVariablesPluginName,
-      extractRuleName
-    )
+      extractRuleName,
+    ),
   );
 
   // validates config.data
@@ -276,7 +276,7 @@ const resolveConfig = async (configPath) => {
   const resolveCoreDataResults = await resolveCoreData(
     data,
     extracts,
-    composedVariablesExclusivesSchemaResultsData
+    composedVariablesExclusivesSchemaResultsData,
   );
   if (!resolveCoreDataResults.success) return resolveCoreDataResults;
   const {
@@ -327,8 +327,8 @@ const resolveConfig = async (configPath) => {
     // (but after resolveCoreData as to not disturb the ones provided by the user)
     const variantComposedVariablesExclusivesSet = new Set(
       composedVariablesExclusivesSchemaResultsData.map((e) =>
-        removeVariantPrefixFromVariationKey(e)
-      )
+        removeVariantPrefixFromVariationKey(e),
+      ),
     );
     composedVariablesExclusivesSchemaResultsData = [
       ...composedVariablesExclusivesSchemaResultsData,
@@ -347,12 +347,12 @@ const resolveConfig = async (configPath) => {
 
     if (dataTopLevelKeysSet.size !== variantsKeysSet.size)
       return makeSuccessFalseTypeError(
-        `ERROR. There isn't the same amount of top-level keys in the data key as there is of top-level keys in the variations.variants key.`
+        `ERROR. There isn't the same amount of top-level keys in the data key as there is of top-level keys in the variations.variants key.`,
       );
     for (const key of dataTopLevelKeysSet) {
       if (!variantsKeysSet.has(key))
         return makeSuccessFalseTypeError(
-          `ERROR. The key "${key}" present among the top-level keys in the data key is not present among the top-level keys in the variations.variants key.`
+          `ERROR. The key "${key}" present among the top-level keys in the data key is not present among the top-level keys in the variations.variants key.`,
         );
     }
 
@@ -366,13 +366,13 @@ const resolveConfig = async (configPath) => {
       const variation = configDataResultsData[variantKey];
       const variationTopLevelKeys = Object.keys(variation);
       const variationTopLevelKeysNormalized = variationTopLevelKeys.map((e) =>
-        normalize(e)
+        normalize(e),
       );
 
       for (const normalizedKey of variationTopLevelKeysNormalized) {
         if (variantsKeysNormalizedSet.has(normalizedKey))
           return makeSuccessFalseTypeError(
-            `ERROR. The normalized top-level key "${normalizedKey}" from the "${variantKey}" variation collides with an existing variant's name either as is or when normalized ("${normalizedKey}").`
+            `ERROR. The normalized top-level key "${normalizedKey}" from the "${variantKey}" variation collides with an existing variant's name either as is or when normalized ("${normalizedKey}").`,
           );
       }
     }
@@ -384,14 +384,14 @@ const resolveConfig = async (configPath) => {
       config.variations.referenceData
     )
       return makeSuccessFalseTypeError(
-        `ERROR. config.variations.referenceData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.referenceData needs to be strictly the same as that of one of the variants's data.`
+        `ERROR. config.variations.referenceData's reference is not found within the values of any of the top-level keys in data. The object used for config.variations.referenceData needs to be strictly the same as that of one of the variants's data.`,
       );
 
     // Checking that all variations data have the exact same keys and only so, excluding composed variables exclusives, as the canonical config.variations.referenceData.
 
     const referenceDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
       variationsSchemaResultsData.referenceData,
-      composedVariablesExclusivesSchemaResultsData
+      composedVariablesExclusivesSchemaResultsData,
     );
 
     if (!referenceDataFreeKeysResults.success)
@@ -416,7 +416,7 @@ const resolveConfig = async (configPath) => {
       const variationDataFreeKeysResults =
         getComposedVariablesExclusivesFreeKeys(
           configDataResultsData[variantKey],
-          composedVariablesExclusivesSchemaResultsData
+          composedVariablesExclusivesSchemaResultsData,
         );
 
       if (!variationDataFreeKeysResults.success)
@@ -439,7 +439,7 @@ const resolveConfig = async (configPath) => {
     ] of variantsKeys_variationsDataFreeKeys__map) {
       const outstandingKeysSet = getArraySetDifference(
         variationDataFreeKeysAndSet,
-        referenceDataFreeKeysAndSet
+        referenceDataFreeKeysAndSet,
       );
 
       if (outstandingKeysSet.size !== 0) {
@@ -460,7 +460,7 @@ const resolveConfig = async (configPath) => {
               ...typeError,
               message: `Key "${outstandingKey}" at relative file path "${path.relative(
                 process.cwd(),
-                outstandingKeyValueLocation.filePath
+                outstandingKeyValueLocation.filePath,
               )}" is not found in referenceData. (Line: ${
                 outstandingKeyValueLocation.loc.start.line
               }. Column: ${outstandingKeyValueLocation.loc.start.column}.)`,
@@ -492,7 +492,7 @@ const resolveConfig = async (configPath) => {
     ] of variantsKeys_variationsDataFreeKeys__map) {
       const missingKeysSet = getArraySetDifference(
         referenceDataFreeKeysAndSet,
-        variationDataFreeKeysAndSet
+        variationDataFreeKeysAndSet,
       );
 
       if (!allowIncompleteVariations && missingKeysSet.size !== 0) {
@@ -512,10 +512,10 @@ const resolveConfig = async (configPath) => {
             {
               ...typeError,
               message: `Key "${removeVariantPrefixFromVariationKey(
-                missingKey
+                missingKey,
               )}" at relative file path "${path.relative(
                 process.cwd(),
-                missingKeyValueLocation.filePath
+                missingKeyValueLocation.filePath,
               )}" is not found in "${variantKey}" variation. (Line: ${
                 missingKeyValueLocation.loc.start.line
               }. Column: ${missingKeyValueLocation.loc.start.column}.)`,
@@ -541,7 +541,7 @@ const resolveConfig = async (configPath) => {
       variationsSchemaResultsData.referenceData,
       originalFlattenedConfigData,
       aliases_flattenedKeys,
-      flattenedConfigData
+      flattenedConfigData,
     );
     if (!resolvedReferenceDataResults.success)
       return resolvedReferenceDataResults;
@@ -555,7 +555,7 @@ const resolveConfig = async (configPath) => {
         resolvedReferenceDataResults.reversedFlattenedConfigData,
       variant: variationsSchemaResultsData.referenceVariant,
       normalizedVariant: normalize(
-        variationsSchemaResultsData.referenceVariant
+        variationsSchemaResultsData.referenceVariant,
       ),
       variantLabel:
         variationsSchemaResultsData.variants[
@@ -569,7 +569,7 @@ const resolveConfig = async (configPath) => {
       originalFlattenedConfigData,
       aliases_flattenedKeys,
       flattenedConfigData,
-      resolvedReferenceData.flattenedConfigData
+      resolvedReferenceData.flattenedConfigData,
     );
     if (!resolvedVariationDataResults.success)
       return resolvedVariationDataResults;
@@ -622,7 +622,7 @@ const resolveConfig = async (configPath) => {
 const resolveComposedVariable = (
   composedVariable,
   flattenedConfigData,
-  aliases_flattenedKeys
+  aliases_flattenedKeys,
 ) => {
   const composedVariableSegments = composedVariable.split(" ");
   const resolvedSegments = composedVariableSegments.map((e) => {
@@ -643,7 +643,7 @@ const resolveComposedVariable = (
 const resolveConfigDataStringValue = (
   stringValue,
   flattenedConfigData,
-  aliases_flattenedKeys
+  aliases_flattenedKeys,
 ) => {
   const valueThroughAlias = flattenedConfigData?.[stringValue];
   if (valueThroughAlias) {
@@ -655,7 +655,7 @@ const resolveConfigDataStringValue = (
       return resolveComposedVariable(
         valueThroughAlias,
         flattenedConfigData,
-        aliases_flattenedKeys
+        aliases_flattenedKeys,
       );
     } else {
       // valueThroughAlias is a comment variable
@@ -666,7 +666,7 @@ const resolveConfigDataStringValue = (
     return resolveComposedVariable(
       stringValue,
       flattenedConfigData,
-      aliases_flattenedKeys
+      aliases_flattenedKeys,
     );
   } else {
     // stringValue is a comment variable
@@ -690,8 +690,8 @@ const resolveConfigData = (
     resolveConfigDataStringValue(
       value,
       flattenedConfigData,
-      aliases_flattenedKeys
-    )
+      aliases_flattenedKeys,
+    ),
 ) => {
   /** @type {Record<string, unknown>} */
   const results = {};
@@ -706,11 +706,11 @@ const resolveConfigData = (
         value,
         flattenedConfigData,
         aliases_flattenedKeys,
-        callback
+        callback,
       );
     } else {
       return makeSuccessFalseTypeError(
-        `ERROR. Value "${value}" is supposed to be either a string or a nested object.`
+        `ERROR. Value "${value}" is supposed to be either a string or a nested object.`,
       );
     }
   }
@@ -760,12 +760,12 @@ const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
 const makeResolvedConfigData = (
   configData,
   flattenedConfigData,
-  aliases_flattenedKeys
+  aliases_flattenedKeys,
 ) => {
   const resolveConfigDataResults = resolveConfigData(
     configData,
     flattenedConfigData,
-    aliases_flattenedKeys
+    aliases_flattenedKeys,
   );
   if (
     resolveConfigDataResults.success !== undefined &&
@@ -805,11 +805,11 @@ const makeJsonData = (resolvedConfigData) =>
  */
 const makeMjsData = (resolvedConfigData) =>
   `/** @typedef {${JSON.stringify(
-    resolvedConfigData
+    resolvedConfigData,
   )}} ResolvedConfigData */\n\n/** @type {ResolvedConfigData} */\nexport const resolvedConfigData = ${JSON.stringify(
     resolvedConfigData,
     null,
-    2
+    2,
   )}`;
 
 /* makeJsonPathLog */

@@ -243,7 +243,7 @@ const rule = {
       } = makePlaceholders;
 
       const flattenedKeysWithAliases = new Set(
-        Object.values(aliases_flattenedKeys)
+        Object.values(aliases_flattenedKeys),
       );
 
       // currently only needed here for command placeholders
@@ -252,7 +252,7 @@ const rule = {
           /** @type {Set<string>} */
           const aliasSet = new Set();
           return [e, aliasSet];
-        })
+        }),
       );
       Object.entries(aliases_flattenedKeys).forEach(([eKey, eVal]) => {
         flattenedKeys_aliasPlaceholdersSets__map
@@ -291,18 +291,18 @@ const rule = {
                       (comment) =>
                         // core
                         comment.value.includes(
-                          surroundStringByOneSpace(placeholder)
+                          surroundStringByOneSpace(placeholder),
                         ) &&
                         // variations
                         comment.value.includes(
-                          surroundStringByOneSpace(variationsPlaceholder)
-                        )
+                          surroundStringByOneSpace(variationsPlaceholder),
+                        ),
                     )
                   : commentsAfter.some((comment) =>
                       // core only
                       comment.value.includes(
-                        surroundStringByOneSpace(placeholder)
-                      )
+                        surroundStringByOneSpace(placeholder),
+                      ),
                     );
 
                 // now so aliases are recognized and not prefixed
@@ -322,25 +322,25 @@ const rule = {
                             (aliasPlaceholder) =>
                               // core
                               comment.value.includes(
-                                surroundStringByOneSpace(aliasPlaceholder)
+                                surroundStringByOneSpace(aliasPlaceholder),
                               ) &&
                               // variations
                               comment.value.includes(
                                 surroundStringByOneSpace(
                                   removeVariantPrefixFromVariationPlaceholder(
-                                    aliasPlaceholder
-                                  )
-                                )
-                              )
-                          )
+                                    aliasPlaceholder,
+                                  ),
+                                ),
+                              ),
+                          ),
                         )
                       : commentsAfter.some((comment) =>
                           aliasPlaceholdersArray.some((aliasPlaceholder) =>
                             // core only
                             comment.value.includes(
-                              surroundStringByOneSpace(aliasPlaceholder)
-                            )
-                          )
+                              surroundStringByOneSpace(aliasPlaceholder),
+                            ),
+                          ),
                         );
                   }
                 }
@@ -364,7 +364,7 @@ const rule = {
                         propValueNode,
                         variations
                           ? ` /* variations: ${variationsPlaceholder} / core: ${placeholder} */`
-                          : ` /* ${placeholder} */`
+                          : ` /* ${placeholder} */`,
                       ),
                   });
                 }
@@ -416,12 +416,12 @@ const rule = {
                 });
               } else if (
                 makeIsolatedStringRegex(placeholder).test(
-                  propValueNode.value // for segments in composed variables
+                  propValueNode.value, // for segments in composed variables
                 )
               ) {
                 const matches = [
                   ...propValueNode.value.matchAll(
-                    makeIsolatedStringRegex(placeholder)
+                    makeIsolatedStringRegex(placeholder),
                   ),
                 ];
 

@@ -37,8 +37,8 @@ export const ConfigDataSchema = z
           message: `Value \`${val}\` of type "${typeof val}" should be a string or a nested object.`,
           path: ctx.path,
         });
-      })
-    )
+      }),
+    ),
   )
   .superRefine((obj, ctx) => {
     for (const key of Object.keys(obj)) {
@@ -103,7 +103,7 @@ export const ConfigIgnoresSchema = z.array(
   }),
   {
     message: `The config's "ignores" key value should be an array of strings (or at the very least an empty array).`,
-  }
+  },
 );
 
 export const ConfigLintConfigImportsSchema = z
@@ -125,7 +125,7 @@ export const ConfigComposedVariablesExclusivesSchema = z
     }),
     {
       message: `The config's "composedVariablesExclusives" key value, if provided, should only be an array.`,
-    }
+    },
   )
   .refine((array) => new Set(array).size === array.length, {
     message: `The config's "composedVariablesExclusives" key array should not contain duplicate values.`,
@@ -143,11 +143,11 @@ export const VariationsSchema = z
           },
           {
             message: `The config's "variations.variants" key's value must be a record.`,
-          }
+          },
         ),
         {
           message: `The config's "variations.variants" key's value must be a record.`,
-        }
+        },
       ),
       variant: z.string({
         message: `The config's "variations.variant" key's value must be a string.`,
@@ -162,7 +162,7 @@ export const VariationsSchema = z
     },
     {
       message: `The config's "variations" key's value must be an object (or undefined).`,
-    }
+    },
   )
   .superRefine((val, ctx) => {
     // Check that variant is one of the variants keys

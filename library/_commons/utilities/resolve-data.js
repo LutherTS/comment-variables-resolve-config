@@ -34,7 +34,7 @@ import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
 export const resolveCoreData = async (
   data,
   extracts,
-  composedVariablesExclusives
+  composedVariablesExclusives,
 ) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
@@ -55,7 +55,7 @@ export const resolveCoreData = async (
   const flattenedKeys_originalsOnly = {};
 
   const originalFlattenedConfigData__EntriesArray = Object.entries(
-    originalFlattenedConfigData
+    originalFlattenedConfigData,
   );
 
   // instead of returning an error because an existing flattened key is in the values ...
@@ -74,53 +74,53 @@ export const resolveCoreData = async (
     if (!flattenedConfigKeyRegex.test(key)) {
       // Checks if each key for flattenedConfigData passes the flattenedConfigKeyRegex test. This validates for aliases keys and values at the same time as well since in originalFlattenedConfigData[value] guarantees that the value of an alias is a key being tested right here.
       return makeSuccessFalseTypeError(
-        `ERROR. Somehow the key "${key}" is not properly formatted. (This is mostly an internal mistake.)`
+        `ERROR. Somehow the key "${key}" is not properly formatted. (This is mostly an internal mistake.)`,
       );
     }
 
     // ensures no comment syntax in values (keys are handled in schemas.js)
     if (value.includes("//")) {
       return makeSuccessFalseTypeError(
-        `ERROR. Value "${value}" should not include "//" for structural reasons related to JavaScript comments.`
+        `ERROR. Value "${value}" should not include "//" for structural reasons related to JavaScript comments.`,
       );
     }
     if (value.includes("/*")) {
       return makeSuccessFalseTypeError(
-        `ERROR. Value "${value}" should not include "/*" for structural reasons related to JavaScript comments.`
+        `ERROR. Value "${value}" should not include "/*" for structural reasons related to JavaScript comments.`,
       );
     }
     if (value.includes("*/")) {
       return makeSuccessFalseTypeError(
-        `ERROR. Value "${value}" should not include "*/" for structural reasons related to JavaScript comments.`
+        `ERROR. Value "${value}" should not include "*/" for structural reasons related to JavaScript comments.`,
       );
     }
   }
 
   const aliases_flattenedKeys__EntriesArray = Object.entries(
-    aliases_flattenedKeys
+    aliases_flattenedKeys,
   );
 
   for (const [key, value] of aliases_flattenedKeys__EntriesArray) {
     // checks that no alias is its own key/alias
     if (aliases_flattenedKeys[key] === key)
       return makeSuccessFalseTypeError(
-        `ERROR. The alias "${key}" is its own key/alias.`
+        `ERROR. The alias "${key}" is its own key/alias.`,
       );
     // checks that no value is an actual alias
     if (aliases_flattenedKeys[value])
       return makeSuccessFalseTypeError(
-        `ERROR. The alias "${key}" can't be the alias of "${value}" because "${value}" is already an alias.`
+        `ERROR. The alias "${key}" can't be the alias of "${value}" because "${value}" is already an alias.`,
       );
     // checks if an alias variable's resolved value being a composed variable includes that alias as a segment
     if (
       flattenedKeys_originalsOnly[aliases_flattenedKeys[key]].includes(
-        `${$COMMENT}#${key}`
+        `${$COMMENT}#${key}`,
       )
     )
       return makeSuccessFalseTypeError(
         `ERROR. The alias "${key}" links to composed variable "${
           flattenedKeys_originalsOnly[aliases_flattenedKeys[key]]
-        }" that includes its placeholder as a segment.`
+        }" that includes its placeholder as a segment.`,
       );
   }
 
@@ -131,7 +131,7 @@ export const resolveCoreData = async (
   // Do also keep in mind that aliases are in an object of their own, so they aren't affecting duplicate checks, especially since raw duplication is already addressed with flattenConfigData.
 
   const flattenedKeys_originalsOnly__valuesArray = Object.values(
-    flattenedKeys_originalsOnly
+    flattenedKeys_originalsOnly,
   );
 
   /** @type {Set<string>} */
@@ -142,7 +142,7 @@ export const resolveCoreData = async (
     // ... checks that no two original values are duplicate
     if (flattenedKeys_originalsOnly__valuesDuplicateChecksSet.has(value)) {
       return makeSuccessFalseTypeError(
-        `ERROR. The value "${value}" is already assigned to an existing key.`
+        `ERROR. The value "${value}" is already assigned to an existing key.`,
       );
     }
     flattenedKeys_originalsOnly__valuesDuplicateChecksSet.add(value);
@@ -155,7 +155,7 @@ export const resolveCoreData = async (
   const flattenedConfigData = {};
 
   const flattenedKeys_originalsOnly__EntriesArray = Object.entries(
-    flattenedKeys_originalsOnly
+    flattenedKeys_originalsOnly,
   );
 
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
@@ -166,7 +166,7 @@ export const resolveCoreData = async (
       // 1. check if the value begins with $COMMENT# (basically if a value starts with a comment variable, it is to be understood as a composed variable)
       if (!value.startsWith(`${$COMMENT}#`))
         return makeSuccessFalseTypeError(
-          `ERROR. The value "${value}", due to its inclusion of "${$COMMENT}#", would need to start with "${$COMMENT}#" in order to operate as a composed variable.`
+          `ERROR. The value "${value}", due to its inclusion of "${$COMMENT}#", would need to start with "${$COMMENT}#" in order to operate as a composed variable.`,
         );
 
       // 2. separate the value by a space
@@ -175,20 +175,20 @@ export const resolveCoreData = async (
       // 3. check if the array of value segments is >= 2 (a single comment variable will create a duplicate, so duplicate value behavior is only reserved for aliases via the actual original key as value) // The thing about this system is, we address the parts where values are keys or placeholders, by respectively making them alias variables (keys as values are aliases) and composed variables instead (placeholders, composed, as values are composed variables).
       if (valueSegments.length < 2)
         return makeSuccessFalseTypeError(
-          `ERROR. A composed variable needs at least two comment variables separated by a single space in order to be a composed variable, which the value "${value}" does not.`
+          `ERROR. A composed variable needs at least two comment variables separated by a single space in order to be a composed variable, which the value "${value}" does not.`,
         );
       // 4. check if all segments pass flattenedConfigPlaceholderLocalRegex
       for (const valueSegment of valueSegments) {
         if (!flattenedConfigPlaceholderLocalRegex.test(valueSegment)) {
           return makeSuccessFalseTypeError(
-            `ERROR. Value segment "${valueSegment}" in value "${value}" does not have the "${$COMMENT}#" shape of a comment variable.`
+            `ERROR. Value segment "${valueSegment}" in value "${value}" does not have the "${$COMMENT}#" shape of a comment variable.`,
           );
         }
       }
 
       // 5. remove $COMMENT# from all segments
       const keySegments = valueSegments.map((e) =>
-        e.replace(`${$COMMENT}#`, "")
+        e.replace(`${$COMMENT}#`, ""),
       );
 
       // 6. check that all obtained keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
@@ -199,12 +199,12 @@ export const resolveCoreData = async (
 
         if (!resolvedValue)
           return makeSuccessFalseTypeError(
-            `ERROR. Key segment "${keySegment}" extracted from value "${value}" is neither an original key nor a vetted alias to one.`
+            `ERROR. Key segment "${keySegment}" extracted from value "${value}" is neither an original key nor a vetted alias to one.`,
           );
 
         if (resolvedValue.includes(`${$COMMENT}#`))
           return makeSuccessFalseTypeError(
-            `ERROR. A potential composed variable cannot be used as a segment of another composed variable. (Value: "${resolvedValue}")`
+            `ERROR. A potential composed variable cannot be used as a segment of another composed variable. (Value: "${resolvedValue}")`,
           ); // works even with aliases of composed variables
       }
 
@@ -212,7 +212,7 @@ export const resolveCoreData = async (
       const resolvedSegments = keySegments.map(
         (e) =>
           flattenedKeys_originalsOnly[e] ||
-          flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]]
+          flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]],
       );
       // 8. join back the array of resolved segments by a space
       const composedVariable = resolvedSegments.join(" ");
@@ -264,7 +264,7 @@ export const resolveCoreData = async (
     // ...checks that no two final values are duplicate
     if (flattenedConfigDataDuplicateChecksSet.has(value)) {
       return makeSuccessFalseTypeError(
-        `ERROR. The finalized value "${value}" is already assigned to an existing key.`
+        `ERROR. The finalized value "${value}" is already assigned to an existing key.`,
       );
     }
     flattenedConfigDataDuplicateChecksSet.add(value);
@@ -322,7 +322,7 @@ export const resolveCoreData = async (
   // Now to catch actual duplicate keys that silently override.
 
   const flattenedConfigData__ValuesSet = new Set(
-    flattenedConfigData__ValuesArray
+    flattenedConfigData__ValuesArray,
   );
   /** @type {Array<string} */
   const overriddenObjectStringValues = [];
@@ -380,7 +380,7 @@ export const resolveCoreData = async (
 
     if (isAlias)
       return makeSuccessFalseTypeError(
-        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents an alias variable. Refer to its original instead.`
+        `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents an alias variable. Refer to its original instead.`,
       );
     //   return makeSuccessFalseTypeError(
     //     `ERROR. The "composedVariablesExclusives" key array should only include keys representing comment variables, but "${e}" represents a composed variable. Which defeats the purpose of "composedVariablesExclusives" since composed variables cannot be made of other composed variables.`
@@ -389,7 +389,7 @@ export const resolveCoreData = async (
     // since only regular comment variables remain, check that this is indeed actually a configured Comment Variable
     if (!flattenedConfigData[e])
       return makeSuccessFalseTypeError(
-        `ERROR. "${e}" in the "composedVariablesExclusives" key array is not a configured comment variable. (If you're using variations, check that you do include the full key with its normalized variant prefix.)`
+        `ERROR. "${e}" in the "composedVariablesExclusives" key array is not a configured comment variable. (If you're using variations, check that you do include the full key with its normalized variant prefix.)`,
       );
   }
 
@@ -427,7 +427,7 @@ export const resolveVariationData = async (
   core__originalFlattenedConfigData,
   core__aliases_flattenedKeys,
   core__flattenedConfigData,
-  reference__flattenedConfigData = {}
+  reference__flattenedConfigData = {},
 ) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
@@ -446,7 +446,7 @@ export const resolveVariationData = async (
   const flattenedKeys_originalsOnly = {};
 
   const originalFlattenedConfigData__EntriesArray = Object.entries(
-    originalFlattenedConfigData
+    originalFlattenedConfigData,
   );
 
   // instead of returning an error because an existing flattened key is in the values ...
@@ -468,14 +468,14 @@ export const resolveVariationData = async (
   const flattenedConfigData = reference__flattenedConfigData;
 
   const flattenedKeys_originalsOnly__EntriesArray = Object.entries(
-    flattenedKeys_originalsOnly
+    flattenedKeys_originalsOnly,
   );
 
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
     if (value.includes(`${$COMMENT}#`)) {
       const valueSegments = value.split(" ");
       const keySegments = valueSegments.map((e) =>
-        e.replace(`${$COMMENT}#`, "")
+        e.replace(`${$COMMENT}#`, ""),
       );
 
       const resolvedSegments = keySegments.map(
@@ -483,7 +483,7 @@ export const resolveVariationData = async (
           // flattenedKeys_originalsOnly[e] ||
           // flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]]
           core__flattenedConfigData[e] ||
-          core__flattenedConfigData[core__aliases_flattenedKeys?.[e]]
+          core__flattenedConfigData[core__aliases_flattenedKeys?.[e]],
         // (In the resolveCoreData I had to use flattenedKeys_originalsOnly because flattenedConfigData didn't exist yet. But resolveVariationData runs after resolveCoreData, I can rely on core__flattenedConfigData.)
       );
 

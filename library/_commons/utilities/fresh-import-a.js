@@ -6,7 +6,7 @@ import { MODULE_TO_LOAD } from "../constants/bases.js";
 
 const childScriptAbsolutePath = path.join(
   path.dirname(url.fileURLToPath(import.meta.url)),
-  "fresh-import-b.js"
+  "fresh-import-b.js",
 );
 
 /**

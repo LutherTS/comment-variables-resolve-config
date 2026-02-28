@@ -26,7 +26,7 @@ import {
  */
 export const flattenConfigData = (
   configData,
-  { configDataMap = new Map(), parentKeys = [] } = {}
+  { configDataMap = new Map(), parentKeys = [] } = {},
 ) => {
   for (const [key, value] of Object.entries(configData)) {
     const newKeys = [...parentKeys, key];
@@ -40,7 +40,7 @@ export const flattenConfigData = (
         return makeSuccessFalseTypeError(
           `ERROR. The normalized key "${normalizedKey}" has already been assigned. Check between the two following key paths: \n"${
             configDataMap.get(normalizedKey).source
-          }" \n"${source}"`
+          }" \n"${source}"`,
         );
       }
 
@@ -79,7 +79,7 @@ export const makeOriginalFlattenedConfigData = (data) => {
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     return makeSuccessFalseTypeError(
       // "Invalid config.data format."
-      "ERROR. Invalid data format. The data should be an object."
+      "ERROR. Invalid data format. The data should be an object.",
     );
   }
 
@@ -120,7 +120,7 @@ export const makeOriginalFlattenedConfigData = (data) => {
 
   // makes the original flattened config data object
   const originalFlattenedConfigData = Object.fromEntries(
-    flattenedConfigDataMap
+    flattenedConfigDataMap,
   );
 
   return {
@@ -142,7 +142,7 @@ export const makeOriginalFlattenedConfigData = (data) => {
 export const getComposedVariablesExclusivesFreeKeys = (
   data,
   composedVariablesExclusives,
-  isCoreData
+  isCoreData,
 ) => {
   const makeOriginalFlattenedConfigDataResults =
     makeOriginalFlattenedConfigData(data);
@@ -155,25 +155,25 @@ export const getComposedVariablesExclusivesFreeKeys = (
     makeOriginalFlattenedConfigDataResults;
 
   const originalFlattenedConfigDataKeys = Object.keys(
-    originalFlattenedConfigData
+    originalFlattenedConfigData,
   );
 
   const relevantComposedVariablesExclusives = !isCoreData
     ? // removes variant prefixes for variant data runs
       composedVariablesExclusives.map((e) =>
-        removeVariantPrefixFromVariationKey(e)
+        removeVariantPrefixFromVariationKey(e),
       )
     : // retains the original array for config data runs
       composedVariablesExclusives;
 
   // for variant data runs, negates all logical duplicates from other variations
   const composedVariablesExclusivesSet = new Set(
-    relevantComposedVariablesExclusives
+    relevantComposedVariablesExclusives,
   );
 
   const composedVariablesExclusivesFreeKeys =
     originalFlattenedConfigDataKeys.filter(
-      (e) => !composedVariablesExclusivesSet.has(e)
+      (e) => !composedVariablesExclusivesSet.has(e),
     );
 
   return {

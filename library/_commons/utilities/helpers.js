@@ -54,7 +54,7 @@ export const makeSuccessFalseTypeError = (message) => ({
 export const extractValueLocationsFromLintMessages = (
   lintMessages,
   pluginName,
-  ruleName
+  ruleName,
 ) =>
   /** @type {ValueLocation[]} */ (
     lintMessages
@@ -71,7 +71,7 @@ export const extractValueLocationsFromLintMessages = (
  */
 export const reverseFlattenedConfigData = (flattenedConfigData) =>
   Object.fromEntries(
-    Object.entries(flattenedConfigData).map(([key, value]) => [value, key])
+    Object.entries(flattenedConfigData).map(([key, value]) => [value, key]),
   );
 
 /* normalize */
@@ -111,7 +111,7 @@ export const removeVariantPrefixFromVariationKey = (variationKey) =>
  * @returns $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER
  */
 export const removeVariantPrefixFromVariationPlaceholder = (
-  variationPlaceholder
+  variationPlaceholder,
 ) => variationPlaceholder.replace(/#[^#]+#/, () => "#");
 
 /* surroundStringByOneSpace */

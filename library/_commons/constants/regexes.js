@@ -12,11 +12,11 @@ export const flattenedConfigKeyRegex =
 /** $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX */
 export const flattenedConfigPlaceholderLocalRegex = new RegExp(
   `${escapeRegex($COMMENT)}#(?!#)([\\p{Lu}\\p{Lo}\\p{Pd}\\p{Pc}\\p{N}#_]+)`,
-  "u"
+  "u",
 );
 
 /** $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERGLOBALREGEX */
 export const flattenedConfigPlaceholderGlobalRegex = new RegExp(
   `${escapeRegex($COMMENT)}#(?!#)([\\p{Lu}\\p{Lo}\\p{Pd}\\p{Pc}\\p{N}#_]+)`,
-  "gu"
+  "gu",
 );
