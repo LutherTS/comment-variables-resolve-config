@@ -6,7 +6,8 @@ import {
 } from "../constants/bases.js";
 import {
   flattenedConfigKeyRegex,
-  flattenedConfigPlaceholderLocalRegex,
+  flattenedConfigPlaceholderGlobalRegex,
+  // flattenedConfigPlaceholderLocalRegex,
 } from "../constants/regexes.js";
 
 import {
@@ -127,7 +128,7 @@ export const resolveCoreData = async (
   // PASSED THIS STAGE, we're now clearly distinguishing:
   // - originalFlattenedConfigData, which is the untreated raw config data
   // - aliases_flattenedKeys, which is only the aliases
-  // - flattenedKeys_originalsOnly, which is only the originals
+  // - flattenedKeys_originalsOnly, which is only the originals (composed variables values included)
   // Do also keep in mind that aliases are in an object of their own, so they aren't affecting duplicate checks, especially since raw duplication is already addressed with flattenConfigData.
 
   const flattenedKeys_originalsOnly__valuesArray = Object.values(
@@ -159,69 +160,98 @@ export const resolveCoreData = async (
   );
 
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
-    // 0. check if the value includes "$COMMENT#" (basically there cannot be any value with "$COMMENT#" included that isn't a composed variable)
-    if (value.includes(`${$COMMENT}#`)) {
-      // That's where I can:
+    // NEW: Did I... really do all of this in one morning?
 
-      // 1. check if the value begins with $COMMENT# (basically if a value starts with a comment variable, it is to be understood as a composed variable)
-      if (!value.startsWith(`${$COMMENT}#`))
-        return makeSuccessFalseTypeError(
-          `ERROR. The value "${value}", due to its inclusion of "${$COMMENT}#", would need to start with "${$COMMENT}#" in order to operate as a composed variable.`,
-        );
+    // ...There's actually no sound reason to be that difficult.
+    // What we want to do is use a system similar to that of the VS Code extension, where it scans the value for comment variables it would directly resolve. As such, just using regex work supported by flattenedKeys_originalsOnly and aliases_flattenedKeys would do the trick, as long as flattenedConfigPlaceholderGlobalRegex and other are adjusted.
+    // There wouldn't even be a need for `if (value.includes(`${$COMMENT}#`)) {` because else the regex would just not do anything. Let's also address the known errors one by one:
+    // - `!value.startsWith(`${$COMMENT}#`)`: no longer a matter since $COMMENT can now be anywhere
+    // `valueSegments.length < 2`: no longer a matter since there can be a unique $COMMENT if needed
+    // - `!flattenedConfigPlaceholderLocalRegex.test(valueSegment)`: no longer a matter because if the shape is not respected, just nothing happens
+    // - `!resolvedValue` same, nothing happens
+    // - `resolvedValue.includes(`${$COMMENT}#`)` that will be verified at `replacement` stage, meaning after the comment variable is replaced ultimately based on the ongoing flattenedKeys_originalsOnly, we can check that the value should not include $COMMENT#
+    // ...That's it. And if I'm fast enough, I could solve this today. (...This is exactly what I mean when I tell myself to spend a whole day doing nothing: I always end with an idea and end up working.)
 
-      // 2. separate the value by a space
-      const valueSegments = value.split(" ");
+    const resolvedForComposedValue = value.replace(
+      flattenedConfigPlaceholderGlobalRegex,
+      (match) => {
+        const key = match.replace(`${$COMMENT}#`, "");
+        const resolvedKey = aliases_flattenedKeys[key] || key;
 
-      // 3. check if the array of value segments is >= 2 (a single comment variable will create a duplicate, so duplicate value behavior is only reserved for aliases via the actual original key as value) // The thing about this system is, we address the parts where values are keys or placeholders, by respectively making them alias variables (keys as values are aliases) and composed variables instead (placeholders, composed, as values are composed variables).
-      if (valueSegments.length < 2)
-        return makeSuccessFalseTypeError(
-          `ERROR. A composed variable needs at least two comment variables separated by a single space in order to be a composed variable, which the value "${value}" does not.`,
-        );
-      // 4. check if all segments pass flattenedConfigPlaceholderLocalRegex
-      for (const valueSegment of valueSegments) {
-        if (!flattenedConfigPlaceholderLocalRegex.test(valueSegment)) {
-          return makeSuccessFalseTypeError(
-            `ERROR. Value segment "${valueSegment}" in value "${value}" does not have the "${$COMMENT}#" shape of a comment variable.`,
-          );
-        }
-      }
+        const replacement = flattenedKeys_originalsOnly[resolvedKey]; // instead of flattenedConfigData since that's in the making
+        if (replacement === undefined) return match; // COULD REPORT ON COMMENT VARIABLES THAT DON'T RESOLVE, FOR NOW DOES NOTHING. ...And it should perhaps do nothing, so that it is actually allowed to have $COMMENT#COMMENT inside comment variables just like that without resolving.
 
-      // 5. remove $COMMENT# from all segments
-      const keySegments = valueSegments.map((e) =>
-        e.replace(`${$COMMENT}#`, ""),
-      );
+        if (replacement.includes(`${$COMMENT}#`)) return match; // COULD REPORT ON COMPOSED VARIABLES POINTING TO OTHER COMPOSED VARIABLES, FOR NOW DOES NOTHING. ...And it should perhaps do nothing, because the pointed-to comment variable is actually not using a real comment variable for composition, blocking everything would be based on a false negative.
 
-      // 6. check that all obtained keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
-      for (const keySegment of keySegments) {
-        const resolvedValue =
-          flattenedKeys_originalsOnly[keySegment] ||
-          flattenedKeys_originalsOnly[aliases_flattenedKeys?.[keySegment]];
+        return replacement;
+      },
+    );
+    // console.debug("resolvedForComposedValue is:", resolvedForComposedValue); // test first to see if there is any changes to the current behavior
+    flattenedConfigData[key] = resolvedForComposedValue; // no changes noticed
 
-        if (!resolvedValue)
-          return makeSuccessFalseTypeError(
-            `ERROR. Key segment "${keySegment}" extracted from value "${value}" is neither an original key nor a vetted alias to one.`,
-          );
+    // // 0. check if the value includes "$COMMENT#" (basically there cannot be any value with "$COMMENT#" included that isn't a composed variable)
+    // if (value.includes(`${$COMMENT}#`)) {
+    //   // That's where I can:
 
-        if (resolvedValue.includes(`${$COMMENT}#`))
-          return makeSuccessFalseTypeError(
-            `ERROR. A potential composed variable cannot be used as a segment of another composed variable. (Value: "${resolvedValue}")`,
-          ); // works even with aliases of composed variables
-      }
+    //   // 1. check if the value begins with $COMMENT# (basically if a value starts with a comment variable, it is to be understood as a composed variable)
+    //   if (!value.startsWith(`${$COMMENT}#`))
+    //     return makeSuccessFalseTypeError(
+    //       `ERROR. The value "${value}", due to its inclusion of "${$COMMENT}#", would need to start with "${$COMMENT}#" in order to operate as a composed variable.`,
+    //     );
 
-      // 7. now that it is secure, replace all keys by their values
-      const resolvedSegments = keySegments.map(
-        (e) =>
-          flattenedKeys_originalsOnly[e] ||
-          flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]],
-      );
-      // 8. join back the array of resolved segments by a space
-      const composedVariable = resolvedSegments.join(" ");
-      // 9. flattenedConfigData[key] = result of all this
-      flattenedConfigData[key] = composedVariable;
-      // All throughout this process, when an issue arises, the process stops. Because the idea is, in the values of flattenedConfigData:
-      // - there should be no (existing) keys to guarantee reversibility
-      // - there should be no singled-out placeholders to prevent the creation of unintended placeholders
-    } else flattenedConfigData[key] = value;
+    //   // 2. separate the value by a space
+    //   const valueSegments = value.split(" ");
+
+    //   // 3. check if the array of value segments is >= 2 (a single comment variable will create a duplicate, so duplicate value behavior is only reserved for aliases via the actual original key as value) // The thing about this system is, we address the parts where values are keys or placeholders, by respectively making them alias variables (keys as values are aliases) and composed variables instead (placeholders, composed, as values are composed variables).
+    //   if (valueSegments.length < 2)
+    //     return makeSuccessFalseTypeError(
+    //       `ERROR. A composed variable needs at least two comment variables separated by a single space in order to be a composed variable, which the value "${value}" does not.`,
+    //     );
+    //   // 4. check if all segments pass flattenedConfigPlaceholderLocalRegex
+    //   for (const valueSegment of valueSegments) {
+    //     if (!flattenedConfigPlaceholderLocalRegex.test(valueSegment)) {
+    //       return makeSuccessFalseTypeError(
+    //         `ERROR. Value segment "${valueSegment}" in value "${value}" does not have the "${$COMMENT}#" shape of a comment variable.`,
+    //       );
+    //     }
+    //   }
+
+    //   // 5. remove $COMMENT# from all segments
+    //   const keySegments = valueSegments.map((e) =>
+    //     e.replace(`${$COMMENT}#`, ""),
+    //   );
+
+    //   // 6. check that all obtained keys do exist in flattenedKeys_originalsOnly or in flattenedKeys_originalsOnly via aliases_flattenedKeys
+    //   for (const keySegment of keySegments) {
+    //     const resolvedValue =
+    //       flattenedKeys_originalsOnly[keySegment] ||
+    //       flattenedKeys_originalsOnly[aliases_flattenedKeys?.[keySegment]];
+
+    //     if (!resolvedValue)
+    //       return makeSuccessFalseTypeError(
+    //         `ERROR. Key segment "${keySegment}" extracted from value "${value}" is neither an original key nor a vetted alias to one.`,
+    //       );
+
+    //     if (resolvedValue.includes(`${$COMMENT}#`))
+    //       return makeSuccessFalseTypeError(
+    //         `ERROR. A potential composed variable cannot be used as a segment of another composed variable. (Value: "${resolvedValue}")`,
+    //       ); // works even with aliases of composed variables
+    //   }
+
+    //   // 7. now that it is secure, replace all keys by their values
+    //   const resolvedSegments = keySegments.map(
+    //     (e) =>
+    //       flattenedKeys_originalsOnly[e] ||
+    //       flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]],
+    //   );
+    //   // 8. join back the array of resolved segments by a space
+    //   const composedVariable = resolvedSegments.join(" ");
+    //   // 9. flattenedConfigData[key] = result of all this
+    //   flattenedConfigData[key] = composedVariable;
+    //   // All throughout this process, when an issue arises, the process stops. Because the idea is, in the values of flattenedConfigData:
+    //   // - there should be no (existing) keys to guarantee reversibility
+    //   // - there should be no singled-out placeholders to prevent the creation of unintended placeholders
+    // } else flattenedConfigData[key] = value;
   }
 
   // Also including the reversed flattened config data.

@@ -204,7 +204,7 @@ const data = {
       configKeyRegex:
         "Ensures keys should only include lowercase letters (`Ll`), uppercase letters (`Lu`), other letters (`Lo`), dash punctuation (`Pd`), connector punctuation (`Pc`), numbers (`N`) and whitespaces (`s`)." /* $COMMENT#JSDOC#CONSTANTS#CONFIGKEYREGEX */,
       flattenedConfigKeyRegex:
-        "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), without whitespaces (`\\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together)." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX */,
+        "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), wthout dash punctuation (`Pd`), connector punctuation (`Pc`), whitespaces (`\\s`), which all three are replaced by underscores (`_`), and with the '`#`' character (that links each subkey together)." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX */,
       flattenedConfigPlaceholderLocalRegex:
         "Same as `flattenedConfigKeyRegex` but taking the prefix `$COMMENT` and its `#` into consideration, preventing two consecutive `#`'s, removing `^` and `$` in the capture group, and using `_` as replacement for whitespaces." /* $COMMENT#JSDOC#CONSTANTS#FLATTENEDCONFIGPLACEHOLDERLOCALREGEX */,
       flattenedConfigPlaceholderGlobalRegex:

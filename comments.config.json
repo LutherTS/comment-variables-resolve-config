@@ -404,7 +404,7 @@
         "key": "JSDOC#CONSTANTS#CONFIGKEYREGEX"
       },
       "flattenedConfigKeyRegex": {
-        "value": "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), without whitespaces (`\\s` which are replaced by underscores) and with the '`#`' character (that links each subkey together).",
+        "value": "Same as `configKeyRegex` but without lowercase letters (`\\p{Ll}`), wthout dash punctuation (`Pd`), connector punctuation (`Pc`), whitespaces (`\\s`), which all three are replaced by underscores (`_`), and with the '`#`' character (that links each subkey together).",
         "key": "JSDOC#CONSTANTS#FLATTENEDCONFIGKEYREGEX"
       },
       "flattenedConfigPlaceholderLocalRegex": {
