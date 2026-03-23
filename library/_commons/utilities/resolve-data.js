@@ -495,31 +495,48 @@ export const resolveVariationData = async (
 
   // /** @type {Record<string, string>} */
   // const flattenedConfigData = {};
-  const flattenedConfigData = reference__flattenedConfigData;
+  const flattenedConfigData = reference__flattenedConfigData; // That's what allows the reference variant to seep through, and why this step is so necessary.
 
   const flattenedKeys_originalsOnly__EntriesArray = Object.entries(
     flattenedKeys_originalsOnly,
   );
 
+  // HERE WAS THE ERROR. THIS WAS STILL ROCKING THE PREVIOUS LOGIC.
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
-    if (value.includes(`${$COMMENT}#`)) {
-      const valueSegments = value.split(" ");
-      const keySegments = valueSegments.map((e) =>
-        e.replace(`${$COMMENT}#`, ""),
-      );
+    const resolvedForComposedValue = value.replace(
+      flattenedConfigPlaceholderGlobalRegex,
+      (match) => {
+        const key = match.replace(`${$COMMENT}#`, "");
+        const resolvedKey = core__aliases_flattenedKeys[key] || key;
 
-      const resolvedSegments = keySegments.map(
-        (e) =>
-          // flattenedKeys_originalsOnly[e] ||
-          // flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]]
-          core__flattenedConfigData[e] ||
-          core__flattenedConfigData[core__aliases_flattenedKeys?.[e]],
-        // (In the resolveCoreData I had to use flattenedKeys_originalsOnly because flattenedConfigData didn't exist yet. But resolveVariationData runs after resolveCoreData, I can rely on core__flattenedConfigData.)
-      );
+        const replacement = core__flattenedConfigData[resolvedKey]; // directly using core__flattenedConfigData since that's already made
 
-      const composedVariable = resolvedSegments.join(" ");
-      flattenedConfigData[key] = composedVariable;
-    } else flattenedConfigData[key] = value;
+        if (replacement === undefined) return match;
+        if (replacement.includes(`${$COMMENT}#`)) return match;
+
+        return replacement;
+      },
+    );
+    flattenedConfigData[key] = resolvedForComposedValue;
+
+    // if (value.includes(`${$COMMENT}#`)) {
+    //   const valueSegments = value.split(" ");
+    //   const keySegments = valueSegments.map((e) =>
+    //     e.replace(`${$COMMENT}#`, ""),
+    //   );
+
+    //   const resolvedSegments = keySegments.map(
+    //     (e) =>
+    //       // flattenedKeys_originalsOnly[e] ||
+    //       // flattenedKeys_originalsOnly[aliases_flattenedKeys?.[e]]
+    //       core__flattenedConfigData[e] ||
+    //       core__flattenedConfigData[core__aliases_flattenedKeys?.[e]],
+    //     // (In the resolveCoreData I had to use flattenedKeys_originalsOnly because flattenedConfigData didn't exist yet. But resolveVariationData runs after resolveCoreData, I can rely on core__flattenedConfigData.)
+    //   );
+
+    //   const composedVariable = resolvedSegments.join(" ");
+    //   flattenedConfigData[key] = composedVariable;
+    // } else flattenedConfigData[key] = value;
   }
 
   // Also including the reversed flattened config data.
