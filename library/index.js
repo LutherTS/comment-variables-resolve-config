@@ -16,7 +16,10 @@ import {
   extractRuleName,
   $COMMENT,
 } from "./_commons/constants/bases.js";
-import { flattenedConfigPlaceholderLocalRegex } from "./_commons/constants/regexes.js";
+import {
+  flattenedConfigPlaceholderGlobalRegex,
+  flattenedConfigPlaceholderLocalRegex,
+} from "./_commons/constants/regexes.js";
 import {
   ConfigIgnoresSchema,
   ConfigLintConfigImportsSchema,
@@ -612,6 +615,7 @@ const resolveConfig = async (configPath) => {
 
 /* makeResolvedConfigData */
 
+// AGAIN WITH THE OLD RESOLUTION.
 /**
  * Resolves a composed variable, as in a string made of several comment variables, to the actual Comment Variable it is meant to represent.
  * @param {string} composedVariable The composed variable as is.
@@ -624,13 +628,30 @@ const resolveComposedVariable = (
   flattenedConfigData,
   aliases_flattenedKeys,
 ) => {
-  const composedVariableSegments = composedVariable.split(" ");
-  const resolvedSegments = composedVariableSegments.map((e) => {
-    const segmentKey = e.replace(`${$COMMENT}#`, "");
-    const resolvedSegmentKey = aliases_flattenedKeys[segmentKey] || segmentKey;
-    return flattenedConfigData[resolvedSegmentKey];
-  });
-  return resolvedSegments.join(" ");
+  const resolvedForComposedValue = composedVariable.replace(
+    flattenedConfigPlaceholderGlobalRegex,
+    (match) => {
+      const key = match.replace(`${$COMMENT}#`, "");
+      const resolvedKey = aliases_flattenedKeys[key] || key;
+
+      const replacement = flattenedConfigData[resolvedKey];
+
+      if (replacement === undefined) return match;
+      if (replacement.includes(`${$COMMENT}#`)) return match;
+
+      return replacement;
+    },
+  );
+
+  return resolvedForComposedValue;
+
+  // const composedVariableSegments = composedVariable.split(" ");
+  // const resolvedSegments = composedVariableSegments.map((e) => {
+  //   const segmentKey = e.replace(`${$COMMENT}#`, "");
+  //   const resolvedSegmentKey = aliases_flattenedKeys[segmentKey] || segmentKey;
+  //   return flattenedConfigData[resolvedSegmentKey];
+  // });
+  // return resolvedSegments.join(" ");
 };
 
 /**
