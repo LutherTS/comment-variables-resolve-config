@@ -45,14 +45,14 @@ import { getComposedVariablesExclusivesFreeKeys } from "./_commons/utilities/fla
 
 import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
 
-/* resolveConfig */
-
 /**
  * @typedef {import("../types/_commons/typedefs.js").ValueLocation} ValueLocation
  * @typedef {import("../types/_commons/typedefs.js").ConfigData} ConfigData
  * @typedef {import("../types/_commons/typedefs.js").SuccessFalseWithErrors} SuccessFalseWithErrors
  * @typedef {import("../types/_commons/typedefs.js").ResolveConfigResultsSuccessTrue} ResolveConfigResultsSuccessTrue
  */
+
+/* resolveConfig */
 
 /**
  * Verifies, validates and resolves the config path to retrieve the config's data, ignores, and more.
@@ -96,7 +96,7 @@ const resolveConfig = async (configPath) => {
     );
   }
 
-  // NEW: data should be validated last because it will now depend on whether the variants flag is true or not.
+  // NEW: data should be validated last because it will now depend on whether the variants flag is true or not. // This is subject to change, because variants will be mandatory in v3.
 
   // validates config.ignores
   const ignores = /** @type {unknown} */ (config.ignores);
@@ -593,6 +593,27 @@ const resolveConfig = async (configPath) => {
       variantsKeys_missingKeys,
     };
 
+    // This is where all keys that specifically include `#COMPOSEDVARIABLESEXCLUSIVES#` are merged with composedVariablesExclusivesSchemaResultsData
+
+    const autoComposedVariablesExclusives = Object.keys(
+      resolvedCoreData.flattenedConfigData, // We're going to work with `flattenedConfigData`, but under the understanding that we need to know if variations are used (until v3 when they'll be mandatory). Which is why I am now doing this in the variations branch.
+    ).filter((e) => e.includes("#COMPOSEDVARIABLESEXCLUSIVES#"));
+
+    const autoComposedVariablesExclusivesInCode =
+      autoComposedVariablesExclusives.map((e) =>
+        e.split("#").slice(1).join("#"),
+      );
+
+    const composedVariablesExclusivesWithAuto = [
+      ...new Set([
+        ...composedVariablesExclusivesSchemaResultsData,
+        ...autoComposedVariablesExclusives,
+        ...autoComposedVariablesExclusivesInCode,
+      ]),
+    ];
+
+    // (A similar process will be used in the future for `#PUBLIC#` from v3.)
+
     return {
       ...successTrue,
       // warnings,
@@ -603,7 +624,8 @@ const resolveConfig = async (configPath) => {
       rawConfigAndImportPaths,
       lintConfigImports: configLintConfigImportsSchemaResultsData,
       myIgnoresOnly: configMyIgnoresOnlySchemaResultsData,
-      composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
+      // composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
+      composedVariablesExclusives: composedVariablesExclusivesWithAuto,
       ...variationsTrue,
       resolvedCoreData,
       // specific to variationsTrue
@@ -827,11 +849,11 @@ const makeJsonData = (resolvedConfigData) =>
 const makeMjsData = (resolvedConfigData) =>
   `/** @typedef {${JSON.stringify(
     resolvedConfigData,
-  )}} ResolvedConfigData */\n\n/** @type {ResolvedConfigData} */\nexport const resolvedConfigData = ${JSON.stringify(
+  )}} ResolvedConfigData */\n\nexport const resolvedConfigData = /** @type {ResolvedConfigData} */ (${JSON.stringify(
     resolvedConfigData,
     null,
     2,
-  )}`;
+  )})`;
 
 /* makeJsonPathLog */
 
