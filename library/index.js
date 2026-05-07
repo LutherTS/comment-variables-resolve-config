@@ -365,8 +365,10 @@ const resolveConfig = async (configPath) => {
     const variantsKeysNormalizedSet = new Set(variantsKeysNormalized);
 
     for (const variantKey of variantsKeys) {
-      /** @type {Record<string, unknown>} (Addressing `unknown`.) */
-      const variation = configDataResultsData[variantKey];
+      /** (Addressing `unknown` with the typing.) */
+      const variation = /** @type {Record<string, unknown>} */ (
+        configDataResultsData[variantKey]
+      );
       const variationTopLevelKeys = Object.keys(variation);
       const variationTopLevelKeysNormalized = variationTopLevelKeys.map((e) =>
         normalize(e),
@@ -392,6 +394,29 @@ const resolveConfig = async (configPath) => {
 
     // Checking that all variations data have the exact same keys and only so, excluding composed variables exclusives, as the canonical config.variations.referenceData.
 
+    // This is where all keys that specifically include `#COMPOSEDVARIABLESEXCLUSIVES#` are merged with composedVariablesExclusivesSchemaResultsData.
+    // Now here to ensure that all composed variables exclusives are not taken in to account when `variants.allowIncompleteVariations` is `false`.
+
+    const autoComposedVariablesExclusives = Object.keys(
+      resolvedCoreData.flattenedConfigData, // We're going to work with `flattenedConfigData`, but under the understanding that we need to know if variations are used (until v3 when they'll be mandatory). Which is why I am now doing this in the variations branch.
+    ).filter((e) => e.includes("#COMPOSEDVARIABLESEXCLUSIVES#"));
+
+    const autoComposedVariablesExclusivesInCode =
+      autoComposedVariablesExclusives.map((e) =>
+        e.split("#").slice(1).join("#"),
+      );
+
+    // const composedVariablesExclusivesWithAuto = [
+    composedVariablesExclusivesSchemaResultsData = [
+      ...new Set([
+        ...composedVariablesExclusivesSchemaResultsData,
+        ...autoComposedVariablesExclusives,
+        ...autoComposedVariablesExclusivesInCode,
+      ]),
+    ];
+
+    // (A similar process will be used in the future for `#PUBLIC#` from v3.)
+
     const referenceDataFreeKeysResults = getComposedVariablesExclusivesFreeKeys(
       variationsSchemaResultsData.referenceData,
       composedVariablesExclusivesSchemaResultsData,
@@ -409,11 +434,11 @@ const resolveConfig = async (configPath) => {
     };
 
     // #1: variantsKeys_variationsDataFreeKeys__map loop
-    /**
-     * @type {Map<string, {array: Array<string>; set: Set<string>}>}
-     * (Reminder that all keys are already verified to be unique with `flattenConfigData` within `getComposedVariablesExclusivesFreeKeys`, so there is no need to check whether or not the `Set`s are erasing duplicates that do not exist.)
-     */
-    const variantsKeys_variationsDataFreeKeys__map = new Map();
+    /** (Reminder that all keys are already verified to be unique with `flattenConfigData` within `getComposedVariablesExclusivesFreeKeys`, so there is no need to check whether or not the `Set`s are erasing duplicates that do not exist.) */
+    const variantsKeys_variationsDataFreeKeys__map =
+      /** @type {Map<string, {array: Array<string>; set: Set<string>}>} */ (
+        new Map()
+      );
 
     for (const variantKey of variantsKeys) {
       const variationDataFreeKeysResults =
@@ -486,8 +511,8 @@ const resolveConfig = async (configPath) => {
     // #3 missing keys loop
     allowIncompleteVariations || console.log("Checking for missing keys...");
 
-    /** @type {Record<string, string[]>} */
-    const variantsKeys_missingKeys = {};
+    const variantsKeys_missingKeys =
+      /** @type {Record<string, string[]>} */ ({});
 
     for (const [
       variantKey,
@@ -593,25 +618,6 @@ const resolveConfig = async (configPath) => {
       variantsKeys_missingKeys,
     };
 
-    // This is where all keys that specifically include `#COMPOSEDVARIABLESEXCLUSIVES#` are merged with composedVariablesExclusivesSchemaResultsData
-
-    const autoComposedVariablesExclusives = Object.keys(
-      resolvedCoreData.flattenedConfigData, // We're going to work with `flattenedConfigData`, but under the understanding that we need to know if variations are used (until v3 when they'll be mandatory). Which is why I am now doing this in the variations branch.
-    ).filter((e) => e.includes("#COMPOSEDVARIABLESEXCLUSIVES#"));
-
-    const autoComposedVariablesExclusivesInCode =
-      autoComposedVariablesExclusives.map((e) =>
-        e.split("#").slice(1).join("#"),
-      );
-
-    const composedVariablesExclusivesWithAuto = [
-      ...new Set([
-        ...composedVariablesExclusivesSchemaResultsData,
-        ...autoComposedVariablesExclusives,
-        ...autoComposedVariablesExclusivesInCode,
-      ]),
-    ];
-
     // (A similar process will be used in the future for `#PUBLIC#` from v3.)
 
     return {
@@ -624,8 +630,8 @@ const resolveConfig = async (configPath) => {
       rawConfigAndImportPaths,
       lintConfigImports: configLintConfigImportsSchemaResultsData,
       myIgnoresOnly: configMyIgnoresOnlySchemaResultsData,
-      // composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
-      composedVariablesExclusives: composedVariablesExclusivesWithAuto,
+      composedVariablesExclusives: composedVariablesExclusivesSchemaResultsData,
+      // composedVariablesExclusives: composedVariablesExclusivesWithAuto,
       ...variationsTrue,
       resolvedCoreData,
       // specific to variationsTrue
@@ -736,8 +742,7 @@ const resolveConfigData = (
       aliases_flattenedKeys,
     ),
 ) => {
-  /** @type {Record<string, unknown>} */
-  const results = {};
+  const results = /** @type {Record<string, unknown>} */ ({});
 
   for (const key in configData) {
     const value = configData[key];
@@ -768,8 +773,7 @@ const resolveConfigData = (
  * @returns The transformed resolved config data with keys and placeholders readily accessible alongside values.
  */
 const transformResolvedConfigData = (resolvedConfigData, parentsKeys = []) => {
-  /** @type {Record<string, unknown>} */
-  const results = {};
+  const results = /** @type {Record<string, unknown>} */ ({});
 
   for (const [k, v] of Object.entries(resolvedConfigData)) {
     const newKeys = [...parentsKeys, k];
@@ -818,8 +822,9 @@ const makeResolvedConfigData = (
     return /** @type {SuccessFalseWithErrors} */ (resolveConfigDataResults);
   }
 
-  /** @type {Record<string, unknown>} */
-  const resolvedConfigData = resolveConfigDataResults;
+  const resolvedConfigData = /** @type {Record<string, unknown>} */ (
+    resolveConfigDataResults
+  );
   const transformedResolvedConfigData =
     transformResolvedConfigData(resolvedConfigData);
 
