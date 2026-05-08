@@ -145,8 +145,18 @@ export const getArraySetDifference = (a, b) => {
 
 /* findKeyAliases */
 
-// TODO
-export const findKeyAliases = (
-  /** @type {string} */ resolvedKey,
-  /** @type {Record<string, string>} */ aliases_flattenedKeys,
-) => {};
+// NO LONGER NEEDED AS OF NOW
+// aliases_flattenedKeys__EntriesArray is only used for checks, and can be reused below ostensibly for the same purpose.
+
+// export const findKeyAliases = (
+//   /** @type {string} */ resolvedKey,
+//   /** @type {[string, string][]} */ aliases_flattenedKeys__EntriesArray,
+// ) => {
+//   const allAliases = /** @type {string[]} */ ([]);
+//   for (const [alias, flattenedKey] of aliases_flattenedKeys__EntriesArray) {
+//     if (flattenedKey === resolvedKey) allAliases.push(alias);
+//   }
+//   return allAliases;
+//   // Complete at consumption with:
+//   // const allAliasesWithOriginal = [...allAliases, resolvedKey];
+// };

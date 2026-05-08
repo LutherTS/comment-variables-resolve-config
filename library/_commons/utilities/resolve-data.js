@@ -175,6 +175,9 @@ export const resolveCoreData = async (
     // - `resolvedValue.includes(`${$COMMENT}#`)` that will be verified at `replacement` stage, meaning after the comment variable is replaced ultimately based on the ongoing flattenedKeys_originalsOnly, we can check that the value should not include $COMMENT#
     // ...That's it. And if I'm fast enough, I could solve this today. (...This is exactly what I mean when I tell myself to spend a whole day doing nothing: I always end with an idea and end up working.)
 
+    /** Tracks the composed variables that are used within their own values. */
+    const faultyRecursiveComposed = /** @type {string[]} */ ([]);
+
     const resolvedForComposedValue = value.replace(
       flattenedConfigPlaceholderGlobalRegex,
       (match) => {
@@ -185,18 +188,43 @@ export const resolveCoreData = async (
         if (replacement === undefined) return match; // COULD REPORT ON COMMENT VARIABLES THAT DON'T RESOLVE, FOR NOW DOES NOTHING. ...And it should perhaps do nothing, so that it is actually allowed to have $COMMENT#COMMENT inside comment variables just like that without resolving.
 
         if (replacement.includes(`${$COMMENT}#`)) {
-          // Actually we'll need to find all of the aliases, even if the key is not an alias, because the Comment Variables used inside of the composed variable value can be aliases as well. This will be in an upcoming patch, perhaps even later today, and will need to be included here and in the `while` loop below. (Also see `findKeyAliases`.)
+          // Actually we'll need to find all of the aliases, even if the key is not an alias, because the Comment Variables used inside of the composed variable value can be aliases as well. This will be in an upcoming patch, perhaps even later today, and will need to be included here AND in the `while` loop below. (Also see `findKeyAliases`.)
 
-          // if (key === resolvedKey) {
-          //   // If the key is not an alias, makes sure that the key is not being used a composed variable segment of its value, which would create an infinite loop.
-          //   if (replacement.includes(`${$COMMENT}#${key}`)) {
-          //     return makeSuccessFalseTypeError(
-          //       `ERROR. A composed variable can't be used within its own value. (See the ${key} key.).`,
-          //     );
-          //   }
-          // } else {
-          //   // if (replacement.includes(`${$COMMENT}#${resolvedKey}`))
+          // CANCELED. That complexity is already solved by the error above saying "[...] that includes its placeholder as a segment." That means we can just focus on originals.
+          // const allAliases = /** @type {string[]} */ ([]);
+          // for (const [
+          //   alias,
+          //   flattenedKey,
+          // ] of aliases_flattenedKeys__EntriesArray) {
+          //   if (flattenedKey === resolvedKey) allAliases.push(alias);
           // }
+
+          // const allAliasesWithOriginal = [...allAliases, resolvedKey];
+          // // console.debug("allAliasesWithOriginal is:", allAliasesWithOriginal);
+
+          // for (const relatedKey of allAliasesWithOriginal) {
+          //   if (replacement.includes(relatedKey)) {
+          //     console.debug("replacement is:", replacement);
+          //     console.debug("relatedKey is:", relatedKey);
+          //     //     return makeSuccessFalseTypeError(
+          //     //       `ERROR. A composed variable can't be used within its own value. (See ${$COMMENT}#${relatedKey} key in ${key} value.).`,
+          //     //     );
+          //   }
+          // }
+
+          // APPROVED INSTEAD. A lot less taxing too.
+          if (key === resolvedKey) {
+            // If the key is not an alias, makes sure that the key is not being used a composed variable segment of its value, which would create an infinite loop.
+            if (replacement.includes(`${$COMMENT}#${key}`)) {
+              faultyRecursiveComposed.push(key);
+              // return makeSuccessFalseTypeError(
+              //   `ERROR. A composed variable can't be used within its own value. (See the ${key} key.).`,
+              // ); // can't bubble up the error inside String.replace
+            }
+            // } else {
+            // if (replacement.includes(`${$COMMENT}#${resolvedKey}`))
+            // As said prior, if the key is an alias, the behavior is handled in a previous step.
+          }
 
           replacementIncludesComposed = true; // now informs on remaining composed variables in `flattenedConfigData` values
           return match;
@@ -205,6 +233,13 @@ export const resolveCoreData = async (
         return replacement;
       },
     );
+
+    if (faultyRecursiveComposed.length > 0) {
+      return makeSuccessFalseTypeError(
+        `ERROR. A composed variable can't be used within its own value. (See the ${faultyRecursiveComposed[0]} key.).`,
+      ); // error had to be bubbled up outside String.replace
+    }
+
     flattenedConfigData[key] = resolvedForComposedValue; // no changes noticed
 
     // // 0. check if the value includes "$COMMENT#" (basically there cannot be any value with "$COMMENT#" included that isn't a composed variable)
