@@ -142,3 +142,11 @@ export const getArraySetDifference = (a, b) => {
   }
   return results;
 };
+
+/* findKeyAliases */
+
+// TODO
+export const findKeyAliases = (
+  /** @type {string} */ resolvedKey,
+  /** @type {Record<string, string>} */ aliases_flattenedKeys,
+) => {};

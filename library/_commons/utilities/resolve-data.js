@@ -159,6 +159,9 @@ export const resolveCoreData = async (
     flattenedKeys_originalsOnly,
   );
 
+  /** `true` if there remains composed variables in the `flattenedConfigData` values, as they need to continue to be sequentially flattened. */
+  let replacementIncludesComposed = false;
+
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
     // NEW: Did I... really do all of this in one morning?
 
@@ -181,12 +184,27 @@ export const resolveCoreData = async (
         const replacement = flattenedKeys_originalsOnly[resolvedKey]; // instead of flattenedConfigData since that's in the making
         if (replacement === undefined) return match; // COULD REPORT ON COMMENT VARIABLES THAT DON'T RESOLVE, FOR NOW DOES NOTHING. ...And it should perhaps do nothing, so that it is actually allowed to have $COMMENT#COMMENT inside comment variables just like that without resolving.
 
-        if (replacement.includes(`${$COMMENT}#`)) return match; // COULD REPORT ON COMPOSED VARIABLES POINTING TO OTHER COMPOSED VARIABLES, FOR NOW DOES NOTHING. ...And it should perhaps do nothing, because the pointed-to comment variable is actually not using a real comment variable for composition, blocking everything would be based on a false negative.
+        if (replacement.includes(`${$COMMENT}#`)) {
+          // Actually we'll need to find all of the aliases, even if the key is not an alias, because the Comment Variables used inside of the composed variable value can be aliases as well. This will be in an upcoming patch, perhaps even later today, and will need to be included here and in the `while` loop below. (Also see `findKeyAliases`.)
+
+          // if (key === resolvedKey) {
+          //   // If the key is not an alias, makes sure that the key is not being used a composed variable segment of its value, which would create an infinite loop.
+          //   if (replacement.includes(`${$COMMENT}#${key}`)) {
+          //     return makeSuccessFalseTypeError(
+          //       `ERROR. A composed variable can't be used within its own value. (See the ${key} key.).`,
+          //     );
+          //   }
+          // } else {
+          //   // if (replacement.includes(`${$COMMENT}#${resolvedKey}`))
+          // }
+
+          replacementIncludesComposed = true; // now informs on remaining composed variables in `flattenedConfigData` values
+          return match;
+        } // COULD REPORT ON COMPOSED VARIABLES POINTING TO OTHER COMPOSED VARIABLES, FOR NOW DOES NOTHING. ...And it should perhaps do nothing, because the pointed-to comment variable is actually not using a real comment variable for composition, blocking everything would be based on a false negative.
 
         return replacement;
       },
     );
-    // console.debug("resolvedForComposedValue is:", resolvedForComposedValue); // test first to see if there is any changes to the current behavior
     flattenedConfigData[key] = resolvedForComposedValue; // no changes noticed
 
     // // 0. check if the value includes "$COMMENT#" (basically there cannot be any value with "$COMMENT#" included that isn't a composed variable)
@@ -252,6 +270,63 @@ export const resolveCoreData = async (
     //   // - there should be no (existing) keys to guarantee reversibility
     //   // - there should be no singled-out placeholders to prevent the creation of unintended placeholders
     // } else flattenedConfigData[key] = value;
+  }
+
+  // console.debug(
+  //   "flattenedConfigData in resolveCoreData is:",
+  //   flattenedConfigData,
+  // );
+
+  // So here we just redo the operation, based on flattenedConfigData, enough times until there are no longer any $COMMENT# in the values. For now we won't be focused on circular dependencies, we will simply cap the operation at 42 and tell users that if 42 times were reached, it probably means there's a circular dependency.
+
+  /** Keeps track of the number of times composed variables in `flattenedConfigData` have been sequentially flattened so far. */
+  let attempts = 0;
+  /** Represents the maximum number of times composed variables in `flattenedConfigData` can be sequentially flattened. When that number is reached, it is assumed that the data is experiencing circular dependencies in composed variables. */
+  let maxAttempts = 42; // currently arbitrary decided to be 42
+
+  // console.debug("replacementIncludesComposed is:", replacementIncludesComposed);
+
+  while (replacementIncludesComposed === true && attempts < maxAttempts) {
+    replacementIncludesComposed = false;
+
+    const currentFlattenedConfigData = { ...flattenedConfigData };
+
+    // Let's go.
+    for (const [key, value] of Object.entries(flattenedConfigData)) {
+      const resolvedForComposedValue = value.replace(
+        flattenedConfigPlaceholderGlobalRegex,
+        (match) => {
+          const key = match.replace(`${$COMMENT}#`, "");
+          const resolvedKey = aliases_flattenedKeys[key] || key;
+
+          const replacement = currentFlattenedConfigData[resolvedKey];
+          if (replacement === undefined) return match;
+
+          if (replacement.includes(`${$COMMENT}#`)) {
+            replacementIncludesComposed = true;
+            return match;
+          } // THAT'S THE IMPORTANT PART. LEAVING FOUND COMPOSED-IN-COMPOSED VARIABLES AS ARE SO THAT THE NEXT PASS CAN GET THEM HANDLED.
+
+          return replacement;
+        },
+      );
+      flattenedConfigData[key] = resolvedForComposedValue;
+    }
+
+    attempts++;
+
+    // console.debug("flattenedConfigData in attempts is:", flattenedConfigData);
+    // console.debug(
+    //   "replacementIncludesComposed is:",
+    //   replacementIncludesComposed,
+    // );
+    // console.debug("attempts is:", attempts);
+  } // And that's how one of the biggest feature works in a single night and morning pair: "recursive composed variables".
+
+  if (attempts === maxAttempts) {
+    return makeSuccessFalseTypeError(
+      `ERROR. Max attempts reached for sequentially flattening composed variables (${maxAttempts}). You most likely are facing circular dependencies in composed variables.`,
+    );
   }
 
   // Also including the reversed flattened config data.
@@ -501,8 +576,12 @@ export const resolveVariationData = async (
     flattenedKeys_originalsOnly,
   );
 
-  // HERE WAS THE ERROR. THIS WAS STILL ROCKING THE PREVIOUS LOGIC.
+  // console.debug("core__flattenedConfigData is:", core__flattenedConfigData);
+
+  // HERE WAS THE (OLD) ERROR. THIS WAS STILL ROCKING THE PREVIOUS LOGIC.
   for (const [key, value] of flattenedKeys_originalsOnly__EntriesArray) {
+    // IMPORTANT. BY THE TIME WE DO THIS HERE, THERE SHOULD BE NO MORE `$COMMENT#` IN VALUES. THIS MEANS THAT THIS SHOULD HANDLED ENTIRELY INSIDE resolveCoreData.
+
     const resolvedForComposedValue = value.replace(
       flattenedConfigPlaceholderGlobalRegex,
       (match) => {
@@ -512,7 +591,13 @@ export const resolveVariationData = async (
         const replacement = core__flattenedConfigData[resolvedKey]; // directly using core__flattenedConfigData since that's already made
 
         if (replacement === undefined) return match;
-        if (replacement.includes(`${$COMMENT}#`)) return match;
+        if (replacement.includes(`${$COMMENT}#`)) {
+          // return match;
+          // At this point we don't return match, we return an error. Because at this time when we're making `flattenedConfigData` for the config, there should no longer be any composed variables left in `core__flattenedConfigData` values.
+          return makeSuccessFalseTypeError(
+            `ERROR. All composed variables should have been resolved before resolving variation data.`,
+          );
+        }
 
         return replacement;
       },
