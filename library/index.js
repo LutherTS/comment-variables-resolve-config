@@ -852,13 +852,9 @@ const makeJsonData = (resolvedConfigData) =>
  * @returns The MJS resolved config data to be written at an expected `.mjs` path. Its format makes it possible to be consumed with literal type safety in both JavaScript and TypeScript.
  */
 const makeMjsData = (resolvedConfigData) =>
-  `/** @typedef {${JSON.stringify(
+  `export const resolvedConfigData = /** @type {${JSON.stringify(
     resolvedConfigData,
-  )}} ResolvedConfigData */\n\nexport const resolvedConfigData = /** @type {ResolvedConfigData} */ (${JSON.stringify(
-    resolvedConfigData,
-    null,
-    2,
-  )})`;
+  )} */ (${JSON.stringify(resolvedConfigData, null, 2)})`;
 
 /* makeJsonPathLog */
 
