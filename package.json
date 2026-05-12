@@ -9,6 +9,14 @@
   "author": "Luther Tchofo Safo <luther@tchofo-safo-portfolio.me>",
   "type": "module",
   "main": "library/index.js",
+  "files": [
+    "library",
+    "packages",
+    "types",
+    "comments.config.js",
+    "comments.config.json",
+    "comments.config.mjs"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LutherTS/comment-variables-resolve-config.git"
