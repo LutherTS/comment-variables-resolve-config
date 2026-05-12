@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 
-import { ESLint } from "eslint";
-// import { findAllImports } from "find-all-js-imports";
 import { findAllImports } from "find-all-imports";
+
+import { ESLint } from "eslint";
 
 import {
   successFalse,
