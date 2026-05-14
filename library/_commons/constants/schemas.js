@@ -132,7 +132,6 @@ export const ConfigComposedVariablesExclusivesSchema = z
   })
   .optional();
 
-// NEW
 export const VariationsSchema = z
   .object(
     {
@@ -149,24 +148,74 @@ export const VariationsSchema = z
           message: `The config's "variations.variants" key's value must be a record.`,
         },
       ),
-      variant: z.string({
-        message: `The config's "variations.variant" key's value must be a string.`,
-      }),
+      variant: z
+        .string({
+          message: `The config's "variations.variant" key's value must be a string.`,
+        })
+        .nonempty({
+          message: `The config's "variations.variant" key's value cannot be an empty string.`,
+        }), // new
       referenceData: ConfigDataSchema,
-      referenceVariant: z.string({
-        message: `The config's "variations.referenceVariant" key's value must be a string.`,
-      }),
+      referenceVariant: z
+        .string({
+          message: `The config's "variations.referenceVariant" key's value must be a string.`,
+        })
+        .nonempty({
+          message: `The config's "variations.referenceVariant" key's value cannot be an empty string.`,
+        }), // new
       allowIncompleteVariations: z.boolean({
         message: `The config's "variations.allowIncompleteVariations" key's value must be a boolean.`,
       }),
+      // NEW
+      public: z
+        .array(
+          z
+            .string({
+              message: `All elements in the provided "variations.public" array must be strings.`,
+            })
+            .nonempty({
+              message: `None of the elements in the provided "variations.public" array can be an empty string.`,
+            }),
+          {
+            message: `The config's "variations.public" key's value must be an array when provided.`,
+          },
+        )
+        .nonempty({
+          message: `The config's provided "variations.public" key array should contain at least one element.`,
+        })
+        .refine((array) => new Set(array).size === array.length, {
+          message: `The config's provided "variations.public" key array should not contain duplicate values.`,
+        })
+        .optional(),
     },
     {
       message: `The config's "variations" key's value must be an object (or undefined).`,
     },
   )
   .superRefine((val, ctx) => {
+    const variantsKeys = Object.keys(val.variants);
+
+    for (const variantKey of variantsKeys) {
+      // Check that none of the variant keys is an empty string // new
+      if (variantKey === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `None of the keys in variations.variants can be an empty string.`,
+          path: ["variants"],
+        });
+      }
+      // Check that all of the variant keys could be JS identifiers. // new
+      if (!/^\p{ID_Start}\p{ID_Continue}*$/u.test(variantKey)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `All of the keys in variations.variants need to comply with the JavaScript identifier format such as for dot access, which is not the case for the current "${variantKey}" key.`,
+          path: ["variants"],
+        });
+      }
+    }
+
     // Check that variant is one of the variants keys
-    if (!Object.keys(val.variants).includes(val.variant)) {
+    if (!variantsKeys.includes(val.variant)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `The variations.variant key "${val.variant}" must be one of the keys in variations.variants.`,
@@ -174,7 +223,7 @@ export const VariationsSchema = z
       });
     }
     // Check that referenceVariant is one of the variants keys
-    if (!Object.keys(val.variants).includes(val.referenceVariant)) {
+    if (!variantsKeys.includes(val.referenceVariant)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `The variations.referenceVariant key "${val.referenceVariant}" must be one of the keys in variations.variants.`,
@@ -192,6 +241,31 @@ export const VariationsSchema = z
         message: `The variations.variants key's object values should not contain duplicate labels.`,
         path: ["variants"],
       });
+    }
+
+    const variationsPublic = val.public;
+
+    // Handle val.public if provided // NEW
+    if (variationsPublic) {
+      // Check that the first element in public is the reference variant // NEW
+      if (variationsPublic[0] !== val.referenceVariant) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `The first element in the provided "variations.public" key array must be the reference variant.`,
+          path: ["public"],
+        });
+      }
+
+      // Check that all elements in public are variants // NEW
+      for (const vPublic of variationsPublic) {
+        if (!val.variants[vPublic]) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `"${vPublic}" from the provided "variations.public" key array is not defined as a variant.`,
+            path: ["public"],
+          });
+        }
+      }
     }
   })
   .optional();

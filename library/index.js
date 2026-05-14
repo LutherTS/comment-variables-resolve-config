@@ -4,6 +4,7 @@ import path from "path";
 import { findAllImports } from "find-all-imports";
 
 import { ESLint } from "eslint";
+import { findUpSync } from "find-up";
 
 import {
   successFalse,
@@ -619,7 +620,139 @@ const resolveConfig = async (configPath) => {
       variantsKeys_missingKeys,
     };
 
-    // (A similar process will be used in the future for `#PUBLIC#` from v3.)
+    // Generating `#PUBLIC#` data, only if the public key is provided
+
+    if (variationsSchemaResultsData.public) {
+      const variationsPublic = variationsSchemaResultsData.public;
+
+      const packageJsonFilename = findUpSync("package.json", {
+        cwd: path.dirname(configPath),
+      });
+
+      if (!packageJsonFilename) {
+        return makeSuccessFalseTypeError(
+          `ERROR. Somehow the project's package.json could not be found for variations.public.`,
+        );
+      }
+
+      let packageJsonRaw = /** @type {string | undefined} */ (undefined);
+      try {
+        packageJsonRaw = fs.readFileSync(packageJsonFilename, "utf8");
+      } catch (error) {
+        return makeSuccessFalseTypeError(
+          `ERROR. Somehow the project's package.json could not be read for variations.public.`,
+        );
+      }
+
+      let packageJson = /** @type {object | undefined} */ undefined;
+      try {
+        packageJson = /** @type {object} */ (JSON.parse(packageJsonRaw));
+      } catch (error) {
+        return makeSuccessFalseTypeError(
+          `ERROR. Somehow the project's package.json could not be parsed for variations.public.`,
+        );
+      }
+
+      const packageJsonName = /** @type {string | undefined} */ (
+        packageJson["name"]
+      );
+
+      if (!packageJsonName) {
+        return makeSuccessFalseTypeError(
+          `ERROR. Somehow the project's package.json does not have a value at its "name" key.`,
+        );
+      }
+
+      const packageJsonNameNormalized = normalize(
+        // first applies a normalization specific to npm package names on all dashes and connectors
+        packageJsonName.replace(/\p{Pd}|\p{Pc}/gu, "_"),
+      );
+
+      const flattenedPublicDataWithMaps =
+        /** @type {Record<string, Map<string, string>} */
+        ({});
+      const flattenedPublicDataWithRecords =
+        /** @type {Record<string, Record<string, string>} */ ({});
+
+      const variationsPublicNormalized =
+        /** @type {typeof variationsPublic} */ ([]);
+
+      for (const vPublic of variationsPublic) {
+        const vPublicNormalized = normalize(vPublic);
+        variationsPublicNormalized.push(vPublicNormalized);
+
+        flattenedPublicDataWithMaps[vPublicNormalized] = new Map();
+        flattenedPublicDataWithRecords[vPublicNormalized] = {};
+      }
+
+      const flattenedConfigData__EntriesArray = Object.entries(
+        resolvedCoreData.flattenedConfigData,
+      );
+
+      for (const [key, value] of flattenedConfigData__EntriesArray) {
+        if (!key.includes("#PUBLIC#")) continue;
+
+        const variantSegment = key.split("#")[0];
+        const vPublicMap = flattenedPublicDataWithMaps[variantSegment];
+
+        if (vPublicMap) {
+          vPublicMap.set(removeVariantPrefixFromVariationKey(key), value);
+        }
+      }
+
+      // Compares the maps for validation, based on the reference data
+
+      const referenceVariantNormalized = normalize(
+        variationsSchemaResultsData.referenceVariant,
+      );
+
+      const referencePublicData =
+        flattenedPublicDataWithMaps[referenceVariantNormalized];
+
+      for (const vPublicNormalized of variationsPublicNormalized) {
+        if (vPublicNormalized === referenceVariantNormalized) continue;
+
+        const vPublicData = flattenedPublicDataWithMaps[vPublicNormalized];
+
+        // ensures each key in each variation is present in the reference
+        for (const vPublicDataKey of vPublicData.keys()) {
+          if (!referencePublicData.has(vPublicDataKey)) {
+            return makeSuccessFalseTypeError(
+              `ERROR. Public key ${vPublicDataKey} for normalized variant ${vPublicNormalized} in not present in normalized reference variant ${referenceVariantNormalized}.`,
+            );
+          }
+        }
+
+        // ensures each variation has the same length as the reference
+        if (referencePublicData.size !== vPublicData.size) {
+          return makeSuccessFalseTypeError(
+            `ERROR. Normalized variant ${vPublicNormalized} (${vPublicData.size}) and normalized reference variant ${referenceVariantNormalized} (${referencePublicData.size}) do not have the same amount of public keys.`,
+          );
+        }
+      }
+
+      // Converts the public data from Maps to objects
+
+      for (const vPublicNormalized of variationsPublicNormalized) {
+        const vPublicMap = flattenedPublicDataWithMaps[vPublicNormalized];
+        if (vPublicMap) {
+          const vPublicRecord =
+            flattenedPublicDataWithRecords[vPublicNormalized];
+          if (vPublicRecord) {
+            for (const [key, value] of vPublicMap.entries()) {
+              const libraryKeyWithKey = packageJsonNameNormalized + "#" + key;
+              vPublicRecord[libraryKeyWithKey] = value;
+            }
+          }
+        }
+      }
+
+      const resolvedPublicData = {
+        libraryKey: packageJsonNameNormalized,
+        libraryVariations: flattenedPublicDataWithRecords,
+      };
+      console.debug("resolvedPublicData is:", resolvedPublicData);
+    }
 
     return {
       ...successTrue,
