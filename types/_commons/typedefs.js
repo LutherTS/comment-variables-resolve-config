@@ -97,6 +97,13 @@ import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
  */
 
 /**
+ * @typedef {{
+ *   libraryKey: string;
+ *   libraryVariations: Record<string, Record<string, string>>;
+ * }} ResolvedPublicData
+ */
+
+/**
  * Currently unused though, but useful as guidance.
  * @typedef {NonNullable<z.infer<typeof VariationsSchema>>} Variations
  */

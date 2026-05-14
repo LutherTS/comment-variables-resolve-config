@@ -64,6 +64,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       };
       resolvedReferenceData: null;
       resolvedVariationData: null;
+      resolvedPublicData: null;
     }
   | {
       success: true;
@@ -124,6 +125,10 @@ declare const resolveConfig: (configPath: string) => Promise<
         normalizedVariant: string;
         variantLabel: string;
         variantsKeys_missingKeys: Record<string, string[]>;
+      };
+      resolvedPublicData: {
+        libraryKey: string;
+        libraryVariations: Record<string, Record<string, string>>;
       };
     }
 >;

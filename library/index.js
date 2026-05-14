@@ -52,6 +52,7 @@ import extractObjectStringLiteralValues from "./_commons/rules/extract.js";
  * @typedef {import("../types/_commons/typedefs.js").ConfigData} ConfigData
  * @typedef {import("../types/_commons/typedefs.js").SuccessFalseWithErrors} SuccessFalseWithErrors
  * @typedef {import("../types/_commons/typedefs.js").ResolveConfigResultsSuccessTrue} ResolveConfigResultsSuccessTrue
+ * @typedef {import("../types/_commons/typedefs.js").ResolvedPublicData} ResolvedPublicData
  */
 
 /* resolveConfig */
@@ -326,6 +327,7 @@ const resolveConfig = async (configPath) => {
       // specific to variationsFalse
       resolvedreferenceData: null,
       resolvedVariationData: null,
+      resolvedPublicData: null,
     };
   } else {
     // specifies the comment variables exclusives when variations are enabled
@@ -622,6 +624,10 @@ const resolveConfig = async (configPath) => {
 
     // Generating `#PUBLIC#` data, only if the public key is provided
 
+    let resolvedPublicData = /** @type {ResolvedPublicData | undefined} */ (
+      undefined
+    );
+
     if (variationsSchemaResultsData.public) {
       const variationsPublic = variationsSchemaResultsData.public;
 
@@ -747,11 +753,10 @@ const resolveConfig = async (configPath) => {
         }
       }
 
-      const resolvedPublicData = {
+      resolvedPublicData = {
         libraryKey: packageJsonNameNormalized,
         libraryVariations: flattenedPublicDataWithRecords,
       };
-      console.debug("resolvedPublicData is:", resolvedPublicData);
     }
 
     return {
@@ -771,6 +776,8 @@ const resolveConfig = async (configPath) => {
       // specific to variationsTrue
       resolvedReferenceData,
       resolvedVariationData,
+      // and specific to variations.public
+      resolvedPublicData: resolvedPublicData ?? null,
     };
   }
 };
