@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 import { placeholderMessageId } from "../../library/_commons/constants/bases.js";
-import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
+import {
+  VariationsSchema,
+  LibrariesSchema,
+} from "../../library/_commons/constants/schemas.js";
 
 /**
  * @typedef {import('eslint').Linter.LintMessage} LintMessage
@@ -97,9 +100,13 @@ import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
  */
 
 /**
+ * @typedef {Record<string, Record<string, string>} LibraryVariations
+ */
+
+/**
  * @typedef {{
  *   libraryKey: string;
- *   libraryVariations: Record<string, Record<string, string>>;
+ *   libraryVariations: LibraryVariations;
  * }} ResolvedPublicData
  */
 
@@ -108,4 +115,7 @@ import { VariationsSchema } from "../../library/_commons/constants/schemas.js";
  * @typedef {NonNullable<z.infer<typeof VariationsSchema>>} Variations
  */
 
-export {}; // Makes the file a module.
+/**
+ * Currently unused too.
+ * @typedef {NonNullable<z.infer<typeof LibrariesSchema>>} Libraries
+ */

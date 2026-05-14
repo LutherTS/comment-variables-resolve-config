@@ -65,6 +65,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       resolvedReferenceData: null;
       resolvedVariationData: null;
       resolvedPublicData: null;
+      librariesData: Record<string, Record<string, string>> | null;
     }
   | {
       success: true;
@@ -130,6 +131,7 @@ declare const resolveConfig: (configPath: string) => Promise<
         libraryKey: string;
         libraryVariations: Record<string, Record<string, string>>;
       };
+      librariesData: Record<string, Record<string, string>> | null;
     }
 >;
 

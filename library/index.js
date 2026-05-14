@@ -28,6 +28,7 @@ import {
   ConfigMyIgnoresOnlySchema,
   ConfigComposedVariablesExclusivesSchema,
   VariationsSchema,
+  LibrariesSchema,
 } from "./_commons/constants/schemas.js";
 
 import {
@@ -227,6 +228,31 @@ const resolveConfig = async (configPath) => {
 
   const variationsSchemaResultsData = variationsSchemaResults.data;
 
+  // v3: Checking the libraries key. // NEW
+
+  // validates config.libraries
+  const libraries = /** @type {unknown} */ (config.libraries);
+  const librariesSchemaResults = LibrariesSchema.safeParse(libraries);
+
+  if (!librariesSchemaResults.success) {
+    return {
+      ...successFalse,
+      errors: [
+        {
+          ...typeError,
+          message:
+            "ERROR. Config variations could not pass validation from zod.",
+        },
+        ...librariesSchemaResults.error.errors.map((e) => ({
+          ...typeError,
+          message: e.message,
+        })),
+      ],
+    };
+  }
+
+  const librariesSchemaResultsData = librariesSchemaResults.data; // and I that's all the validations needed for libraries
+
   // IMPORTANT: MOVED EARLIER IN THE PROCESS
   // This is where I use ESLint programmatically to obtain all object values that are string literals, along with their source locations. It may not seem necessary for the CLI — it now is thanks to the `placeholders` command — but since the CLI ought to be used with the extension, validating its integrity right here and there will prevent mismatches in expectations between the two products.
   // So in the process, I am running and receiving findAllImports, meaning resolveConfig exports all import paths from the config, with the relevant flag only needing to choose between all imports or just the config path at consumption. This way you can say eventually OK, here when I command+click a $COMMENT, because it's not ignored it sends me to the position in the config files, but there because it's ignored it actually shows me all references outside the ignored files.
@@ -328,6 +354,8 @@ const resolveConfig = async (configPath) => {
       resolvedreferenceData: null,
       resolvedVariationData: null,
       resolvedPublicData: null,
+      // libraries can be consumed regardless of variations usage
+      librariesData: librariesSchemaResultsData ?? null,
     };
   } else {
     // specifies the comment variables exclusives when variations are enabled
@@ -778,6 +806,8 @@ const resolveConfig = async (configPath) => {
       resolvedVariationData,
       // and specific to variations.public
       resolvedPublicData: resolvedPublicData ?? null,
+      // libraries can be consumed regardless of variations usage
+      librariesData: librariesSchemaResultsData ?? null,
     };
   }
 };
