@@ -14,6 +14,7 @@ import {
   makeSuccessFalseTypeError,
   reverseFlattenedConfigData,
   removeVariantPrefixFromVariationKey,
+  escapeRegex,
 } from "./helpers.js";
 import { makeOriginalFlattenedConfigData } from "./flatten-config-data.js";
 
@@ -214,8 +215,16 @@ export const resolveCoreData = async (
 
           // APPROVED INSTEAD. A lot less taxing too.
           if (key === resolvedKey) {
-            // If the key is not an alias, makes sure that the key is not being used a composed variable segment of its value, which would create an infinite loop.
-            if (replacement.includes(`${$COMMENT}#${key}`)) {
+            // If the key is not an alias, makes sure that the key is not being used as a composed variable segment of its value, which would create an infinite loop.
+
+            // Uses a pattern instead of String.includes to ensure $COMMENT#SOME is not wrongly captured as part of $COMMENT#SOMETHING
+            const pattern = new RegExp(
+              `${escapeRegex($COMMENT)}#${escapeRegex(key)}(?![\\p{L}\\d_])`,
+              "u",
+            );
+
+            // if (replacement.includes(`${$COMMENT}#${key}`)) {
+            if (pattern.test(replacement)) {
               faultyRecursiveComposed.push(key);
               // return makeSuccessFalseTypeError(
               //   `ERROR. A composed variable can't be used within its own value. (See the ${key} key.).`,
