@@ -5,6 +5,8 @@ import { enComposedVariablesExclusives } from "./comment-variables/data/en/index
 import { EN, ENGLISH } from "./comment-variables/index.js";
 import { enData } from "./comment-variables/data/en/index.js";
 
+import { commentVariablesData as findAllImportsCommentVariablesData } from "find-all-imports";
+
 const ignores = [];
 
 const composedVariablesExclusives = [...enComposedVariablesExclusives];
@@ -24,10 +26,6 @@ const variations = Object.freeze({
   allowIncompleteVariations: true,
   // Defines which variants' `#PUBLIC#` Comment Variables should be publicly available, by default through `comments.public.mjs` and `comments.public.json`.
 });
-
-/* libraries */
-
-import { commentVariablesData as findAllImportsCommentVariablesData } from "find-all-imports";
 
 const libraries = {
   [findAllImportsCommentVariablesData.libraryKey]:
