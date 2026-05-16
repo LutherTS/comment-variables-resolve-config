@@ -187,6 +187,22 @@ export const VariationsSchema = z
           message: `The config's provided "variations.public" key array should not contain duplicate values.`,
         })
         .optional(),
+      // NEW
+      docCommandData: z
+        .object(
+          {
+            declarationDir: z.string({
+              message: `The config's "variations.docCommandData.declarationDir" key's value, when "variations.docCommand" is provided, must be a string.`,
+            }),
+            rootDir: z.string({
+              message: `The config's "variations.docCommandData.rootDir" key's value, when "variations.docCommand" is provided, must be a string.`,
+            }),
+          },
+          {
+            message: `The config's "variations.docCommandData" key's value must be an object when provided.`,
+          },
+        )
+        .optional(),
     },
     {
       message: `The config's "variations" key's value must be an object (or undefined).`,

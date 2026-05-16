@@ -228,6 +228,8 @@ const resolveConfig = async (configPath) => {
 
   const variationsSchemaResultsData = variationsSchemaResults.data;
 
+  const docCommandData = variationsSchemaResultsData?.docCommandData; // NEW
+
   // v3: Checking the libraries key. // NEW
 
   // validates config.libraries
@@ -356,6 +358,8 @@ const resolveConfig = async (configPath) => {
       resolvedPublicData: null,
       // libraries can be consumed regardless of variations usage
       librariesData: librariesSchemaResultsData ?? null,
+      // config for the `comvar doc` command
+      docCommandData: docCommandData ?? null,
     };
   } else {
     // specifies the comment variables exclusives when variations are enabled
@@ -808,6 +812,8 @@ const resolveConfig = async (configPath) => {
       resolvedPublicData: resolvedPublicData ?? null,
       // libraries can be consumed regardless of variations usage
       librariesData: librariesSchemaResultsData ?? null,
+      // config for the `comvar doc` command
+      docCommandData: docCommandData ?? null,
     };
   }
 };

@@ -66,6 +66,7 @@ declare const resolveConfig: (configPath: string) => Promise<
       resolvedVariationData: null;
       resolvedPublicData: null;
       librariesData: Record<string, Record<string, string>> | null;
+      docCommandData: null;
     }
   | {
       success: true;
@@ -132,6 +133,10 @@ declare const resolveConfig: (configPath: string) => Promise<
         libraryVariations: Record<string, Record<string, string>>;
       };
       librariesData: Record<string, Record<string, string>> | null;
+      docCommandData: {
+        declarationDir: string;
+        rootDir: string;
+      } | null;
     }
 >;
 
