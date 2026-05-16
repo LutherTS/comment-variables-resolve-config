@@ -1029,9 +1029,9 @@ const makeJsonData = (resolvedConfigData) =>
  * @returns The MJS resolved config data to be written at an expected $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATHPERIOD $COMMENT#FORCOMPOSEDVARIABLES#MAKEMJSDATARETURNS
  */
 const makeMjsData = (resolvedConfigData) =>
-  `export const resolvedConfigData = /** @type {${JSON.stringify(
+  `/** @private */\nexport const resolvedConfigData = /** @type {${JSON.stringify(
     resolvedConfigData,
-  )} */ (${JSON.stringify(resolvedConfigData, null, 2)})`;
+  )}} */ (${JSON.stringify(resolvedConfigData, null, 2)})`;
 
 /* makeJsonPathLog */
 
