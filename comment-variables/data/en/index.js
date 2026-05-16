@@ -1,6 +1,6 @@
 /* data */
 
-export const enData = {
+export const enData = Object.freeze({
   jsDoc: Object.freeze({
     definitions: Object.freeze({
       escapeRegex:
@@ -29,7 +29,8 @@ export const enData = {
         "Guarantees a fresh import of the config, negating the innate (and hidden) cache of the dynamic `import` utility." /* variations: $COMMENT#JSDOC#DEFINITIONS#FRESHIMPORT / core: $COMMENT#EN#JSDOC#DEFINITIONS#FRESHIMPORT */,
       transformResolvedConfigData:
         "Transforms resolved config data with keys alongside values." /* variations: $COMMENT#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA / core: $COMMENT#EN#JSDOC#DEFINITIONS#TRANSFORMRESOLVEDCONFIGDATA */,
-      normalize: "Normalizes a Comment Variables key part." /* variations: $COMMENT#JSDOC#DEFINITIONS#NORMALIZE / core: $COMMENT#EN#JSDOC#DEFINITIONS#NORMALIZE */,
+      normalize:
+        "Normalizes a Comment Variables key part." /* variations: $COMMENT#JSDOC#DEFINITIONS#NORMALIZE / core: $COMMENT#EN#JSDOC#DEFINITIONS#NORMALIZE */,
       makeNormalizedKey:
         "Normalizes and makes a Comment Variable key from the list of keys that trace to its value." /* variations: $COMMENT#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY / core: $COMMENT#EN#JSDOC#DEFINITIONS#MAKENORMALIZEDKEY */,
       makeJsonData:
@@ -58,7 +59,8 @@ export const enData = {
         "Resolves any provided variation data into information consumable by the Comment Variables ecosystem. Along with some tailored wiring, it follows the path of `resolveCoreData` while ignoring all of its checks, since they have already been passed in `resolveCoreData`." /* variations: $COMMENT#JSDOC#DEFINITIONS#RESOLVEVARIATIONDATA / core: $COMMENT#EN#JSDOC#DEFINITIONS#RESOLVEVARIATIONDATA */,
     }),
     params: Object.freeze({
-      stringA: "The string." /* variations: $COMMENT#JSDOC#PARAMS#STRINGA / core: $COMMENT#EN#JSDOC#PARAMS#STRINGA */,
+      stringA:
+        "The string." /* variations: $COMMENT#JSDOC#PARAMS#STRINGA / core: $COMMENT#EN#JSDOC#PARAMS#STRINGA */,
       configDataA:
         "$COMMENT#FORCOMPOSEDVARIABLES#CONFIGORVARIATIONDATA $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA" /* variations: $COMMENT#JSDOC#PARAMS#CONFIGDATAA / core: $COMMENT#EN#JSDOC#PARAMS#CONFIGDATAA */,
       configDataC:
@@ -75,21 +77,26 @@ export const enData = {
         "The list of keys that are parent to the key at hand given the recursive nature of the data's structure, instantiated as an empty array of strings (`[]`)." /* variations: $COMMENT#JSDOC#PARAMS#PARENTKEYSOPTION / core: $COMMENT#EN#JSDOC#PARAMS#PARENTKEYSOPTION */,
       configPathA:
         'The path of the config from `comments.config.js`, or from a config passed via the `--config` flag in the CLI, or from one passed via `"commentVariables.config": "my.config.js"` in `.vscode/settings.json` for the VS Code extension.' /* variations: $COMMENT#JSDOC#PARAMS#CONFIGPATHA / core: $COMMENT#EN#JSDOC#PARAMS#CONFIGPATHA */,
-      message: "The human-readable message of the error." /* variations: $COMMENT#JSDOC#PARAMS#MESSAGE / core: $COMMENT#EN#JSDOC#PARAMS#MESSAGE */,
+      message:
+        "The human-readable message of the error." /* variations: $COMMENT#JSDOC#PARAMS#MESSAGE / core: $COMMENT#EN#JSDOC#PARAMS#MESSAGE */,
       lintMessages:
         "The array of LintMessages such as obtained from an `ESLint` or a `Linter` instance running." /* variations: $COMMENT#JSDOC#PARAMS#LINTMESSAGES / core: $COMMENT#EN#JSDOC#PARAMS#LINTMESSAGES */,
       pluginName:
         "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD" /* variations: $COMMENT#JSDOC#PARAMS#PLUGINNAME / core: $COMMENT#EN#JSDOC#PARAMS#PLUGINNAME */,
       ruleName:
         "$COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF $COMMENT#FORCOMPOSEDVARIABLES#RULENAME $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD" /* variations: $COMMENT#JSDOC#PARAMS#RULENAME / core: $COMMENT#EN#JSDOC#PARAMS#RULENAME */,
-      options: "The additional options as follows:" /* variations: $COMMENT#JSDOC#PARAMS#OPTIONS / core: $COMMENT#EN#JSDOC#PARAMS#OPTIONS */,
-      settings: "The required settings as follows:" /* variations: $COMMENT#JSDOC#PARAMS#SETTINGS / core: $COMMENT#EN#JSDOC#PARAMS#SETTINGS */,
+      options:
+        "The additional options as follows:" /* variations: $COMMENT#JSDOC#PARAMS#OPTIONS / core: $COMMENT#EN#JSDOC#PARAMS#OPTIONS */,
+      settings:
+        "The required settings as follows:" /* variations: $COMMENT#JSDOC#PARAMS#SETTINGS / core: $COMMENT#EN#JSDOC#PARAMS#SETTINGS */,
       flattenedConfigDataA:
         "The provided flattened config data to be reversed." /* variations: $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAA / core: $COMMENT#EN#JSDOC#PARAMS#FLATTENEDCONFIGDATAA */,
-      composedVariable: "The composed variable as is." /* variations: $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLE / core: $COMMENT#EN#JSDOC#PARAMS#COMPOSEDVARIABLE */,
+      composedVariable:
+        "The composed variable as is." /* variations: $COMMENT#JSDOC#PARAMS#COMPOSEDVARIABLE / core: $COMMENT#EN#JSDOC#PARAMS#COMPOSEDVARIABLE */,
       flattenedConfigDataB:
         "$COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG" /* variations: $COMMENT#JSDOC#PARAMS#FLATTENEDCONFIGDATAB / core: $COMMENT#EN#JSDOC#PARAMS#FLATTENEDCONFIGDATAB */,
-      stringValue: "The encountered string value to be resolved." /* variations: $COMMENT#JSDOC#PARAMS#STRINGVALUE / core: $COMMENT#EN#JSDOC#PARAMS#STRINGVALUE */,
+      stringValue:
+        "The encountered string value to be resolved." /* variations: $COMMENT#JSDOC#PARAMS#STRINGVALUE / core: $COMMENT#EN#JSDOC#PARAMS#STRINGVALUE */,
       aliases_flattenedKeys:
         "$COMMENT#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG" /* variations: $COMMENT#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS / core: $COMMENT#EN#JSDOC#PARAMS#ALIASES_FLATTENEDKEYS */,
       configDataB:
@@ -98,10 +105,14 @@ export const enData = {
         "The function that runs on every time a string value is encountered, set to `resolveConfigDataStringValue` by default." /* variations: $COMMENT#JSDOC#PARAMS#CALLBACK / core: $COMMENT#EN#JSDOC#PARAMS#CALLBACK */,
       resolveConfigResultsSuccessTrue:
         "The successful results of a `resolveConfig` operation, already vetted and ready to be transformed." /* variations: $COMMENT#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE / core: $COMMENT#EN#JSDOC#PARAMS#RESOLVECONFIGRESULTSSUCCESSTRUE */,
-      moduleUrl: "The absolute path of the module to import." /* variations: $COMMENT#JSDOC#PARAMS#MODULEURL / core: $COMMENT#EN#JSDOC#PARAMS#MODULEURL */,
-      resolvedConfigDataA: "The resolved config data." /* variations: $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAA / core: $COMMENT#EN#JSDOC#PARAMS#RESOLVEDCONFIGDATAA */,
-      parentKeys: "JSDOC#PARAMS#PARENTKEYSOPTION" /* variations: $COMMENT#JSDOC#PARAMS#PARENTKEYS / core: $COMMENT#EN#JSDOC#PARAMS#PARENTKEYS */,
-      stringB: "The key part to be normalized, notably for variants." /* variations: $COMMENT#JSDOC#PARAMS#STRINGB / core: $COMMENT#EN#JSDOC#PARAMS#STRINGB */,
+      moduleUrl:
+        "The absolute path of the module to import." /* variations: $COMMENT#JSDOC#PARAMS#MODULEURL / core: $COMMENT#EN#JSDOC#PARAMS#MODULEURL */,
+      resolvedConfigDataA:
+        "The resolved config data." /* variations: $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAA / core: $COMMENT#EN#JSDOC#PARAMS#RESOLVEDCONFIGDATAA */,
+      parentKeys:
+        "JSDOC#PARAMS#PARENTKEYSOPTION" /* variations: $COMMENT#JSDOC#PARAMS#PARENTKEYS / core: $COMMENT#EN#JSDOC#PARAMS#PARENTKEYS */,
+      stringB:
+        "The key part to be normalized, notably for variants." /* variations: $COMMENT#JSDOC#PARAMS#STRINGB / core: $COMMENT#EN#JSDOC#PARAMS#STRINGB */,
       keys: "The list of keys at hand in order of traversal." /* variations: $COMMENT#JSDOC#PARAMS#KEYS / core: $COMMENT#EN#JSDOC#PARAMS#KEYS */,
       resolvedConfigDataB:
         "The resolved config data as obtained from `makeResolvedConfigData`." /* variations: $COMMENT#JSDOC#PARAMS#RESOLVEDCONFIGDATAB / core: $COMMENT#EN#JSDOC#PARAMS#RESOLVEDCONFIGDATAB */,
@@ -117,9 +128,12 @@ export const enData = {
         "The variation key that needs its variant prefix removed (such as going from `EN#COMMENT` to `COMMENT`)." /* variations: $COMMENT#JSDOC#PARAMS#VARIATIONKEY / core: $COMMENT#EN#JSDOC#PARAMS#VARIATIONKEY */,
       variationPlaceholder:
         "The variation placeholder that needs its variant prefix removed." /* variations: $COMMENT#JSDOC#PARAMS#VARIATIONPLACEHOLDER / core: $COMMENT#EN#JSDOC#PARAMS#VARIATIONPLACEHOLDER */,
-      stringC: "The given string to be surrounded." /* variations: $COMMENT#JSDOC#PARAMS#STRINGC / core: $COMMENT#EN#JSDOC#PARAMS#STRINGC */,
-      sourceA: "The source collection (uses `.array`)." /* variations: $COMMENT#JSDOC#PARAMS#SOURCEA / core: $COMMENT#EN#JSDOC#PARAMS#SOURCEA */,
-      exclusionB: "The exclusion collection (uses `.set`)." /* variations: $COMMENT#JSDOC#PARAMS#EXCLUSIONB / core: $COMMENT#EN#JSDOC#PARAMS#EXCLUSIONB */,
+      stringC:
+        "The given string to be surrounded." /* variations: $COMMENT#JSDOC#PARAMS#STRINGC / core: $COMMENT#EN#JSDOC#PARAMS#STRINGC */,
+      sourceA:
+        "The source collection (uses `.array`)." /* variations: $COMMENT#JSDOC#PARAMS#SOURCEA / core: $COMMENT#EN#JSDOC#PARAMS#SOURCEA */,
+      exclusionB:
+        "The exclusion collection (uses `.set`)." /* variations: $COMMENT#JSDOC#PARAMS#EXCLUSIONB / core: $COMMENT#EN#JSDOC#PARAMS#EXCLUSIONB */,
       extracts:
         "The array that holds all the object string values related to the config, since those are to be exclusively used with the config's data. Includes their file paths and `SourceLocation` objects alongside their values." /* variations: $COMMENT#JSDOC#PARAMS#EXTRACTS / core: $COMMENT#EN#JSDOC#PARAMS#EXTRACTS */,
       composedVariablesExclusivesB:
@@ -134,7 +148,8 @@ export const enData = {
         "The flattenedConfigData obtained from the previous resolveVariationData run, used when `allowIncompleteVariations` is set to `true` so that missing variation data can fallback to the reference data." /* variations: $COMMENT#JSDOC#PARAMS#REFERENCE__FLATTENEDCONFIGDATA / core: $COMMENT#EN#JSDOC#PARAMS#REFERENCE__FLATTENEDCONFIGDATA */,
     }),
     returns: Object.freeze({
-      escapeRegex: "The string with regex characters escaped." /* variations: $COMMENT#JSDOC#RETURNS#ESCAPEREGEX / core: $COMMENT#EN#JSDOC#RETURNS#ESCAPEREGEX */,
+      escapeRegex:
+        "The string with regex characters escaped." /* variations: $COMMENT#JSDOC#RETURNS#ESCAPEREGEX / core: $COMMENT#EN#JSDOC#RETURNS#ESCAPEREGEX */,
       makeIsolatedStringRegex:
         "The regex complete with positive lookbehind and positive lookahead to ensure the string is taken into account only when surrounded by whitespace." /* variations: $COMMENT#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX / core: $COMMENT#EN#JSDOC#RETURNS#MAKEISOLATEDSTRINGREGEX */,
       flattenConfigData:
@@ -161,7 +176,8 @@ export const enData = {
         "The transformed resolved config data with keys and placeholders readily accessible alongside values." /* variations: $COMMENT#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA / core: $COMMENT#EN#JSDOC#RETURNS#TRANSFORMRESOLVEDCONFIGDATA */,
       normalize:
         "The normalized key part under a common algorith for the entire library." /* variations: $COMMENT#JSDOC#RETURNS#NORMALIZE / core: $COMMENT#EN#JSDOC#RETURNS#NORMALIZE */,
-      makeNormalizedKey: "The normalized key of a Comment Variable." /* variations: $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY / core: $COMMENT#EN#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
+      makeNormalizedKey:
+        "The normalized key of a Comment Variable." /* variations: $COMMENT#JSDOC#RETURNS#MAKENORMALIZEDKEY / core: $COMMENT#EN#JSDOC#RETURNS#MAKENORMALIZEDKEY */,
       makeJsonData:
         "$COMMENT#FORCOMPOSEDVARIABLES#_THE $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATHPERIOD $COMMENT#FORCOMPOSEDVARIABLES#MAKEJSONDATARETURNS" /* variations: $COMMENT#JSDOC#RETURNS#MAKEJSONDATA / core: $COMMENT#EN#JSDOC#RETURNS#MAKEJSONDATA */,
       makeMjsData:
@@ -178,7 +194,8 @@ export const enData = {
         "The variation key with its variant prefix removed, akin to a Comment Variable key when `variations` are not in use." /* variations: $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY / core: $COMMENT#EN#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONKEY */,
       removeVariantPrefixFromVariationPlaceholder:
         "The variation placeholder with its variant prefix removed, akin to a Comment Variable placeholder when `variations` are not in use." /* variations: $COMMENT#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER / core: $COMMENT#EN#JSDOC#RETURNS#REMOVEVARIANTPREFIXFROMVARIATIONPLACEHOLDER */,
-      surroundStringByOneSpace: "The given string surrounded by one space." /* variations: $COMMENT#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE / core: $COMMENT#EN#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE */,
+      surroundStringByOneSpace:
+        "The given string surrounded by one space." /* variations: $COMMENT#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE / core: $COMMENT#EN#JSDOC#RETURNS#SURROUNDSTRINGBYONESPACE */,
       getArraySetDifference:
         "A new `Set` containing all elements in `a` that are not in `b`." /* variations: $COMMENT#JSDOC#RETURNS#GETARRAYSETDIFFERENCE / core: $COMMENT#EN#JSDOC#RETURNS#GETARRAYSETDIFFERENCE */,
       resolveCoreData:
@@ -200,53 +217,83 @@ export const enData = {
     }),
   }),
   forComposedVariables: Object.freeze({
-    pluginName: "plugin" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#PLUGINNAME */,
-    ruleName: "rule" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RULENAME / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RULENAME */,
-    theNameOf: "The name of the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#THENAMEOF */,
-    forFilteringPeriod: "being used for filtering." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD */,
-    flattenedConfigDataB: "The flattened config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB */,
-    aliases_flattenedKeys: "The aliases-to-flattened-keys dictionary" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS */,
-    configDataB: "The original config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAB */,
-    obtainedResolveConfig: "obtained from resolveConfig." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG */,
+    pluginName:
+      "plugin" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#PLUGINNAME / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#PLUGINNAME */,
+    ruleName:
+      "rule" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RULENAME / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RULENAME */,
+    theNameOf:
+      "The name of the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#THENAMEOF / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#THENAMEOF */,
+    forFilteringPeriod:
+      "being used for filtering." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#FORFILTERINGPERIOD */,
+    flattenedConfigDataB:
+      "The flattened config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#FLATTENEDCONFIGDATAB */,
+    aliases_flattenedKeys:
+      "The aliases-to-flattened-keys dictionary" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#ALIASES_FLATTENEDKEYS */,
+    configDataB:
+      "The original config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAB / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAB */,
+    obtainedResolveConfig:
+      "obtained from resolveConfig." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#OBTAINEDRESOLVECONFIG */,
     recursivelyResolvesTo:
       "Recursively resolves Comment Variables config data values (being strings or nested objects) to generate an" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RECURSIVELYRESOLVESTO */,
-    createsThat: "Creates that" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CREATESTHAT */,
+    createsThat:
+      "Creates that" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CREATESTHAT / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CREATESTHAT */,
     objectConfigData:
       "object with the same keys and the same shape as the original config data now with all string values entirely resolved." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#OBJECTCONFIGDATA */,
     transformedObjectConfigData:
       "object with the same keys and the same base shape as the original config data now with all string values entirely resolved alongside Comment Variables keys." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#TRANSFORMEDOBJECTCONFIGDATA */,
-    makesThe: "Makes the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MAKESTHE */,
-    resolvedAnExpected: "resolved config data to be written at an expected" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED */,
-    pathPeriod: " path." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#PATHPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#PATHPERIOD */,
-    jsonCaps: "JSON" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#JSONCAPS */,
-    dotJsonPathPeriod: "`.json` path." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATHPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTJSONPATHPERIOD */,
-    mjsCaps: "MJS" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MJSCAPS */,
-    dotMjsPathPeriod: "`.mjs` path." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATHPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTMJSPATHPERIOD */,
-    logWritingOfThe: "log that announces the writing of the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE */,
-    resolvedConfigDataPeriod: "resolved config data." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD */,
+    makesThe:
+      "Makes the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MAKESTHE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MAKESTHE */,
+    resolvedAnExpected:
+      "resolved config data to be written at an expected" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDANEXPECTED */,
+    pathPeriod:
+      " path." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#PATHPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#PATHPERIOD */,
+    jsonCaps:
+      "JSON" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#JSONCAPS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#JSONCAPS */,
+    dotJsonPathPeriod:
+      "`.json` path." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATHPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTJSONPATHPERIOD */,
+    mjsCaps:
+      "MJS" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MJSCAPS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MJSCAPS */,
+    dotMjsPathPeriod:
+      "`.mjs` path." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATHPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTMJSPATHPERIOD */,
+    logWritingOfThe:
+      "log that announces the writing of the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#LOGWRITINGOFTHE */,
+    resolvedConfigDataPeriod:
+      "resolved config data." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGDATAPERIOD */,
     _The: "The" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#_THE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#_THE */,
-    expected: "expected" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#EXPECTED / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#EXPECTED */,
-    dotJsonPath: "`.json` path" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATH / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTJSONPATH */,
-    dotMjsPath: "`.mjs` path" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATH / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTMJSPATH */,
-    whereThe: "where the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#WHERETHE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#WHERETHE */,
-    resolvedToBeWritten: "resolved config data is to be written." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN */,
+    expected:
+      "expected" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#EXPECTED / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#EXPECTED */,
+    dotJsonPath:
+      "`.json` path" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTJSONPATH / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTJSONPATH */,
+    dotMjsPath:
+      "`.mjs` path" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#DOTMJSPATH / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#DOTMJSPATH */,
+    whereThe:
+      "where the" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#WHERETHE / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#WHERETHE */,
+    resolvedToBeWritten:
+      "resolved config data is to be written." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDTOBEWRITTEN */,
     makeJsonDataReturns:
       "It can be consumed by any language that can parse JSON, which means virtually all modern languages, so that Comment Variables can act as a single source of truth for text variables beyond JavaScript and TypeScript." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MAKEJSONDATARETURNS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MAKEJSONDATARETURNS */,
     makeMjsDataReturns:
       "Its format makes it possible to be consumed with literal type safety in both JavaScript and TypeScript." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MAKEMJSDATARETURNS / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MAKEMJSDATARETURNS */,
-    resolvedConfigCompleted: "resolved config data has been completed." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED */,
-    configData: "The config's data property." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATA */,
-    variationData: "Any provided variation data." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONDATA */,
+    resolvedConfigCompleted:
+      "resolved config data has been completed." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#RESOLVEDCONFIGCOMPLETED */,
+    configData:
+      "The config's data property." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATA */,
+    variationData:
+      "Any provided variation data." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONDATA */,
     configOrVariationData:
       "The config's data property or any provided variation data." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGORVARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGORVARIATIONDATA */,
     variationOrConfigData:
       "Any provided variation data or the config's data property." /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONORCONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONORCONFIGDATA */,
     configDataA:
       "(Values are typed `unknown` given the limitations in typing recursive values in JSDoc.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAA */,
-    configDataC: "(Config data at this time is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAC */,
-    configDataD: "(Config data at this time may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAD */,
-    variationDataC: "(Variation data at this time is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONDATAC / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONDATAC */,
-    variationDataD: "(Variation data at this time may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONDATAD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONDATAD */,
+    configDataC:
+      "(Config data at this time is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAC / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAC */,
+    configDataD:
+      "(Config data at this time may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGDATAD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGDATAD */,
+    variationDataC:
+      "(Variation data at this time is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONDATAC / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONDATAC */,
+    variationDataD:
+      "(Variation data at this time may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONDATAD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONDATAD */,
     configOrVariationDataC:
       "(Config or variation data at this time is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#CONFIGORVARIATIONDATAC / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#CONFIGORVARIATIONDATAC */,
     configOrVariationDataD:
@@ -255,15 +302,22 @@ export const enData = {
       "(Variation – or config – data at this time is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONORCONFIGDATAC / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONORCONFIGDATAC */,
     variationOrConfigDataD:
       "(Variation – or config – data at this time may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#VARIATIONORCONFIGDATAD / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#VARIATIONORCONFIGDATAD */,
-    __configData: "(Config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__CONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__CONFIGDATA */,
-    __variationData: "(Variation data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__VARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__VARIATIONDATA */,
-    __configOrVariationData: "(Config or variation data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__CONFIGORVARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__CONFIGORVARIATIONDATA */,
-    __variationOrConfigData: "(Variation or config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__VARIATIONORCONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__VARIATIONORCONFIGDATA */,
-    atThisTime: "at this time" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#ATTHISTIME / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#ATTHISTIME */,
-    isStillUnknown__: "is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#ISSTILLUNKNOWN__ / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#ISSTILLUNKNOWN__ */,
-    mayStillUnknown__: "may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MAYSTILLUNKNOWN__ / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MAYSTILLUNKNOWN__ */,
+    __configData:
+      "(Config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__CONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__CONFIGDATA */,
+    __variationData:
+      "(Variation data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__VARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__VARIATIONDATA */,
+    __configOrVariationData:
+      "(Config or variation data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__CONFIGORVARIATIONDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__CONFIGORVARIATIONDATA */,
+    __variationOrConfigData:
+      "(Variation or config data" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#__VARIATIONORCONFIGDATA / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#__VARIATIONORCONFIGDATA */,
+    atThisTime:
+      "at this time" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#ATTHISTIME / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#ATTHISTIME */,
+    isStillUnknown__:
+      "is still `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#ISSTILLUNKNOWN__ / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#ISSTILLUNKNOWN__ */,
+    mayStillUnknown__:
+      "may still be `unknown`.)" /* variations: $COMMENT#FORCOMPOSEDVARIABLES#MAYSTILLUNKNOWN__ / core: $COMMENT#EN#FORCOMPOSEDVARIABLES#MAYSTILLUNKNOWN__ */,
   }),
-};
+});
 
 /* manual commentVariablesExclusives */
 
