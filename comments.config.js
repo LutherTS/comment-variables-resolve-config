@@ -25,11 +25,21 @@ const variations = Object.freeze({
   // Defines which variants' `#PUBLIC#` Comment Variables should be publicly available, by default through `comments.public.mjs` and `comments.public.json`.
 });
 
+/* libraries */
+
+import { commentVariablesData as findAllImportsCommentVariablesData } from "find-all-imports";
+
+const libraries = {
+  [findAllImportsCommentVariablesData.libraryKey]:
+    findAllImportsCommentVariablesData.libraryVariations.EN,
+}; // v3
+
 const config = {
   data,
   ignores,
   composedVariablesExclusives,
   variations,
+  libraries, // v3
 };
 
 export default config;
