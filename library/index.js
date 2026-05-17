@@ -703,7 +703,7 @@ const resolveConfig = async (configPath) => {
 
       const packageJsonNameNormalized = normalize(
         // first applies a normalization specific to npm package names on all dashes and connectors
-        packageJsonName.replace(/\p{Pd}|\p{Pc}/gu, "_"),
+        packageJsonName.replace(/[\p{Pd}\p{Pc}@\/]/gu, "_"),
       );
 
       const flattenedPublicDataWithMaps =
