@@ -11,7 +11,8 @@
   "main": "library/index.js",
   "files": [
     "library",
-    "packages",
+    "packages/find-all-imports-0.1.8.tgz",
+    "packages/get-sourcecode-0.1.8.tgz",
     "types",
     "comments.config.js",
     "comments.config.json",
