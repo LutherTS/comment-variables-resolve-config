@@ -358,13 +358,6 @@ export const resolveCoreData = async (
     }
 
     attempts++;
-
-    // console.debug("flattenedConfigData in attempts is:", flattenedConfigData);
-    // console.debug(
-    //   "replacementIncludesComposed is:",
-    //   replacementIncludesComposed,
-    // );
-    // console.debug("attempts is:", attempts);
   } // And that's how one of the biggest feature works in a single night and morning pair: "recursive composed variables".
 
   if (attempts === maxAttempts) {

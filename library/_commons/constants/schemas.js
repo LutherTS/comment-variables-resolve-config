@@ -290,10 +290,10 @@ export const LibrariesSchema = z
   .record(
     z.record(
       z.string({
-        message: `The values of the records of the config's "libraries" key's records must only be strings (representing the actual values of the libraries' Comment Variables keys they are paired with).`,
+        message: `The values of the records of the config's "libraries" key's records must only be strings (representing the actual values of the libraries' Comment Variables keys these strings are paired with).`,
       }),
       {
-        message: `The values of the config's "libraries" key's records must only be records as well (representing libraries' Comment Variables keys pairs with their actual values).`,
+        message: `The values of the config's "libraries" key's records must only be records as well (representing libraries' Comment Variables keys paired with their actual values).`,
       },
     ),
     {
